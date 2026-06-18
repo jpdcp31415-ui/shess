@@ -52,6 +52,8 @@ void assertPiece(const Piece* p)
     assert(isValid && "Piece does not exist in the real world");
 }
 
+// unicode character range: \u2654-F
+// order: king, queen, rook, bishop, knight, pawn
 const char* getDefPieceEmoji(const Piece* p)
 {
     assertPiece(p);

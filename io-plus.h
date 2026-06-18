@@ -66,4 +66,22 @@ void clearOutput(void)
 	printf("\e[1;1H\e[2J");
 }
 
+int getPosNumber(void)
+{
+    int n = 0;
+
+    if (!scanf("%d", &n))
+    {
+        printf("Error: Input didn't go well please try again\n");
+        return -1;
+    }
+    else if (n < 0)
+    {
+        printf("Error: Number inputted is not positive!\n");
+        return -1;
+    }
+
+    return n;
+}
+
 #endif

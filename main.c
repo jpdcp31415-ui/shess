@@ -30,21 +30,21 @@ ChessGrid currBoard = {
      {WHITE,KING},{WHITE,BISHOP},{WHITE,KNIGHT},{WHITE,ROOK}}, // \ row
 };
 
-// unicode character range: \u2654-F
-// order: king, queen, rook, bishop, knight, pawn
+bool isInBoardBounds(int x, int y)
+{
+    return ((x >= 0 && x < 8) &&
+            (y >= 0 && y < 8));
+}
+
 Piece* getPieceAt(ChessGrid grid, const int x, const int y)
 {
-    assert(x >= 0 && x < 8 &&
-           y >= 0 && y < 8 &&
-           "Getting piece that is out of bounds!");
+    assert(isInBoardBounds(x,y) && "Getting piece that is out of bounds!");
     return &(grid[y][x]);
 }
 
 Piece* getCurrPieceAt(const int x, const int y)
 {
-    assert(x >= 0 && x < 8 &&
-           y >= 0 && y < 8 &&
-           "Getting piece that is out of bounds!");
+    assert(isInBoardBounds(x,y) && "Getting piece that is out of bounds!");
     return &(currBoard[y][x]);
 }
 
@@ -176,6 +176,32 @@ void helpCommand(void);
 
 void listCommands(void);
 
+void moveCurrAt(void)
+{
+    IntVec2D position = {getPosNumber(),getPosNumber()};
+    IntVec2D move     = {getPosNumber(),getPosNumber()};
+
+    if (position.x == -1 || position.y == -1 ||
+        move.x == -1 || move.y == -1)
+    {
+        printf("Did not move because of failed input\n");
+        return;
+    }
+    else if (isInBoardBounds(position.x,position.y))
+    {
+        printf("Error: position specified is out of bounds");
+        return;
+    }
+    else if (isInBoardBounds(move.x,move.y))
+    {
+        printf("Error: move specified is out of bounds");
+        return;
+    }
+
+    *getCurrPieceAt(addVecs(position, move), position.y) = ;
+
+}
+
 typedef struct
 {
     const char* const name;
@@ -223,7 +249,7 @@ const Command CMD_LIST[] =
 
     {
         .name = "move",
-        .run = foo,
+        .run = moveCurrAt,
         .helpText = "Moves the pieces using x and y or chess notation",
     },
    
