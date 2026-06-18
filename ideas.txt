@@ -1,0 +1,8 @@
+Seperate the main.c program into parts:
+ - piece.h
+ - chess-grid.h
+ - vec2d.h
+ - piece-traits.h
+ - command.h : Command type
+ - input.h
+ - main.c : gameLoop()
