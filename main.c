@@ -36,6 +36,12 @@ bool isInBoardBounds(int x, int y)
             (y >= 0 && y < 8));
 }
 
+bool isVecInBoardBounds(const IntVec2D* vec)
+{
+    return ((vec->x >= 0 && vec->x < 8) &&
+            (vec->y >= 0 && vec->y < 8));
+}
+
 Piece* getPieceAt(ChessGrid grid, const int x, const int y)
 {
     assert(isInBoardBounds(x,y) && "Getting piece that is out of bounds!");
@@ -46,6 +52,18 @@ Piece* getCurrPieceAt(const int x, const int y)
 {
     assert(isInBoardBounds(x,y) && "Getting piece that is out of bounds!");
     return &(currBoard[y][x]);
+}
+
+Piece* getPieceAtVec(ChessGrid grid, const IntVec2D* vec)
+{
+    assert(isInBoardBounds(vec->x,vec->y) && "Getting piece that is out of bounds!");
+    return &(grid[vec->y][vec->x]);
+}
+
+Piece* getCurrPieceAtVec(const IntVec2D* vec)
+{
+    assert(isInBoardBounds(vec->x,vec->y) && "Getting piece that is out of bounds!");
+    return &(currBoard[vec->y][vec->x]);
 }
 
 typedef enum
@@ -178,8 +196,8 @@ void listCommands(void);
 
 void moveCurrAt(void)
 {
-    IntVec2D position = {getPosNumber(),getPosNumber()};
-    IntVec2D move     = {getPosNumber(),getPosNumber()};
+    const IntVec2D position = {getPosNumber(),getPosNumber()};
+    const IntVec2D move     = {getPosNumber(),getPosNumber()};
 
     if (position.x == -1 || position.y == -1 ||
         move.x == -1 || move.y == -1)
@@ -187,19 +205,18 @@ void moveCurrAt(void)
         printf("Did not move because of failed input\n");
         return;
     }
-    else if (isInBoardBounds(position.x,position.y))
+    else if (isVecInBoardBounds(&position))
     {
         printf("Error: position specified is out of bounds");
         return;
     }
-    else if (isInBoardBounds(move.x,move.y))
+    else if (isVecInBoardBounds(&(IntVec2D){addVecs(&position, &move)}))
     {
-        printf("Error: move specified is out of bounds");
+        printf("Error: posotion + move specified is out of bounds");
         return;
     }
 
-    *getCurrPieceAt(addVecs(position, move), position.y) = ;
-
+    *getCurrPieceAtVec(&(IntVec2D){addVecs(&position, &move)}) = ;
 }
 
 typedef struct
