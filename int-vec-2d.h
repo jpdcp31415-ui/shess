@@ -27,4 +27,9 @@ IntVec2D negVecs(const IntVec2D* v)
     return (IntVec2D){-v->x, -v->y};
 }
 
+int equalVecs(const IntVec2D* v1, const IntVec2D* v2)
+{
+    return ((v1->x == v2->x) && (v1->y == v2->y));
+}
+
 #endif

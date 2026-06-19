@@ -196,27 +196,30 @@ void listCommands(void);
 
 void moveCurrAt(void)
 {
-    const IntVec2D position = {getPosNumber(),getPosNumber()};
-    const IntVec2D move     = {getPosNumber(),getPosNumber()};
+    const IntVec2D position = {getPosNumber(),7-getPosNumber()};
+    const IntVec2D move     = {getPosNumber(),-getPosNumber()};
+
+    const IntVec2D nextPostion = addVecs(&position, &move);
 
     if (position.x == -1 || position.y == -1 ||
-        move.x == -1 || move.y == -1)
+        move.x == -1 || move.y == 1)
     {
         printf("Did not move because of failed input\n");
         return;
     }
-    else if (isVecInBoardBounds(&position))
+    else if (!isVecInBoardBounds(&position))
     {
-        printf("Error: position specified is out of bounds");
+        printf("Error: position specified is out of bounds\n");
         return;
     }
-    else if (isVecInBoardBounds(&(IntVec2D){addVecs(&position, &move)}))
+    else if (!isVecInBoardBounds(&nextPostion))
     {
-        printf("Error: posotion + move specified is out of bounds");
+        printf("Error: position + move specified is out of bounds\n");
         return;
     }
 
-    *getCurrPieceAtVec(&(IntVec2D){addVecs(&position, &move)}) = ;
+    *getCurrPieceAtVec(&nextPostion) = *getCurrPieceAtVec(&position);
+    *getCurrPieceAtVec(&position) = (Piece){NULL_COLOUR, NULL_TYPE};
 }
 
 typedef struct
