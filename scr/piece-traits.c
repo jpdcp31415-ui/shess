@@ -1,29 +1,4 @@
-#ifndef PIECE_TRAITS_H
-#define PIECE_TRAITS_H
-
-#include "piece.h"
-#include "int-vec-2d.h"
-
-typedef struct
-{
-    const Type piece_type;
-    const bool mult_steps;
-    const IntVec2D* moves;
-    const int num_moves;
-} PieceTraits;
-
-/*
- for pieces that move around:
-        ----
-      --    --
-     ^        -   <- clock-wise
-     S        v
-      --    --
-        ----
-  is the direction that the move member is in
-  and the S is the start/first position or 
-  at least the closest move to it
-*/
+#include "../include/piece-traits.h"
 
 const PieceTraits PAWN_TRAITS =
 {
@@ -117,4 +92,12 @@ const PieceTraits* getTraits(const Piece* p)
     return &NO_TRAITS;
 }
 
-#endif
+bool isMoveValidForPiece(const IntVec2D* move, const Piece* piece)
+{
+    const PieceTraits* traits = getTraits(piece);
+    for (int i = 0; i < traits->num_moves; i++)
+        if (equalVecs(&traits->moves[i],move))
+            return i;
+
+    return -1;
+}

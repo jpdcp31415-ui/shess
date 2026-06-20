@@ -1,40 +1,4 @@
-#ifndef PIECE_H
-#define PIECE_H
-
-#define ENABLE_ASSERT 1
-
-#if ENABLE_ASSERT
-    #include <assert.h>
-#else
-    #define assert(x)
-#endif
-
-#include <stdbool.h>
-#include <ctype.h>
-
-typedef enum
-{
-    NULL_COLOUR,
-    WHITE,
-    BLACK,
-} Colour;
-
-typedef enum
-{
-    NULL_TYPE,
-    PAWN,
-    KNIGHT,
-    BISHOP,
-    ROOK,
-    QUEEN,
-    KING,
-} Type;
-
-typedef struct
-{
-    Colour colour;
-    Type type;
-} Piece;
+#include "../include/piece.h"
 
 bool isBlankSpace(const Piece* p)
 {
@@ -156,5 +120,3 @@ const char* getPiece2Ch(const Piece* p)
 
     return str;
 }
-
-#endif

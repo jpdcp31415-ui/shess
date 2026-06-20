@@ -196,16 +196,21 @@ void listCommands(void);
 
 void moveCurrAt(void)
 {
-    const IntVec2D position = {getPosNumber(),7-getPosNumber()};
-    const IntVec2D move     = {getPosNumber(),-getPosNumber()};
+    ErrorCode errCodePosX = 0, errCodePosY = 0, errCodeMoveX = 0, errCodeMoveY = 0;
+    const IntVec2D position = {getPosNumber(&errCodePosX),7-getPosNumber(&errCodePosY)};
+    const IntVec2D move     = {getNumber(&errCodeMoveX),-getNumber(&errCodeMoveY)};
 
     const IntVec2D nextPostion = addVecs(&position, &move);
 
-    if (position.x == -1 || position.y == -1 ||
-        move.x == -1 || move.y == 1)
+    if ((errCodePosX == INPUT_ERR  || errCodePosY  == INPUT_ERR) ||
+        (errCodeMoveX == INPUT_ERR || errCodeMoveY == INPUT_ERR))
     {
         printf("Did not move because of failed input\n");
         return;
+    }
+    else if (errCodePosX == 1 || errCodePosY == 2)
+    {
+        printf("Error: position specified has a negative coodinate");
     }
     else if (!isVecInBoardBounds(&position))
     {
@@ -218,6 +223,7 @@ void moveCurrAt(void)
         return;
     }
 
+    if (isMoveValidForPiece(,mov))
     *getCurrPieceAtVec(&nextPostion) = *getCurrPieceAtVec(&position);
     *getCurrPieceAtVec(&position) = (Piece){NULL_COLOUR, NULL_TYPE};
 }
@@ -312,7 +318,6 @@ void helpCommand(void)
 {
     char cmd[MAX_STR_LENGTH] = "";
     strcpy(cmd,getStr());
-
     if (indexOfCmd(cmd) != -1)
         printf("%s\n", CMD_LIST[indexOfCmd(cmd)].helpText);
 }

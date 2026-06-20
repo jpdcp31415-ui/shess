@@ -1,19 +1,4 @@
-#ifndef IO_PLUS_H
-#define IO_PLUS_H
-
-#define ENABLE_ASSERT 1
-
-#if ENABLE_ASSERT
-    #include <assert.h>
-#else
-    #define assert(x)
-#endif
-
-#include <stdio.h>
-#include <stdbool.h>
-
-#define MAX_LINE_LENGTH 256
-#define MAX_STR_LENGTH 64
+#include "../include/io-plus.h"
 
 char* getLine(void)
 {
@@ -26,10 +11,15 @@ void clearInput(void)
         getLine();
 }
 
+void clearOutput(void)
+{
+	printf("\e[1;1H\e[2J");
+}
+
 char* getStr(void)
 {
     static char str[MAX_STR_LENGTH] = "";
-	assert(scanf("%s", str) && "Input failed when getting string");
+    assert(scanf("%s", str) && "Input failed when getting string");
     return str;
 }
 
@@ -61,27 +51,33 @@ bool getYesOrNo(void)
     } 
 }
 
-void clearOutput(void)
-{
-	printf("\e[1;1H\e[2J");
-}
-
-int getPosNumber(void)
+int getNumber(ErrorCode* const inputFailed)
 {
     int n = 0;
 
     if (!scanf("%d", &n))
     {
         printf("Error: Input didn't go well please try again\n");
-        return -1;
-    }
-    else if (n < 0)
-    {
-        printf("Error: Number inputted is not positive!\n");
-        return -1;
+        *inputFailed = INPUT_ERR;
     }
 
     return n;
 }
 
-#endif
+int getPosNumber(ErrorCode* const inputFailed)
+{
+    int n = 0;
+
+    if (!scanf("%d", &n))
+    {
+        printf("Error: Input didn't go well please try again\n");
+        *inputFailed = INPUT_ERR;
+    }
+    else if (n < 0)
+    {
+        printf("Error: Number inputted is not positive!\n");
+        *inputFailed = NON_POS_ERR;
+    }
+
+    return n;
+}

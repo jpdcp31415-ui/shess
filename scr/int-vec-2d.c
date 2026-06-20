@@ -1,11 +1,4 @@
-#ifndef INT_VEC_2D_H
-#define INT_VEC_2D_H
-
-typedef struct
-{
-    int x;
-    int y;
-} IntVec2D;
+#include "../include/int-vec-2d.h"
 
 IntVec2D addVecs(const IntVec2D* v1, const IntVec2D* v2)
 {
@@ -31,5 +24,3 @@ int equalVecs(const IntVec2D* v1, const IntVec2D* v2)
 {
     return ((v1->x == v2->x) && (v1->y == v2->y));
 }
-
-#endif
