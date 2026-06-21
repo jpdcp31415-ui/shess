@@ -3,8 +3,8 @@
 #endif
 
 #include <string.h>
-#include "piece-traits.h"
-#include "io-plus.h"
+#include "../include/piece-traits.h"
+#include "../include/io-plus.h"
 
 typedef Piece ChessGrid[8][8];
 
@@ -223,7 +223,6 @@ void moveCurrAt(void)
         return;
     }
 
-    if (isMoveValidForPiece(,mov))
     *getCurrPieceAtVec(&nextPostion) = *getCurrPieceAtVec(&position);
     *getCurrPieceAtVec(&position) = (Piece){NULL_COLOUR, NULL_TYPE};
 }

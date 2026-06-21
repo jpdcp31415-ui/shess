@@ -12,17 +12,17 @@ typedef struct
     const int num_moves;
 } PieceTraits;
 
-const PieceTraits PAWN_TRAITS;
+extern const PieceTraits PAWN_TRAITS;
 
-const PieceTraits KNIGHT_TRAITS;
+extern const PieceTraits KNIGHT_TRAITS;
 
-const PieceTraits BISHOP_TRAITS;
+extern const PieceTraits BISHOP_TRAITS;
 
-const PieceTraits ROOK_TRAITS;
+extern const PieceTraits ROOK_TRAITS;
 
-const PieceTraits QUEEN_TRAITS;
+extern const PieceTraits QUEEN_TRAITS;
 
-const PieceTraits KING_TRAITS;
+extern const PieceTraits KING_TRAITS;
 
 extern const PieceTraits NO_TRAITS;
 

@@ -44,12 +44,12 @@ const char* getDefPieceEmoji(const Piece* p);
 
 Colour oppositeColour(const Colour c);
 
-bool g_setInvertPieceColours;
+extern bool g_setInvertPieceColours;
 
 const char* getPieceEmoji(const Piece* p);
 
-bool g_setWhiteIsUpper;
-int g_setNumChPiece;
+extern bool g_setWhiteIsUpper;
+extern int g_setNumChPiece;
 
 char getPiece1Ch(const Piece* p);
 

@@ -13,8 +13,8 @@ $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $(TARGET)
 
 # How to compile any .c file into a .o file
-./obj/%.o: ./scr/%.c
-	$(CC) $(CFLAGS) -c $< -o $@
+./obj/%.o: ./src/%.c
+	$(CC) $(CFLAGS) $(SRCS) -c $(OBJS) **--outdir=**obj
 
 clean:
 	rm -f *.o $(TARGET)
