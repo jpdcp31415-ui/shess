@@ -9,12 +9,13 @@ OBJS = $(patsubst ./src/%.c, ./obj/%.o, $(SRCS))
 
 TARGET = main 
 
+# Building
 $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $(TARGET)
 
-# How to compile any .c file into a .o file
+# Compiling
 ./obj/%.o: ./src/%.c
-	$(CC) $(CFLAGS) $(SRCS) -c $(OBJS) **--outdir=**obj
+	$(CC) -c -Iinc -o $@ $< $(CFLAGS) 
 
 clean:
 	rm -f *.o $(TARGET)
