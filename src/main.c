@@ -118,7 +118,7 @@ void moveCurrAt(void)
 typedef struct
 {
     const char* const name;
-    void(*run)(void);
+    void(*getAndRun)(void);
     const char* const helpText;
 } Command;
 
@@ -132,55 +132,55 @@ const Command CMD_LIST[] =
 {
     {
         .name = "print",
-        .run = printCurrBoard,
+        .getAndRun = printCurrBoard,
         .helpText = "Prints the current state of the board to the console",
     },
 
     {
         .name = "flip",
-        .run = flipCurrBoard,
+        .getAndRun = flipCurrBoard,
         .helpText = "Flips the board vertically",
     },
 
     {
         .name = "restart",
-        .run = resetCurrBoard,
+        .getAndRun = resetCurrBoard,
         .helpText = "Resets the board to its initial state",
     },
 
     {
         .name = "setup",
-        .run = runSetup,
+        .getAndRun = runSetup,
         .helpText = "Makes a series of questions appear to costumize your chess experience!",
     },
 
     {
         .name = "end",
-        .run = endProgram,
+        .getAndRun = endProgram,
         .helpText = "Prints the current state of the board to the console",
     },
 
     {
         .name = "move",
-        .run = moveCurrAt,
+        .getAndRun = moveCurrAt,
         .helpText = "Moves the pieces using x and y or chess notation",
     },
    
     {
         .name = "clear",
-        .run = clearOutput,
+        .getAndRun = clearOutput,
         .helpText = "Clears the output from the console",
     },
 
     {
         .name = "list",
-        .run = listCommands,
+        .getAndRun = listCommands,
         .helpText = "Lists all avaliable commands",
     },
 
     {
         .name = "help",
-        .run = helpCommand,
+        .getAndRun = helpCommand,
         .helpText = "Displays text about the command",
     },
 
@@ -218,7 +218,7 @@ void listCommands(void)
 void getAndRunCommand(const char* const cmd)
 {
     if (indexOfCmd(cmd) != -1)
-        CMD_LIST[indexOfCmd(cmd)].run();
+        CMD_LIST[indexOfCmd(cmd)].getAndRun();
 }
 
 void gameLoop(void)
