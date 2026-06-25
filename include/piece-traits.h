@@ -6,26 +6,14 @@
 
 typedef struct
 {
-    const Type piece_type;
-    const bool mult_steps;
+    const Type pieceType;
+    const bool multSteps;
     const IntVec2D* moves;
-    const int num_moves;
+    const int numMoves;
 } PieceTraits;
 
-extern const PieceTraits PAWN_TRAITS;
+const PieceTraits* getTraits(const Piece*);
 
-extern const PieceTraits KNIGHT_TRAITS;
-
-extern const PieceTraits BISHOP_TRAITS;
-
-extern const PieceTraits ROOK_TRAITS;
-
-extern const PieceTraits QUEEN_TRAITS;
-
-extern const PieceTraits KING_TRAITS;
-
-extern const PieceTraits NO_TRAITS;
-
-const PieceTraits* getTraits(const Piece* p);
+bool hasMove(const IntVec2D*, const Piece*);
 
 #endif

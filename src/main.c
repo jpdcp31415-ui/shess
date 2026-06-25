@@ -4,14 +4,14 @@
 
 #include <string.h>
 #include "../include/piece-traits.h"
-#include "../include/chess-grid.h"
+#include "../include/chess-grid-output.h"
 #include "../include/io-plus.h"
 
-bool isRunning = true;
+bool gProgramIsRunning = true;
 
 void endProgram(void)
 {
-    isRunning = false;
+    gProgramIsRunning = false;
 }
 
 void runSetup(void)
@@ -23,9 +23,9 @@ void runSetup(void)
 getAgain:
     switch (getSingleChar())
     {
-    case '1': g_setPrintMode = ONE_CHAR;  break;
-    case '2': g_setPrintMode = TWO_CHARS; break; // this is the classic way
-    case 'E': g_setPrintMode = EMOJI;     break;
+    case '1': gSetPrintMode = ONE_CHAR;  break;
+    case '2': gSetPrintMode = TWO_CHARS; break; // this is the classic way
+    case 'E': gSetPrintMode = EMOJI;     break;
     default:
         printf("Inputted character is invalid.\nTry again: ");
         goto getAgain;
@@ -44,11 +44,13 @@ getAgain:
 	printf("Preview without space: ");
     printPiece(&whitePawn); printPiece(&whitePawn);
 
+    printf("\n");
+
     printf("Do you want spaces between the pieces? (Y/n): ");
-    g_setSpaceBetween = getYesOrNo();
+    gSetSpaceBetween = getYesOrNo();
     
     // Invert colours of emojis
-    if (g_setPrintMode == EMOJI)
+    if (gSetPrintMode == EMOJI)
     {
         printf("Do you want to invert the colours of the pieces (only displaying)\n");
         printf("White pawn: %s, Black pawn: %s\n",
@@ -68,28 +70,44 @@ void moveCurrAt(void)
 {
     ErrorCode errCodePosX = 0, errCodePosY = 0, errCodeMoveX = 0, errCodeMoveY = 0;
     const IntVec2D position = {getPosNumber(&errCodePosX),7-getPosNumber(&errCodePosY)};
-    const IntVec2D move     = {getNumber(&errCodeMoveX),-getNumber(&errCodeMoveY)};
-
-    const IntVec2D nextPostion = addVecs(&position, &move);
 
     if ((errCodePosX == INPUT_ERR  || errCodePosY  == INPUT_ERR) ||
         (errCodeMoveX == INPUT_ERR || errCodeMoveY == INPUT_ERR))
     {
         printf("Did not move because of failed input\n");
+        clearInput();
         return;
     }
-    else if (errCodePosX == 1 || errCodePosY == 2)
+    else if (errCodePosX == NON_POS_ERR || errCodePosY == NON_POS_ERR)
     {
         printf("Error: position specified has a negative coodinate");
+        clearInput();
+        return;
     }
     else if (!isVecInBoardBounds(&position))
     {
         printf("Error: position specified is out of bounds\n");
+        clearInput();
         return;
     }
-    else if (!isVecInBoardBounds(&nextPostion))
+
+    const IntVec2D move     = {getNumber(&errCodeMoveX),getNumber(&errCodeMoveY)};
+    const IntVec2D nextPostion = addVecs(&position, &move);
+
+    if (!isVecInBoardBounds(&nextPostion))
     {
         printf("Error: position + move specified is out of bounds\n");
+        clearInput();
+        return;
+    }
+
+    clearInput();
+
+    const Piece movingPiece = *getCurrPieceAtVec(&position);
+
+    if (!hasMove(&move, &movingPiece))
+    {
+        printf("Move is not valid for this piece\n");
         return;
     }
 
@@ -102,10 +120,10 @@ typedef struct
     const char* const name;
     void(*run)(void);
     const char* const helpText;
-//  const char* const useText; Maybe?
 } Command;
 
-void foo(void)
+// This is a placeholder funtion for incomplete commands
+void fooCmdFunc(void)
 {
     printf("This is a placeholder function!\n");
 }
@@ -213,7 +231,7 @@ void gameLoop(void)
            "Use \"list\" to list all commands\n"
            "And use \"help [command]\" for text about the command\n");
 
-    while (isRunning)
+    while (gProgramIsRunning)
     {
         printf("> ");
         strcpy(command,getStr());

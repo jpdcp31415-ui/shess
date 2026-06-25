@@ -1,103 +1,80 @@
 #include "../include/piece-traits.h"
 
-const PieceTraits PAWN_TRAITS =
+static const PieceTraits kTraitsArray[] =
 {
-    .piece_type = PAWN,
-    .mult_steps = false,
-    .moves = (const IntVec2D []) {
-        {-1,1},{0,1},{1,1},{0,2}
+    {
+        .pieceType = PAWN,
+        .multSteps = false,
+        .moves = (const IntVec2D []) {
+            {-1,1},{0,1},{1,1},{0,2}
+        },
+        .numMoves = 4,
     },
-    .num_moves = 4,
-};
 
-const PieceTraits KNIGHT_TRAITS = 
-{
-    .piece_type = KNIGHT,
-    .mult_steps = false,
-    .moves = (const IntVec2D []) {
-        {-2,1},{-1,2},{1,2},{2,1},
-        {2,-1},{1,-2},{-1,-2},{-2,-1}
+    {
+        .pieceType = KNIGHT,
+        .multSteps = false,
+        .moves = (const IntVec2D []) {
+            {-2,1},{-1,2},{1,2},{2,1},
+            {2,-1},{1,-2},{-1,-2},{-2,-1}
+        },
+        .numMoves = 8,
     },
-    .num_moves = 8,
-};
 
-const PieceTraits BISHOP_TRAITS = 
-{
-    .piece_type = BISHOP,
-    .mult_steps = true,
-    .moves = (const IntVec2D []) {
-        {-1,1},{1,1},{-1,1},{-1,-1}
+    {
+        .pieceType = BISHOP,
+        .multSteps = true,
+        .moves = (const IntVec2D []) {
+            {-1,1},{1,1},{-1,1},{-1,-1}
+        },
+        .numMoves = 4,
     },
-    .num_moves = 4,
-};
 
-const PieceTraits ROOK_TRAITS =
-{
-    .piece_type = ROOK,
-    .mult_steps = true,
-    .moves = (const IntVec2D []) {
-        {-1,0},{0,1},{1,0},{-1,0}
+    {
+        .pieceType = ROOK,
+        .multSteps = true,
+        .moves = (const IntVec2D []) {
+            {-1,0},{0,1},{1,0},{-1,0}
+        },
+        .numMoves = 4,
     },
-    .num_moves = 4,
-};
 
-const PieceTraits QUEEN_TRAITS =
-{
-    .piece_type = QUEEN,
-    .mult_steps = true,
-    .moves = (const IntVec2D []) {
-        {-1,0},{-1,1},{0,1},{1,1},
-        {1,0},{1,-1},{0,-1},{-1,-1}
+    {
+        .pieceType = QUEEN,
+        .multSteps = true,
+        .moves = (const IntVec2D []) {
+            {-1,0},{-1,1},{0,1},{1,1},
+            {1,0},{1,-1},{0,-1},{-1,-1}
+        },
+        .numMoves = 8,
     },
-    .num_moves = 8,
-};
 
-const PieceTraits KING_TRAITS =
-{
-    .piece_type = KING,
-    .mult_steps = false,
-    .moves = (const IntVec2D []) {
-        {-1,0},{-1,1},{0,1},{1,1},
-        {1,0},{1,-1},{0,-1},{-1,-1}
-    },
-    .num_moves = 8,
-};
-
-const PieceTraits NO_TRAITS =
-{
-    .piece_type = NULL_TYPE,
-    .mult_steps = false,
-    .moves = (const IntVec2D []) {{0,0}},
-    .num_moves = 1,
+    {
+        .pieceType = KING,
+        .multSteps = false,
+        .moves = (const IntVec2D []) {
+            {-2,0},{-1,0},{-1,1},{0,1},{0,2},
+            {1,1},{1,0},{1,-1},{0,-1},{-1,-1},
+        },
+        .numMoves = 10,
+    }
 };
 
 const PieceTraits* getTraits(const Piece* p)
 {
     assertPiece(p);
-    
-    assert(isBlankSpace(p) && "Error: Blank piece/space shouldn't have traits");
-
-    switch (p->type)
-    {
-    case PAWN:   return &PAWN_TRAITS;
-    case KNIGHT: return &KNIGHT_TRAITS;
-    case BISHOP: return &BISHOP_TRAITS;
-    case ROOK:   return &ROOK_TRAITS;
-    case QUEEN:  return &QUEEN_TRAITS;
-    case KING:   return &KING_TRAITS;
-    case NULL_TYPE:
-    }
-    
-    // using this to avoid compiler warning/error
-    return &NO_TRAITS;
+    assert(!isBlankSpace(p) && "Error: Blank piece/space shouldn't have traits");
+    return &kTraitsArray[p->type-1];
 }
 
-bool isMoveValidForPiece(const IntVec2D* move, const Piece* piece)
+bool hasMove(const IntVec2D* move, const Piece* piece)
 {
-    const PieceTraits* traits = getTraits(piece);
-    for (int i = 0; i < traits->num_moves; i++)
-        if (equalVecs(&traits->moves[i],move))
-            return i;
+    assertPiece(piece);
 
-    return -1;
+    const PieceTraits* traits = getTraits(piece);
+    for (int i = 0; i < traits->numMoves; i++)
+        if (equalVecs(&traits->moves[i],move))
+            return true;
+
+    return false;
 }

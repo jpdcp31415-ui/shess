@@ -1,29 +1,28 @@
 #include <string.h>
-#include <stdio.h>
 #include "../include/chess-grid.h"
 
 typedef Piece ChessGrid[8][8];
 
-const ChessGrid startChessGrid = {
-    {{BLACK,ROOK},{BLACK,KNIGHT},{BLACK,BISHOP},{BLACK,QUEEN}, // / 1st
-     {BLACK,KING},{BLACK,BISHOP},{BLACK,KNIGHT},{BLACK,ROOK}}, // \ row
-    {{BLACK,PAWN},{BLACK,PAWN},{BLACK,PAWN},{BLACK,PAWN},      // / 2nd
-     {BLACK,PAWN},{BLACK,PAWN},{BLACK,PAWN},{BLACK,PAWN}},     // \ row
-[6]={{WHITE,PAWN},{WHITE,PAWN},{WHITE,PAWN},{WHITE,PAWN},      // / 8th
-     {WHITE,PAWN},{WHITE,PAWN},{WHITE,PAWN},{WHITE,PAWN}},     // \ row
-    {{WHITE,ROOK},{WHITE,KNIGHT},{WHITE,BISHOP},{WHITE,QUEEN}, // / 7th
-     {WHITE,KING},{WHITE,BISHOP},{WHITE,KNIGHT},{WHITE,ROOK}}, // \ row
+static const ChessGrid kStartBoard = {
+    {{BLACK,ROOK},{BLACK,KNIGHT},{BLACK,BISHOP},{BLACK,QUEEN},
+     {BLACK,KING},{BLACK,BISHOP},{BLACK,KNIGHT},{BLACK,ROOK}},
+    {{BLACK,PAWN},{BLACK,PAWN},{BLACK,PAWN},{BLACK,PAWN},     
+     {BLACK,PAWN},{BLACK,PAWN},{BLACK,PAWN},{BLACK,PAWN}},    
+[6]={{WHITE,PAWN},{WHITE,PAWN},{WHITE,PAWN},{WHITE,PAWN},     
+     {WHITE,PAWN},{WHITE,PAWN},{WHITE,PAWN},{WHITE,PAWN}},    
+    {{WHITE,ROOK},{WHITE,KNIGHT},{WHITE,BISHOP},{WHITE,QUEEN},
+     {WHITE,KING},{WHITE,BISHOP},{WHITE,KNIGHT},{WHITE,ROOK}},
 };
 
-ChessGrid currBoard = {
-    {{BLACK,ROOK},{BLACK,KNIGHT},{BLACK,BISHOP},{BLACK,QUEEN}, // / 1st
-     {BLACK,KING},{BLACK,BISHOP},{BLACK,KNIGHT},{BLACK,ROOK}}, // \ row
-    {{BLACK,PAWN},{BLACK,PAWN},{BLACK,PAWN},{BLACK,PAWN},      // / 2nd
-     {BLACK,PAWN},{BLACK,PAWN},{BLACK,PAWN},{BLACK,PAWN}},     // \ row
-[6]={{WHITE,PAWN},{WHITE,PAWN},{WHITE,PAWN},{WHITE,PAWN},      // / 8th
-     {WHITE,PAWN},{WHITE,PAWN},{WHITE,PAWN},{WHITE,PAWN}},     // \ row
-    {{WHITE,ROOK},{WHITE,KNIGHT},{WHITE,BISHOP},{WHITE,QUEEN}, // / 7th
-     {WHITE,KING},{WHITE,BISHOP},{WHITE,KNIGHT},{WHITE,ROOK}}, // \ row
+ChessGrid gCurrBoard = {
+    {{BLACK,ROOK},{BLACK,KNIGHT},{BLACK,BISHOP},{BLACK,QUEEN},
+     {BLACK,KING},{BLACK,BISHOP},{BLACK,KNIGHT},{BLACK,ROOK}},
+    {{BLACK,PAWN},{BLACK,PAWN},{BLACK,PAWN},{BLACK,PAWN},     
+     {BLACK,PAWN},{BLACK,PAWN},{BLACK,PAWN},{BLACK,PAWN}},    
+[6]={{WHITE,PAWN},{WHITE,PAWN},{WHITE,PAWN},{WHITE,PAWN},     
+     {WHITE,PAWN},{WHITE,PAWN},{WHITE,PAWN},{WHITE,PAWN}},    
+    {{WHITE,ROOK},{WHITE,KNIGHT},{WHITE,BISHOP},{WHITE,QUEEN},
+     {WHITE,KING},{WHITE,BISHOP},{WHITE,KNIGHT},{WHITE,ROOK}},
 };
 
 bool isInBoardBounds(int x, int y)
@@ -47,7 +46,7 @@ Piece* getPieceAt(ChessGrid grid, const int x, const int y)
 Piece* getCurrPieceAt(const int x, const int y)
 {
     assert(isInBoardBounds(x,y) && "Getting piece that is out of bounds!");
-    return &(currBoard[y][x]);
+    return &(gCurrBoard[y][x]);
 }
 
 Piece* getPieceAtVec(ChessGrid grid, const IntVec2D* vec)
@@ -59,41 +58,7 @@ Piece* getPieceAtVec(ChessGrid grid, const IntVec2D* vec)
 Piece* getCurrPieceAtVec(const IntVec2D* vec)
 {
     assert(isInBoardBounds(vec->x,vec->y) && "Getting piece that is out of bounds!");
-    return &(currBoard[vec->y][vec->x]);
-}
-
-
-PrintMode g_setPrintMode = EMOJI;
-
-void printPiece(const Piece* p)
-{
-    switch (g_setPrintMode)
-    {
-    case ONE_CHAR:  printf("%c", getPiece1Ch(p));   break;
-    case TWO_CHARS: printf("%s", getPiece2Ch(p));   break;
-    case EMOJI:     printf("%s", getPieceEmoji(p)); break;
-    }
-}
-
-bool g_setSpaceBetween = true;
-
-void printBoard(ChessGrid grid)
-{
-    for (int y=0; y<8; y++)
-    {
-        for (int x=0; x<8; x++)
-        {
-            printPiece(getPieceAt(grid,x,y));
-            if (g_setSpaceBetween)
-                printf(" ");
-        }
-        printf("\n");
-    }
-}
-
-void printCurrBoard(void)
-{
-    printBoard(currBoard);
+    return &(gCurrBoard[vec->y][vec->x]);
 }
 
 void flipBoard(ChessGrid grid)
@@ -109,7 +74,7 @@ void flipBoard(ChessGrid grid)
 
 void flipCurrBoard(void)
 {
-    flipBoard(currBoard);
+    flipBoard(gCurrBoard);
 }
 
 void setBoard(const ChessGrid fromGrid, ChessGrid toGrid)
@@ -119,10 +84,10 @@ void setBoard(const ChessGrid fromGrid, ChessGrid toGrid)
 
 void resetBoard(ChessGrid grid)
 {
-    memcpy(&grid, startChessGrid, sizeof(ChessGrid));
+    memcpy(&grid, kStartBoard, sizeof(ChessGrid));
 }
 
 void resetCurrBoard(void)
 {
-    resetBoard(currBoard);
+    resetBoard(gCurrBoard);
 }
