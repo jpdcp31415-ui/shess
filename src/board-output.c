@@ -29,7 +29,19 @@ const char* getDefPieceEmoji(const Piece* p)
 {
     assertPiece(p);
 
-    if (isBlankSpace(p)) return " ";
+    if (isBlankSpace(p))
+    {
+        if (gOutputSettings.emptySpaceAs1or2Ch)
+        {
+            if (gOutputSettings.emptySpaceAsUnderscore) return "_";
+            else return " ";
+        }
+        else
+        {
+            if (gOutputSettings.emptySpaceAsUnderscore) return "__";
+            else return "  ";
+        }
+    }
     
     if (p->colour == WHITE)
         switch (p->type)
@@ -176,9 +188,6 @@ getAgain:
         gOutputSettings.invertColours = getYesOrNo();
 
         printf("How many spaces do you want for an empty space to be displayed?: ");
-        printf("White pawn: %s, Black pawn: %s\n",
-                getPieceEmoji(&whitePawn),
-                getPieceEmoji(&blackPawn));
 
         ErrorCode errCode = NO_ERRS;
 
@@ -189,7 +198,7 @@ getAgain:
             if (errCode == NON_POS_ERR)
             {
                 clearInput();
-                printf("Error: Number inputted is not positive: \n");
+                printf("Error: Number inputted is not positive: ");
             }
             else if (errCode == INPUT_ERR)
             {
