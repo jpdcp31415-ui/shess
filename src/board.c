@@ -1,8 +1,6 @@
 #include <string.h>
 #include "../include/board.h"
 
-typedef Piece Board[8][8];
-
 static const Board kStartBoard = {
     {{BLACK,ROOK},{BLACK,KNIGHT},{BLACK,BISHOP},{BLACK,QUEEN},
      {BLACK,KING},{BLACK,BISHOP},{BLACK,KNIGHT},{BLACK,ROOK}},

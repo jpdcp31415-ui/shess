@@ -2,6 +2,13 @@
 #include "../include/board-output.h"
 #include "../include/io-plus.h"
 
+typedef enum
+{
+    ONE_CHAR,
+    TWO_CHARS,
+    EMOJI,
+} PrintMode;
+
 typedef struct
 {
     PrintMode printMode;
@@ -156,6 +163,21 @@ void printCurrBoard(void)
 {
     printBoard(gCurrBoard);
 }
+
+char getAndMatchCh(const char* const matchChs)
+{
+    const char inputtedCh = getSingleChar();
+
+    while (true)
+    {
+        for (int i = 0; matchChs[i] != '\0'; i++)
+            if (tolower(inputtedCh) == matchChs[i] ||
+                toupper(inputtedCh) == matchChs[i])
+                return inputtedCh;
+        printf("Error: %c is not a valid character. Try again: ", inputtedCh);
+    }
+}
+/* remember to use this function /\/\/\ */
 
 void runSetup(void)
 {

@@ -2,8 +2,14 @@
 #include "../include/piece-traits.h"
 #include "../include/int-vec-2d.h"
 #include "../include/board-output.h"
+#include "../include/move-rules.h"
 
-typedef IntVec2D IntCart2D;
+typedef IntVec2D IntCart2D; // Cart stands for cartesian coordinates
+
+IntCart2D toCart(const IntVec2D* vec)
+{
+    return (IntVec2D){vec->x,7-vec->y};
+}
 
 typedef struct 
 {
@@ -60,4 +66,7 @@ void moveCommand(void)
 
     *getCurrPieceAtVec(&nextPostion) = *getCurrPieceAtVec(&position);
     *getCurrPieceAtVec(&position) = (Piece){NULL_COLOUR, NULL_TYPE};
+
+    printCurrBoard();
+    flipCurrBoard();
 }

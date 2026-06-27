@@ -1,5 +1,5 @@
-#ifndef CHESS_GRID_H
-#define CHESS_GRID_H
+#ifndef BOARD_H
+#define BOARD_H
 
 #include "piece.h"
 #include "int-vec-2d.h"

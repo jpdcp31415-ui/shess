@@ -1,15 +1,8 @@
-#ifndef CHESS_GRID_OUTPUT_H
-#define CHESS_GRID_OUTPUT_H
+#ifndef BOARD_OUTPUT_H
+#define BOARD_OUTPUT_H
 
 #include "int-vec-2d.h"
 #include "board.h"
-
-typedef enum
-{
-    ONE_CHAR,
-    TWO_CHARS,
-    EMOJI,
-} PrintMode;
 
 void printPiece(const Piece* p);
 
