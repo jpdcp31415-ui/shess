@@ -4,7 +4,7 @@
 
 #include <string.h>
 #include "../include/piece-traits.h"
-#include "../include/chess-grid-output.h"
+#include "../include/board-output.h"
 #include "../include/io-plus.h"
 
 bool gProgramIsRunning = true;
@@ -12,54 +12,6 @@ bool gProgramIsRunning = true;
 void endProgram(void)
 {
     gProgramIsRunning = false;
-}
-
-void runSetup(void)
-{
-    printf("Starting Setup:\n"); 
-    
-    // Print mode
-    printf("Do you want to use Emojis or ASCII (one or two chars) for the pieces? (E/1/2)");
-getAgain:
-    switch (getSingleChar())
-    {
-    case '1': gSetPrintMode = ONE_CHAR;  break;
-    case '2': gSetPrintMode = TWO_CHARS; break; // this is the classic way
-    case 'E': gSetPrintMode = EMOJI;     break;
-    default:
-        printf("Inputted character is invalid.\nTry again: ");
-        goto getAgain;
-    }
-
-    // short versions for address of anonymous? variable
-    const Piece whitePawn = {WHITE, PAWN};
-    const Piece blackPawn = {BLACK, PAWN};
-
-    // Space between pieces    
-	printf("Preview with space: ");
-    printPiece(&whitePawn); printf(" "); printPiece(&whitePawn);
-
-    printf("\n");
-
-	printf("Preview without space: ");
-    printPiece(&whitePawn); printPiece(&whitePawn);
-
-    printf("\n");
-
-    printf("Do you want spaces between the pieces? (Y/n): ");
-    gSetSpaceBetween = getYesOrNo();
-    
-    // Invert colours of emojis
-    if (gSetPrintMode == EMOJI)
-    {
-        printf("Do you want to invert the colours of the pieces (only displaying)\n");
-        printf("White pawn: %s, Black pawn: %s\n",
-                getPieceEmoji(&whitePawn),
-                getPieceEmoji(&blackPawn));
-        g_setInvertPieceColours = getYesOrNo();
-    }
-
-    printf("Ending Setup\n");  
 }
 
 void helpCommand(void);

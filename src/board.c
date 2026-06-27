@@ -1,9 +1,9 @@
 #include <string.h>
-#include "../include/chess-grid.h"
+#include "../include/board.h"
 
-typedef Piece ChessGrid[8][8];
+typedef Piece Board[8][8];
 
-static const ChessGrid kStartBoard = {
+static const Board kStartBoard = {
     {{BLACK,ROOK},{BLACK,KNIGHT},{BLACK,BISHOP},{BLACK,QUEEN},
      {BLACK,KING},{BLACK,BISHOP},{BLACK,KNIGHT},{BLACK,ROOK}},
     {{BLACK,PAWN},{BLACK,PAWN},{BLACK,PAWN},{BLACK,PAWN},     
@@ -14,7 +14,7 @@ static const ChessGrid kStartBoard = {
      {WHITE,KING},{WHITE,BISHOP},{WHITE,KNIGHT},{WHITE,ROOK}},
 };
 
-ChessGrid gCurrBoard = {
+Board gCurrBoard = {
     {{BLACK,ROOK},{BLACK,KNIGHT},{BLACK,BISHOP},{BLACK,QUEEN},
      {BLACK,KING},{BLACK,BISHOP},{BLACK,KNIGHT},{BLACK,ROOK}},
     {{BLACK,PAWN},{BLACK,PAWN},{BLACK,PAWN},{BLACK,PAWN},     
@@ -37,7 +37,7 @@ bool isVecInBoardBounds(const IntVec2D* vec)
             (vec->y >= 0 && vec->y < 8));
 }
 
-Piece* getPieceAt(ChessGrid grid, const int x, const int y)
+Piece* getPieceAt(Board grid, const int x, const int y)
 {
     assert(isInBoardBounds(x,y) && "Getting piece that is out of bounds!");
     return &(grid[y][x]);
@@ -49,7 +49,7 @@ Piece* getCurrPieceAt(const int x, const int y)
     return &(gCurrBoard[y][x]);
 }
 
-Piece* getPieceAtVec(ChessGrid grid, const IntVec2D* vec)
+Piece* getPieceAtVec(Board grid, const IntVec2D* vec)
 {
     assert(isInBoardBounds(vec->x,vec->y) && "Getting piece that is out of bounds!");
     return &(grid[vec->y][vec->x]);
@@ -61,7 +61,7 @@ Piece* getCurrPieceAtVec(const IntVec2D* vec)
     return &(gCurrBoard[vec->y][vec->x]);
 }
 
-void flipBoard(ChessGrid grid)
+void flipBoard(Board grid)
 {
     for (int y=0; y<4; y++)
         for (int x=0; x<8; x++)
@@ -77,14 +77,14 @@ void flipCurrBoard(void)
     flipBoard(gCurrBoard);
 }
 
-void setBoard(const ChessGrid fromGrid, ChessGrid toGrid)
+void setBoard(const Board fromGrid, Board toGrid)
 {
-    memcpy(toGrid, fromGrid, sizeof(ChessGrid));
+    memcpy(toGrid, fromGrid, sizeof(Board));
 }
 
-void resetBoard(ChessGrid grid)
+void resetBoard(Board grid)
 {
-    memcpy(&grid, kStartBoard, sizeof(ChessGrid));
+    memcpy(&grid, kStartBoard, sizeof(Board));
 }
 
 void resetCurrBoard(void)

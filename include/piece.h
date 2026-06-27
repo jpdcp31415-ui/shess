@@ -1,13 +1,7 @@
 #ifndef PIECE_H
 #define PIECE_H
 
-#define ENABLE_ASSERT 1
-
-#if ENABLE_ASSERT
-    #include <assert.h>
-#else
-    #define assert(x)
-#endif
+#include "assert-toggle.h"
 
 #include <stdbool.h>
 #include <ctype.h>
@@ -40,19 +34,6 @@ bool isBlankSpace(const Piece* p);
 
 void assertPiece(const Piece* p);
 
-const char* getDefPieceEmoji(const Piece* p);
-
 Colour oppositeColour(const Colour c);
-
-extern bool g_setInvertPieceColours;
-
-const char* getPieceEmoji(const Piece* p);
-
-extern bool g_setWhiteIsUpper;
-extern int g_setNumChPiece;
-
-char getPiece1Ch(const Piece* p);
-
-const char* getPiece2Ch(const Piece* p);
 
 #endif
