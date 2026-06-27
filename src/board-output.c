@@ -10,6 +10,7 @@ typedef struct
     int emptySpaceAs1or2Ch; // false means 1, true means 2
     bool spaceBetween;
     bool emptySpaceAsUnderscore;
+    bool printCoords;
 } OutputSettings;
 
 OutputSettings gOutputSettings = 
@@ -19,6 +20,7 @@ OutputSettings gOutputSettings =
     .whiteIsUpper = false,
     .emptySpaceAs1or2Ch = 1,
     .spaceBetween = true,
+    .printCoords = true,
 };
 
 // unicode character range: \u2654-F
@@ -71,23 +73,10 @@ char getPiece1Ch(const Piece* p)
 {
     assertPiece(p);
 
-    char ch = '\0';
+    static const char pieceChArr[] = " phbrqk";
 
-    switch (p->type)
-    {
-    case PAWN:      ch = 'p'; break;
-    case KNIGHT:    ch = 'h'; break;
-    case BISHOP:    ch = 'b'; break;
-    case ROOK:      ch = 'r'; break;
-    case QUEEN:     ch = 'q'; break;
-    case KING:      ch = 'k'; break;
-    case NULL_TYPE: ch = ' '; break;
-    }
-
-    if (p->colour == (gOutputSettings.whiteIsUpper ? WHITE : BLACK))
-        ch = toupper(ch);
-
-    return ch;
+    return (p->colour == (gOutputSettings.whiteIsUpper ? WHITE : BLACK)) ?
+            toupper(pieceChArr[p->type]) : pieceChArr[p->type];
 }
 
 const char* getPiece2Ch(const Piece* p)
@@ -127,9 +116,23 @@ void printBoard(Board grid)
 {
     for (int y=0; y<8; y++)
     {
+        if (gOutputSettings.printCoords)
+            printf("%d ", 7-y);
         for (int x=0; x<8; x++)
         {
             printPiece(getPieceAt(grid,x,y));
+            if (gOutputSettings.spaceBetween)
+                printf(" ");
+        }
+        printf("\n");
+    }
+
+    if (gOutputSettings.printCoords)
+    {
+        printf("  ");
+        for (int x=0; x<8; x++)
+        {
+            printf("%d", x);
             if (gOutputSettings.spaceBetween)
                 printf(" ");
         }
@@ -221,6 +224,9 @@ getAgain:
     // Display empty spaces as underscores
     printf("Do you want empty spaces to be displayed as \"_\" (y/N): ");
     gOutputSettings.emptySpaceAsUnderscore = getYesOrNo();
+
+    printf("Do you want for coordinates to be displayed? (Y/n): ");
+    gOutputSettings.printCoords = getYesOrNo();
 
     printf("Ending Setup\n");  
 }
