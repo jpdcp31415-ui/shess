@@ -22,13 +22,13 @@ Piece* getCurrPieceAt(const int x, const int y);
 
 Piece* getCurrPieceAtVec(const IntVec2D* vec);
 
-void flipBoard(Board grid);
+void flipChessGame(ChessGame* grid);
 
-void flipCurrBoard(void);
+void flipCurrChessGame(void);
 
-void setChessGame(const Board fromGrid, Board toGrid);
+void setChessGame(const ChessGame* game1, ChessGame* game2);
 
-void resetChessGame(Board grid);
+void resetChessGame(ChessGame* game);
 
 void resetCurrChessGame(void);
 

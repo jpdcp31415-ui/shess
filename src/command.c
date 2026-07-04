@@ -3,6 +3,7 @@
 #include "../include/io-plus.h"
 #include "../include/move-rules.h"
 #include "../include/chess-game.h"
+#include "../include/piece-traits.h"
 
 static bool gProgramIsRunning = true;
 
@@ -15,17 +16,20 @@ void helpCommand(void);
 
 void listCommands(void);
 
-typedef struct
+void printCurrChessGame(void)
 {
-    const char* const name;
-    void(*getAndRun)(void);
-    const char* const helpText;
-} Command;
+    printBoard(gCurrChessGame.board);
+}
+
+IntVec2D addMoveToPos(const IntVec2D* pos, const IntVec2D* move)
+{
+    return (IntVec2D){pos->x + move->x, pos->y + 7-move->y};
+}
 
 void moveCommand(void)
 {
     ErrorCode errCodePosX = 0, errCodePosY = 0, errCodeMoveX = 0, errCodeMoveY = 0;
-    const IntVec2D position = {getPosNumber(&errCodePosX),7-getPosNumber(&errCodePosY)};
+    const IntVec2D position = {getPosNumber(&errCodePosX),getPosNumber(&errCodePosY)};
 
     if ((errCodePosX == INPUT_ERR  || errCodePosY  == INPUT_ERR) ||
         (errCodeMoveX == INPUT_ERR || errCodeMoveY == INPUT_ERR))
@@ -48,7 +52,7 @@ void moveCommand(void)
     }
 
     const IntVec2D move     = {getNumber(&errCodeMoveX),getNumber(&errCodeMoveY)};
-    const IntVec2D nextPostion = addVecs(&position, &move);
+    const IntVec2D nextPostion = addMoveToPos(&position, &move);
 
     if (!isVecInBoardBounds(&nextPostion))
     {
@@ -70,9 +74,16 @@ void moveCommand(void)
     *getCurrPieceAtVec(&nextPostion) = *getCurrPieceAtVec(&position);
     *getCurrPieceAtVec(&position) = (Piece){NULL_COLOUR, NULL_TYPE};
 
-    printCurrBoard();
-    flipCurrBoard();
+    printCurrChessGame();
+    flipCurrChessGame();
 }
+
+typedef struct
+{
+    const char* const name;
+    void(*getAndRun)(void);
+    const char* const helpText;
+} Command;
 
 // This is a placeholder funtion for incomplete commands
 void fooCmdFunc(void)
@@ -84,19 +95,19 @@ static const Command CMD_LIST[] =
 {
     {
         .name = "print",
-        .getAndRun = printCurrBoard,
+        .getAndRun = printCurrChessGame,
         .helpText = "Prints the current state of the board to the console",
     },
 
     {
         .name = "flip",
-        .getAndRun = flipCurrBoard,
+        .getAndRun = flipCurrChessGame,
         .helpText = "Flips the board vertically",
     },
 
     {
         .name = "restart",
-        .getAndRun = resetCurrBoard,
+        .getAndRun = resetCurrChessGame,
         .helpText = "Resets the board to its initial state",
     },
 
@@ -107,7 +118,7 @@ static const Command CMD_LIST[] =
     },
 
     {
-        .name = "end",
+        .name = "quit",
         .getAndRun = endProgram,
         .helpText = "Prints the current state of the board to the console",
     },

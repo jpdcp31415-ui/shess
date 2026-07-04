@@ -8,12 +8,11 @@ bool isBlankSpace(const Piece* p)
 
 void assertPiece(const Piece* p)
 {
-    const bool isValid = (p->colour == NULL_COLOUR &&
-                          p->type   == NULL_TYPE)  ||
-                        ((p->colour == WHITE &&
-                          p->colour == BLACK) &&
-                         (p->type   >= PAWN  &&
-                          p->type   <= KING));
+    const bool isValid =  ( isBlankSpace(p)  )  ||
+                         ((p->colour == WHITE   ||
+                           p->colour == BLACK)  &&
+                          (p->type   >= PAWN    &&
+                           p->type   <= KING));
 
     assert(isValid && "Piece does not exist in the real world");
 }

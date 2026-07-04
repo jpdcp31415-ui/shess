@@ -159,11 +159,6 @@ void printBoard(Board grid)
     }
 }
 
-void printCurrBoard(void)
-{
-    printBoard(gCurrBoard);
-}
-
 char getAndMatchCh(const char* const matchChs)
 {
     const char inputtedCh = getSingleChar();

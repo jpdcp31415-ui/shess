@@ -65,8 +65,9 @@ Piece* getCurrPieceAtVec(const IntVec2D* vec)
 
 bool* initPositionAt(ChessGame* game, const int x, const int y)
 {
-    assert((x <= 1 && x >= 6) &&
-           (x <= 1 && x >= 6) &&
+    assert((x >= 0 && x <= 7) &&
+           (y == 0 || y == 1  ||
+            y == 6 || y == 7) &&
            "Position chosen is an empty space");
     return &game->inInitPositions[y][x];
 }

@@ -16,8 +16,6 @@ const char* getPiece2Ch(const Piece* p);
 
 void printBoard(Board grid);
 
-void printCurrBoard(void);
-
 void runSetup(void);
 
 #endif
