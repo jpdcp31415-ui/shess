@@ -10,8 +10,10 @@ void assertPiece(const Piece* p)
 {
     const bool isValid = (p->colour == NULL_COLOUR &&
                           p->type   == NULL_TYPE)  ||
-                         (p->colour >= (Colour)PAWN &&
-                          p->colour <= (Colour)KING);
+                        ((p->colour == WHITE &&
+                          p->colour == BLACK) &&
+                         (p->type   >= PAWN  &&
+                          p->type   <= KING));
 
     assert(isValid && "Piece does not exist in the real world");
 }
