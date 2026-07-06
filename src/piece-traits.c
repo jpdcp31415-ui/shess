@@ -73,8 +73,16 @@ bool hasMove(const IntVec2D* move, const Piece* piece)
 
     const PieceTraits* traits = getTraits(piece);
     for (int i = 0; i < traits->numMoves; i++)
-        if (equalVecs(&traits->moves[i],move))
+    {
+        const IntVec2D moveMatch = invertY(&traits->moves[i]);
+        
+        if (traits->multSteps &&
+            isVecDivByVec(move,&moveMatch))
             return true;
+
+        if (equalVecs(move,&moveMatch))
+            return true;
+    }
 
     return false;
 }

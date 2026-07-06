@@ -8,7 +8,7 @@ bool isBlankSpace(const Piece* p)
 
 void assertPiece(const Piece* p)
 {
-    const bool isValid =  ( isBlankSpace(p)  )  ||
+    const bool isValid =  (isBlankSpace(p)   )  ||
                          ((p->colour == WHITE   ||
                            p->colour == BLACK)  &&
                           (p->type   >= PAWN    &&

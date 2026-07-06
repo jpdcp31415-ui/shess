@@ -1,22 +1,37 @@
-#include "../include/io-plus.h"
 #include "../include/piece-traits.h"
-#include "../include/int-vec-2d.h"
-#include "../include/board-output.h"
-#include "../include/chess-game.h"
 #include "../include/move-rules.h"
 
-typedef IntVec2D IntCart2D; // Cart stands for cartesian coordinates
-
-IntCart2D toCart(const IntVec2D* vec)
+// add first move (2 spaces)
+// and the attack move
+// and promotion
+bool pawnCondFunc(const ChessGame* game, const ChessMove* chessMove)
 {
-    return (IntVec2D){vec->x,7-vec->y};
+    (void)game,(void)chessMove;
+    return true;
 }
 
-typedef struct 
+// this is always true because of
+// not having any piece-specific/special moves
+bool knightCondFunc(const ChessGame* game, const ChessMove* chessMove)
 {
-    IntCart2D position;
-    IntCart2D move;
-} BoardMove;
+    (void)game,(void)chessMove;
+    return true;
+}
 
-BoardMove getMove(void);
+bool isPathClear(const ChessGame* game, const ChessMove* chessMove)
+{
+    (void)game,(void)chessMove;
+    return true;
+}
 
+bool kingCondFunc(const ChessGame* game, const ChessMove* chessMove)
+{
+    (void)game,(void)chessMove;
+    return true;
+}
+
+bool isValidMove(const ChessGame* game, const ChessMove* chessMove)
+{
+    (void)game,(void)chessMove;
+    return true;
+}

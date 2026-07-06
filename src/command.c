@@ -21,15 +21,21 @@ void printCurrChessGame(void)
     printBoard(gCurrChessGame.board);
 }
 
-IntVec2D addMoveToPos(const IntVec2D* pos, const IntVec2D* move)
+void movePieceUncond(ChessGame* game, const ChessMove* chMove)
 {
-    return (IntVec2D){pos->x + move->x, pos->y + 7-move->y};
+    const IntVec2D nextPostion = addVecs(&chMove->position, &chMove->move);
+    *getPieceAtVec(game->board,&nextPostion) = *getPieceAtVec(game->board,&chMove->position);
+    *getPieceAtVec(game->board,&chMove->position) = (Piece){NULL_COLOUR, NULL_TYPE};
 }
 
 void moveCommand(void)
 {
     ErrorCode errCodePosX = 0, errCodePosY = 0, errCodeMoveX = 0, errCodeMoveY = 0;
-    const IntVec2D position = {getPosNumber(&errCodePosX),getPosNumber(&errCodePosY)};
+
+    ChessMove currChessMove = {
+        .position = {getPosNumber(&errCodePosX),7-getPosNumber(&errCodePosY)},
+        .move = {getNumber(&errCodeMoveX),-getNumber(&errCodeMoveY)}
+    };
 
     if ((errCodePosX == INPUT_ERR  || errCodePosY  == INPUT_ERR) ||
         (errCodeMoveX == INPUT_ERR || errCodeMoveY == INPUT_ERR))
@@ -44,15 +50,14 @@ void moveCommand(void)
         clearInput();
         return;
     }
-    else if (!isVecInBoardBounds(&position))
+    else if (!isVecInBoardBounds(&currChessMove.position))
     {
         printf("Error: position specified is out of bounds\n");
         clearInput();
         return;
     }
 
-    const IntVec2D move     = {getNumber(&errCodeMoveX),getNumber(&errCodeMoveY)};
-    const IntVec2D nextPostion = addMoveToPos(&position, &move);
+    const IntVec2D nextPostion = addVecs(&currChessMove.position,&currChessMove.move);
 
     if (!isVecInBoardBounds(&nextPostion))
     {
@@ -63,16 +68,15 @@ void moveCommand(void)
 
     clearInput();
 
-    const Piece movingPiece = *getCurrPieceAtVec(&position);
+    const Piece movingPiece = *getCurrPieceAtVec(&currChessMove.position);
 
-    if (!hasMove(&move, &movingPiece))
+    if (!hasMove(&currChessMove.move, &movingPiece))
     {
         printf("Move is not valid for this piece\n");
         return;
     }
 
-    *getCurrPieceAtVec(&nextPostion) = *getCurrPieceAtVec(&position);
-    *getCurrPieceAtVec(&position) = (Piece){NULL_COLOUR, NULL_TYPE};
+    movePieceUncond(&gCurrChessGame,&currChessMove);
 
     printCurrChessGame();
     flipCurrChessGame();

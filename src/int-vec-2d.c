@@ -24,3 +24,19 @@ int equalVecs(const IntVec2D* v1, const IntVec2D* v2)
 {
     return ((v1->x == v2->x) && (v1->y == v2->y));
 }
+
+IntVec2D invertX(const IntVec2D* v)
+{
+    return (IntVec2D){-v->x,v->y};
+}
+
+IntVec2D invertY(const IntVec2D* v)
+{
+    return (IntVec2D){v->x,-v->y};
+}
+
+bool isVecDivByVec(const IntVec2D* v1, const IntVec2D* v2)
+{
+    return ((double)v1->x / v2->x ==
+            (double)v1->y / v2->y);
+}
