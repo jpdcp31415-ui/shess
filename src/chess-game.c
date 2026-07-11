@@ -54,8 +54,7 @@ ChessGame gCurrChessGame =
 
 Piece* getCurrPieceAt(const int x, const int y)
 {
-    assert(isInBoardBounds(x,y) && "Getting piece that is out of bounds!");
-    return &(gCurrChessGame.board[y][x]);
+    return getPieceAt(gCurrChessGame.board,x,y);
 }
 
 Piece* getCurrPieceAtVec(const IntVec2D* vec)
@@ -70,6 +69,11 @@ bool* initPositionAt(ChessGame* game, const int x, const int y)
             y == 6 || y == 7) &&
            "Position chosen is an empty space");
     return &game->inInitPositions[y][x];
+}
+
+bool* initPositionAtVec(ChessGame* game, const IntVec2D* vec)
+{
+    return initPositionAt(game,vec->x,vec->y);
 }
 
 void flipChessGame(ChessGame* game)

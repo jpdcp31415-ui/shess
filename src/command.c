@@ -26,6 +26,12 @@ void movePieceUncond(ChessGame* game, const ChessMove* chMove)
     const IntVec2D nextPostion = addVecs(&chMove->position, &chMove->move);
     *getPieceAtVec(game->board,&nextPostion) = *getPieceAtVec(game->board,&chMove->position);
     *getPieceAtVec(game->board,&chMove->position) = (Piece){NULL_COLOUR, NULL_TYPE};
+
+    if ((chMove->position.x >= 0 && chMove->position.x <= 7) &&
+        (chMove->position.y == 0 || chMove->position.y == 1  ||
+         chMove->position.y == 6 || chMove->position.y == 7)
+         && !isBlankSpace(getPieceAtVec(game->board,&chMove->position)))
+        *initPositionAtVec(game,&chMove->position) = false;
 }
 
 void moveCommand(void)

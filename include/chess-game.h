@@ -22,6 +22,10 @@ Piece* getCurrPieceAt(const int x, const int y);
 
 Piece* getCurrPieceAtVec(const IntVec2D* vec);
 
+bool* initPositionAt(ChessGame* game, const int x, const int y);
+
+bool* initPositionAtVec(ChessGame* game, const IntVec2D* vec);
+
 void flipChessGame(ChessGame* grid);
 
 void flipCurrChessGame(void);
