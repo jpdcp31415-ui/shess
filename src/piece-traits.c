@@ -6,7 +6,7 @@ static const PieceTraits kTraitsArray[] =
         .pieceType = PAWN,
         .multSteps = false,
         .moves = (const IntVec2D []) {
-            {-1,1},{0,1},{1,1},{0,2}
+            {-1,-1},{0,-1},{1,-1},{0,-2}
         },
         .numMoves = 4,
     },
@@ -74,7 +74,7 @@ bool hasMove(const IntVec2D* move, const Piece* piece)
     const PieceTraits* traits = getTraits(piece);
     for (int i = 0; i < traits->numMoves; i++)
     {
-        const IntVec2D moveMatch = invertY(&traits->moves[i]);
+        const IntVec2D moveMatch = traits->moves[i];
         
         if (traits->multSteps &&
             isVecDivByVec(move,&moveMatch))

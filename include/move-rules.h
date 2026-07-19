@@ -10,6 +10,6 @@ typedef struct
     const IntVec2D move;
 } ChessMove;
 
-bool isValidMove(const ChessGame* game, const ChessMove* chessMove);
+bool isValidMove(ChessGame* game, const ChessMove* chessMove);
 
 #endif

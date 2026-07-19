@@ -36,4 +36,6 @@ void resetChessGame(ChessGame* game);
 
 void resetCurrChessGame(void);
 
+Player oppositePlayer(const Player p);
+
 #endif

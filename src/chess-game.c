@@ -64,11 +64,14 @@ Piece* getCurrPieceAtVec(const IntVec2D* vec)
 
 bool* initPositionAt(ChessGame* game, const int x, const int y)
 {
-    assert((x >= 0 && x <= 7) &&
-           (y == 0 || y == 1  ||
-            y == 6 || y == 7) &&
-           "Position chosen is an empty space");
-    return &game->inInitPositions[y][x];
+    static bool notInInitBoundsVar = false;
+
+    const bool inInitBounds =
+        (x >= 0 && x <= 7) &&
+        (y == 0 || y == 1  ||
+         y == 6 || y == 7);
+
+    return (inInitBounds ? &game->inInitPositions[y][x] : &notInInitBoundsVar);
 }
 
 bool* initPositionAtVec(ChessGame* game, const IntVec2D* vec)
@@ -113,4 +116,10 @@ void resetChessGame(ChessGame* game)
 void resetCurrChessGame(void)
 {
     resetChessGame(&gCurrChessGame);
+}
+
+Player oppositePlayer(const Player p)
+{
+    assert((p == WHITE_PLAYER || p == BLACK_PLAYER) && "Player is invalid");
+    return (p == WHITE_PLAYER) ? BLACK_PLAYER : WHITE_PLAYER;
 }

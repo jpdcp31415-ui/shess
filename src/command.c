@@ -23,8 +23,8 @@ void printCurrChessGame(void)
 
 void movePieceUncond(ChessGame* game, const ChessMove* chMove)
 {
-    const IntVec2D nextPostion = addVecs(&chMove->position, &chMove->move);
-    *getPieceAtVec(game->board,&nextPostion) = *getPieceAtVec(game->board,&chMove->position);
+    const IntVec2D nextPosition = addVecs(&chMove->position, &chMove->move);
+    *getPieceAtVec(game->board,&nextPosition) = *getPieceAtVec(game->board,&chMove->position);
     *getPieceAtVec(game->board,&chMove->position) = (Piece){NULL_COLOUR, NULL_TYPE};
 
     if ((chMove->position.x >= 0 && chMove->position.x <= 7) &&
@@ -63,9 +63,9 @@ void moveCommand(void)
         return;
     }
 
-    const IntVec2D nextPostion = addVecs(&currChessMove.position,&currChessMove.move);
+    const IntVec2D nextPosition = addVecs(&currChessMove.position,&currChessMove.move);
 
-    if (!isVecInBoardBounds(&nextPostion))
+    if (!isVecInBoardBounds(&nextPosition))
     {
         printf("Error: position + move specified is out of bounds\n");
         clearInput();
@@ -74,18 +74,36 @@ void moveCommand(void)
 
     clearInput();
 
-    const Piece movingPiece = *getCurrPieceAtVec(&currChessMove.position);
+    const Piece pieceAtPosition = *getCurrPieceAtVec(&currChessMove.position);
 
-    if (!hasMove(&currChessMove.move, &movingPiece))
+    if (isBlankSpace(&pieceAtPosition))
+    {
+        printf("Cannot moving empty space\n");
+        return;
+    }
+    else if ((pieceAtPosition.colour == WHITE &&
+             gCurrChessGame.player  == BLACK_PLAYER) ||
+            (pieceAtPosition.colour == BLACK &&
+             gCurrChessGame.player  == WHITE_PLAYER))
+    {
+        printf("Cannot move piece from opposite player\n");
+        return;
+    }
+
+    if (!hasMove(&currChessMove.move, &pieceAtPosition) || !isValidMove(&gCurrChessGame,&currChessMove))
     {
         printf("Move is not valid for this piece\n");
         return;
     }
 
+    // use this latter??
+    /* const Piece pieceAtNextPosition = *getCurrPieceAtVec(&nextPosition); */
+
     movePieceUncond(&gCurrChessGame,&currChessMove);
 
-    printCurrChessGame();
     flipCurrChessGame();
+    printCurrChessGame();
+    gCurrChessGame.player = oppositePlayer(gCurrChessGame.player);
 }
 
 typedef struct
