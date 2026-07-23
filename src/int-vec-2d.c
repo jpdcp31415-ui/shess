@@ -15,7 +15,7 @@ IntVec2D multNumByVec(int n, const IntVec2D* v)
     return (IntVec2D){n * v->x, n * v->y};
 }
 
-IntVec2D negVecs(const IntVec2D* v)
+IntVec2D negVec(const IntVec2D* v)
 {
     return (IntVec2D){-v->x, -v->y};
 }

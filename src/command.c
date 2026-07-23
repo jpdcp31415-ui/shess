@@ -78,13 +78,10 @@ void moveCommand(void)
 
     if (isBlankSpace(&pieceAtPosition))
     {
-        printf("Cannot moving empty space\n");
+        printf("Cannot move empty space\n");
         return;
     }
-    else if ((pieceAtPosition.colour == WHITE &&
-             gCurrChessGame.player  == BLACK_PLAYER) ||
-            (pieceAtPosition.colour == BLACK &&
-             gCurrChessGame.player  == WHITE_PLAYER))
+    else if (areOppositeColour(gCurrChessGame.player,pieceAtPosition.colour))
     {
         printf("Cannot move piece from opposite player\n");
         return;
@@ -95,9 +92,6 @@ void moveCommand(void)
         printf("Move is not valid for this piece\n");
         return;
     }
-
-    // use this latter??
-    /* const Piece pieceAtNextPosition = *getCurrPieceAtVec(&nextPosition); */
 
     movePieceUncond(&gCurrChessGame,&currChessMove);
 

@@ -9,6 +9,10 @@ typedef enum
     BLACK_PLAYER,
 } Player;
 
+bool equalPlayer(const Player p, const Colour c);
+
+bool areOppositeColour(const Player p, const Colour c);
+
 typedef struct
 {
     Board board;

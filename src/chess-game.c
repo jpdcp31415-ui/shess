@@ -2,6 +2,18 @@
 #include "../include/board.h"
 #include "../include/chess-game.h"
 
+bool equalPlayer(const Player p, const Colour c)
+{
+    return (p == WHITE_PLAYER && c == WHITE) ||
+           (p == BLACK_PLAYER && c == BLACK);
+}
+
+bool areOppositeColour(const Player p, const Colour c)
+{
+    return (p == WHITE_PLAYER && c == BLACK) ||
+           (p == BLACK_PLAYER && c == WHITE);
+}
+
 static const ChessGame kStartChessGame =
 {
     .board = {
