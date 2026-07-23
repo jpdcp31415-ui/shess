@@ -48,8 +48,6 @@ bool knightCondFunc(ChessGame* game, const ChessMove* chessMove)
     return true;
 }
 
-#include <stdio.h>
-
 bool isPathClear(ChessGame* game, const ChessMove* chessMove)
 {
     const IntVec2D nextPosition = addVecs(&chessMove->position,&chessMove->move);
@@ -68,7 +66,6 @@ bool isPathClear(ChessGame* game, const ChessMove* chessMove)
         }
 
     IntVec2D loopVec = direcVec;
-    printf("%d %d", loopVec.x, loopVec.y);
 
     for (int i = 0; i < 8; i++)
     {
