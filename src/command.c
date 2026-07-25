@@ -43,7 +43,7 @@ void moveCommand(void)
         .move = {getNumber(&errCodeMoveX),-getNumber(&errCodeMoveY)}
     };
 
-    if ((errCodePosX == INPUT_ERR  || errCodePosY  == INPUT_ERR) ||
+    if ((errCodePosX  == INPUT_ERR || errCodePosY  == INPUT_ERR) ||
         (errCodeMoveX == INPUT_ERR || errCodeMoveY == INPUT_ERR))
     {
         printf("Did not move because of failed input\n");
@@ -92,6 +92,8 @@ void moveCommand(void)
         printf("Move is not valid for this piece\n");
         return;
     }
+
+    /* printf("%d,%d : %d,%d\n", currChessMove.position.x, currChessMove.position.y, currChessMove.move.x, currChessMove.move.y); */
 
     movePieceUncond(&gCurrChessGame,&currChessMove);
 
@@ -215,6 +217,10 @@ void commandLoop(void)
     printf("Welcome to minimal-chess!\n"
            "Use \"list\" to list all commands\n"
            "And use \"help [command]\" for text about the command\n");
+
+    resetCurrChessGame();
+
+    printCurrChessGame();
 
     while (gProgramIsRunning)
     {

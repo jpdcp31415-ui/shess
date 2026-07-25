@@ -56,10 +56,19 @@ bool isDiag(const IntVec2D* v1)
     return (v1->x != 0 && v1->y != 0);
 }
 
+int signof(const double d)
+{
+    return (d < 0.0) ? -1 : (d == 0.0) ? 0 : (d > 0) ? 1 : -2;
+}
+
 bool isVecDivByVec(const IntVec2D* v1, const IntVec2D* v2)
 {
-    double xRatio = (double) v1->x / v2->x;
-    double yRatio = (double) v1->y / v2->y;
+    const double xRatio = (double) v1->x / v2->x;
+    const double yRatio = (double) v1->y / v2->y;
+
+    if (signof(v1->x) != signof(v2->x) ||
+        signof(v1->y) != signof(v2->y))
+        return false;
     
     if (isinf(xRatio) || isinf(yRatio) ||
         xRatio == 0   || yRatio == 0)

@@ -48,18 +48,17 @@ bool knightCondFunc(ChessGame* game, const ChessMove* chessMove)
     return true;
 }
 
+#include <stdio.h>
+
 bool isPathClear(ChessGame* game, const ChessMove* chessMove)
 {
-    const IntVec2D nextPosition = addVecs(&chessMove->position,&chessMove->move);
-
     const Piece pieceAtPosition = *getPieceAtVec(game->board,&chessMove->position);
     const PieceTraits* traits = getTraits(&pieceAtPosition);
 
     IntVec2D direcVec = {0,0};
 
     for (int i = 0; i < traits->numMoves; i++)
-        if (isVecDivByVec(&chessMove->move,&traits->moves[i]) &&
-           (traits->moves[i].x >= 0 || traits->moves[i].y >= 0))
+        if (isVecDivByVec(&chessMove->move,&traits->moves[i]))
         {
             direcVec = traits->moves[i];
             break;
@@ -67,6 +66,9 @@ bool isPathClear(ChessGame* game, const ChessMove* chessMove)
 
     IntVec2D loopVec = direcVec;
 
+    const IntVec2D nextPosition = addVecs(&chessMove->position,&chessMove->move);
+
+    (void)loopVec,(void)nextPosition;
     for (int i = 0; i < 8; i++)
     {
         const IntVec2D positionAtLoopVec = addVecs(&chessMove->position,&loopVec);
@@ -74,9 +76,8 @@ bool isPathClear(ChessGame* game, const ChessMove* chessMove)
 
         if (isBlankSpace(&pieceAtLoopVec)) loopVec = addVecs(&direcVec,&loopVec);
         else return false;
-        
-        if (equalVecs(&positionAtLoopVec,&nextPosition))
-            break;
+
+        if (equalVecs(&positionAtLoopVec,&nextPosition)) break;
     }
 
     return true;

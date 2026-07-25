@@ -38,29 +38,7 @@ static const ChessGame kStartChessGame =
     },
 };
 
-ChessGame gCurrChessGame =
-{
-    .board = {
-        {{BLACK,ROOK},{BLACK,KNIGHT},{BLACK,BISHOP},{BLACK,QUEEN},
-         {BLACK,KING},{BLACK,BISHOP},{BLACK,KNIGHT},{BLACK,ROOK}},
-        {{BLACK,PAWN},{BLACK,PAWN  },{BLACK,PAWN  },{BLACK,PAWN},     
-         {BLACK,PAWN},{BLACK,PAWN  },{BLACK,PAWN  },{BLACK,PAWN}},    
-    [6]={{WHITE,PAWN},{WHITE,PAWN  },{WHITE,PAWN  },{WHITE,PAWN},     
-         {WHITE,PAWN},{WHITE,PAWN  },{WHITE,PAWN  },{WHITE,PAWN}},    
-        {{WHITE,ROOK},{WHITE,KNIGHT},{WHITE,BISHOP},{WHITE,QUEEN},
-         {WHITE,KING},{WHITE,BISHOP},{WHITE,KNIGHT},{WHITE,ROOK}},
-    },
-
-    .player = WHITE_PLAYER,
-
-    .inInitPositions = 
-    {
-        {true,true,true,true,true,true,true,true}, // black player side
-        {true,true,true,true,true,true,true,true},
-        {true,true,true,true,true,true,true,true},
-        {true,true,true,true,true,true,true,true}, // white player side
-    },
-};
+ChessGame gCurrChessGame = {.player = WHITE_PLAYER}; // game is set in the commandLoop function
 
 // All of these functions for ChessGame
 

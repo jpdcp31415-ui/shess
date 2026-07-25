@@ -102,7 +102,7 @@ const char* getPiece2Ch(const Piece* p)
 {
     assertPiece(p);
 
-    static char str[2] = "";
+    static char str[3] = "";
 
     str[0] = (p->colour == NULL_COLOUR) ? ' ' : 
              (p->colour == WHITE) ? 'w' : 'b';

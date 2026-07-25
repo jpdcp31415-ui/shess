@@ -25,7 +25,7 @@ static const PieceTraits kTraitsArray[] =
         .pieceType = BISHOP,
         .multSteps = true,
         .moves = (const IntVec2D []) {
-            {-1,1},{1,1},{-1,1},{-1,-1}
+            {-1,1},{1,1},{1,-1},{-1,-1}
         },
         .numMoves = 4,
     },
@@ -34,7 +34,7 @@ static const PieceTraits kTraitsArray[] =
         .pieceType = ROOK,
         .multSteps = true,
         .moves = (const IntVec2D []) {
-            {-1,0},{0,1},{1,0},{-1,0}
+            {-1,0},{0,1},{1,0},{0,-1}
         },
         .numMoves = 4,
     },
