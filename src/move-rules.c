@@ -48,8 +48,6 @@ bool knightCondFunc(ChessGame* game, const ChessMove* chessMove)
     return true;
 }
 
-#include <stdio.h>
-
 bool isPathClear(ChessGame* game, const ChessMove* chessMove)
 {
     const Piece pieceAtPosition = *getPieceAtVec(game->board,&chessMove->position);
@@ -68,7 +66,6 @@ bool isPathClear(ChessGame* game, const ChessMove* chessMove)
 
     const IntVec2D nextPosition = addVecs(&chessMove->position,&chessMove->move);
 
-    (void)loopVec,(void)nextPosition;
     for (int i = 0; i < 8; i++)
     {
         const IntVec2D positionAtLoopVec = addVecs(&chessMove->position,&loopVec);
