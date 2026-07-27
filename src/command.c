@@ -93,7 +93,13 @@ void moveCommand(void)
         return;
     }
 
-    /* printf("%d,%d : %d,%d\n", currChessMove.position.x, currChessMove.position.y, currChessMove.move.x, currChessMove.move.y); */
+    const Piece pieceAtNextPosition = *getCurrPieceAtVec(&nextPosition);
+
+    if (equalPlayer(gCurrChessGame.player,pieceAtNextPosition.colour))
+    {
+        printf("You cannot attack your own pieces!\n");
+        return;
+    }
 
     movePieceUncond(&gCurrChessGame,&currChessMove);
 

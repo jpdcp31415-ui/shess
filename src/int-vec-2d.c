@@ -70,10 +70,6 @@ bool isVecDivByVec(const IntVec2D* v1, const IntVec2D* v2)
         signof(v1->y) != signof(v2->y))
         return false;
     
-    if (isinf(xRatio) || isinf(yRatio) ||
-        xRatio == 0   || yRatio == 0)
-        return false;
-        
     if (!isnan(xRatio) && isnan(yRatio))
         return xRatio == (int)xRatio;
         

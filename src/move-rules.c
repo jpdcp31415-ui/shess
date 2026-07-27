@@ -62,19 +62,17 @@ bool isPathClear(ChessGame* game, const ChessMove* chessMove)
             break;
         }
 
-    IntVec2D loopVec = direcVec;
-
     const IntVec2D nextPosition = addVecs(&chessMove->position,&chessMove->move);
 
     for (int i = 0; i < 8; i++)
     {
+        const IntVec2D loopVec = multNumByVec(i,&direcVec);
         const IntVec2D positionAtLoopVec = addVecs(&chessMove->position,&loopVec);
         const Piece pieceAtLoopVec = *getPieceAtVec(game->board,&positionAtLoopVec);
 
-        if (isBlankSpace(&pieceAtLoopVec)) loopVec = addVecs(&direcVec,&loopVec);
-        else return false;
+        if (equalVecs(&positionAtLoopVec,&nextPosition)) return true;
 
-        if (equalVecs(&positionAtLoopVec,&nextPosition)) break;
+        if (!isBlankSpace(&pieceAtLoopVec)) return false;
     }
 
     return true;
@@ -90,16 +88,13 @@ bool kingCondFunc(ChessGame* game, const ChessMove* chessMove)
 // to a function to determine if it is valid
 bool(*getCondFunc(const Piece* p))(ChessGame*,const ChessMove*)
 {
-    bool(*condFuncArr[])(ChessGame*,const ChessMove*) = {
-        pawnCondFunc,
-        knightCondFunc,
-        isPathClear,
-        isPathClear,
-        isPathClear,
-        kingCondFunc,
-    };
+    assertPiece(p);
+    assert(!isBlankSpace(p) && "Blank space does not have moves!");
 
-    return condFuncArr[p->type-1];
+    return (p->type == PAWN)   ? pawnCondFunc   :
+           (p->type == KNIGHT) ? knightCondFunc :
+           (p->type == KING)   ? kingCondFunc   :
+           isPathClear;
 }
 
 bool isValidMove(ChessGame* game, const ChessMove* chessMove)
