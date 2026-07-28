@@ -92,7 +92,7 @@ char getPiece1Ch(const Piece* p)
 {
     assertPiece(p);
 
-    static const char pieceChArr[] = " phbrqk";
+    static const char pieceChArr[] = " pnbrqk";
 
     return (p->colour == (gOutputSettings.whiteIsUpper ? WHITE : BLACK)) ?
             toupper(pieceChArr[p->type]) : pieceChArr[p->type];
@@ -110,7 +110,7 @@ const char* getPiece2Ch(const Piece* p)
     switch (p->type)
     {
     case PAWN:      str[1] = 'p'; break;
-    case KNIGHT:    str[1] = 'h'; break;
+    case KNIGHT:    str[1] = 'n'; break;
     case BISHOP:    str[1] = 'b'; break;
     case ROOK:      str[1] = 'r'; break;
     case QUEEN:     str[1] = 'q'; break;
