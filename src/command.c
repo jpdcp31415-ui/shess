@@ -230,7 +230,7 @@ void commandLoop(void)
 
     while (gProgramIsRunning)
     {
-        printf("> ");
+        printf(">> ");
         strcpy(command,getStr());
         getAndRunCommand(command);
     }

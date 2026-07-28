@@ -10,6 +10,12 @@ typedef struct
     const IntVec2D move;
 } ChessMove;
 
+typedef struct
+{
+    const Piece moving;
+    const Piece capturing;
+} PieceMove;
+
 bool isValidMove(ChessGame* game, const ChessMove* chessMove);
 
 #endif

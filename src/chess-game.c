@@ -49,6 +49,7 @@ Piece getCurrPieceAtVec(const IntVec2D* vec)
 {
     return getPieceAtVec(gCurrChessGame.board,vec);
 }
+
 Piece* getCurrPtrPieceAt(const int x, const int y)
 {
     return getPiecePtrAt(gCurrChessGame.board,x,y);

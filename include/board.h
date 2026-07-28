@@ -6,9 +6,9 @@
 
 typedef Piece Board[8][8];
 
-Piece getPieceAt(Board board, const int x, const int y);
+Piece getPieceAt(const Board board, const int x, const int y);
 
-Piece getPieceAtVec(Board board, const IntVec2D* vec);
+Piece getPieceAtVec(const Board board, const IntVec2D* vec);
 
 Piece* getPiecePtrAt(Board board, const int x, const int y);
 
