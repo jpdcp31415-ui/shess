@@ -53,7 +53,7 @@ static const PieceTraits kTraitsArray[] =
         .pieceType = KING,
         .multSteps = false,
         .moves = (const IntVec2D []) {
-            {-2,0},{-1,0},{-1,1},{0,1},{0,2}, // moves with a two are the special "roque" moves
+            {-2,0},{-1,0},{-1,1},{0,1},{2,0}, // moves with a 2 are the special "roque" moves
             {1,1},{1,0},{1,-1},{0,-1},{-1,-1},
         },
         .numMoves = 10,

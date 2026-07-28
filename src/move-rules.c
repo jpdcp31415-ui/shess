@@ -14,7 +14,7 @@ bool isPawnAttackMove(const ChessMove* chessMove)
 bool pawnCondFunc(ChessGame* game, const ChessMove* chessMove)
 {
     const IntVec2D nextPosition = addVecs(&chessMove->position,&chessMove->move);
-    const Piece pieceAtNextPosition = *getCurrPieceAtVec(&nextPosition);
+    const Piece pieceAtNextPosition = getCurrPieceAtVec(&nextPosition);
 
     if (isPawnAttackMove(chessMove))
         if (!isBlankSpace(&pieceAtNextPosition))
@@ -29,7 +29,7 @@ bool pawnCondFunc(ChessGame* game, const ChessMove* chessMove)
                         /*   X   */
                         /*   p   */
     const IntVec2D middlePosition = addVecs(&chessMove->position,&(IntVec2D){0,-1});
-    const Piece pieceAtMiddlePosition = *getPieceAtVec(game->board,&middlePosition);
+    const Piece pieceAtMiddlePosition = getPieceAtVec(game->board,&middlePosition);
 
     if (equalVecs(&chessMove->move,&(IntVec2D){0,-2}))
         if (isBlankSpace(&pieceAtNextPosition) &&
@@ -50,7 +50,7 @@ bool knightCondFunc(ChessGame* game, const ChessMove* chessMove)
 
 bool isPathClear(ChessGame* game, const ChessMove* chessMove)
 {
-    const Piece pieceAtPosition = *getPieceAtVec(game->board,&chessMove->position);
+    const Piece pieceAtPosition = getPieceAtVec(game->board,&chessMove->position);
     const PieceTraits* traits = getTraits(&pieceAtPosition);
 
     IntVec2D direcVec = {0,0};
@@ -64,11 +64,11 @@ bool isPathClear(ChessGame* game, const ChessMove* chessMove)
 
     const IntVec2D nextPosition = addVecs(&chessMove->position,&chessMove->move);
 
-    for (int i = 0; i < 8; i++)
+    for (int i = 1; i < 8; i++)
     {
         const IntVec2D loopVec = multNumByVec(i,&direcVec);
         const IntVec2D positionAtLoopVec = addVecs(&chessMove->position,&loopVec);
-        const Piece pieceAtLoopVec = *getPieceAtVec(game->board,&positionAtLoopVec);
+        const Piece pieceAtLoopVec = getPieceAtVec(game->board,&positionAtLoopVec);
 
         if (equalVecs(&positionAtLoopVec,&nextPosition)) return true;
 
@@ -99,5 +99,5 @@ bool(*getCondFunc(const Piece* p))(ChessGame*,const ChessMove*)
 
 bool isValidMove(ChessGame* game, const ChessMove* chessMove)
 {
-    return getCondFunc(getPieceAtVec(game->board,&chessMove->position))(game,chessMove);
-};
+    return getCondFunc(getPiecePtrAtVec(game->board,&chessMove->position))(game,chessMove);
+}

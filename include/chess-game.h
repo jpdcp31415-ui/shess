@@ -22,9 +22,13 @@ typedef struct
 
 extern ChessGame gCurrChessGame;
 
-Piece* getCurrPieceAt(const int x, const int y);
+Piece getCurrPieceAt(const int x, const int y);
 
-Piece* getCurrPieceAtVec(const IntVec2D* vec);
+Piece getCurrPieceAtVec(const IntVec2D* vec);
+
+Piece* getCurrPiecePtrAt(const int x, const int y);
+
+Piece* getCurrPiecePtrAtVec(const IntVec2D* vec);
 
 bool* initPositionAt(ChessGame* game, const int x, const int y);
 

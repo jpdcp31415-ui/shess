@@ -40,16 +40,23 @@ static const ChessGame kStartChessGame =
 
 ChessGame gCurrChessGame = {.player = WHITE_PLAYER}; // game is set in the commandLoop function
 
-// All of these functions for ChessGame
-
-Piece* getCurrPieceAt(const int x, const int y)
+Piece getCurrPieceAt(const int x, const int y)
 {
     return getPieceAt(gCurrChessGame.board,x,y);
 }
 
-Piece* getCurrPieceAtVec(const IntVec2D* vec)
+Piece getCurrPieceAtVec(const IntVec2D* vec)
 {
     return getPieceAtVec(gCurrChessGame.board,vec);
+}
+Piece* getCurrPtrPieceAt(const int x, const int y)
+{
+    return getPiecePtrAt(gCurrChessGame.board,x,y);
+}
+
+Piece* getCurrPiecePtrAtVec(const IntVec2D* vec)
+{
+    return getPiecePtrAtVec(gCurrChessGame.board,vec);
 }
 
 bool* initPositionAt(ChessGame* game, const int x, const int y)
@@ -74,9 +81,9 @@ void flipChessGame(ChessGame* game)
     for (int y=0; y<4; y++)
         for (int x=0; x<8; x++)
         {
-            const Piece elmntCp = *getPieceAt(game->board,x,y);
-            *getPieceAt(game->board,x,y) = *getPieceAt(game->board,x,7-y);
-            *getPieceAt(game->board,x,7-y) = elmntCp;
+            const Piece elmntCp = *getPiecePtrAt(game->board,x,y);
+            *getPiecePtrAt(game->board,x,y) = *getPiecePtrAt(game->board,x,7-y);
+            *getPiecePtrAt(game->board,x,7-y) = elmntCp;
         }
 
     for (int y=0; y<2; y++)

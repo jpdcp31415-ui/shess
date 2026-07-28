@@ -24,13 +24,13 @@ void printCurrChessGame(void)
 void movePieceUncond(ChessGame* game, const ChessMove* chMove)
 {
     const IntVec2D nextPosition = addVecs(&chMove->position, &chMove->move);
-    *getPieceAtVec(game->board,&nextPosition) = *getPieceAtVec(game->board,&chMove->position);
-    *getPieceAtVec(game->board,&chMove->position) = (Piece){NULL_COLOUR, NULL_TYPE};
+    *getPiecePtrAtVec(game->board,&nextPosition) = *getPiecePtrAtVec(game->board,&chMove->position);
+    *getPiecePtrAtVec(game->board,&chMove->position) = (Piece){NULL_COLOUR, NULL_TYPE};
 
     if ((chMove->position.x >= 0 && chMove->position.x <= 7) &&
         (chMove->position.y == 0 || chMove->position.y == 1  ||
          chMove->position.y == 6 || chMove->position.y == 7)
-         && !isBlankSpace(getPieceAtVec(game->board,&chMove->position)))
+         && !isBlankSpace(getPiecePtrAtVec(game->board,&chMove->position)))
         *initPositionAtVec(game,&chMove->position) = false;
 }
 
@@ -74,7 +74,7 @@ void moveCommand(void)
 
     clearInput();
 
-    const Piece pieceAtPosition = *getCurrPieceAtVec(&currChessMove.position);
+    const Piece pieceAtPosition = getCurrPieceAtVec(&currChessMove.position);
 
     if (isBlankSpace(&pieceAtPosition))
     {
@@ -93,7 +93,7 @@ void moveCommand(void)
         return;
     }
 
-    const Piece pieceAtNextPosition = *getCurrPieceAtVec(&nextPosition);
+    const Piece pieceAtNextPosition = getCurrPieceAtVec(&nextPosition);
 
     if (equalPlayer(gCurrChessGame.player,pieceAtNextPosition.colour))
     {

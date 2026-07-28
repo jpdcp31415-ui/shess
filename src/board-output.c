@@ -139,7 +139,7 @@ void printBoard(Board grid)
             printf("%d ", 7-y);
         for (int x=0; x<8; x++)
         {
-            printPiece(getPieceAt(grid,x,y));
+            printPiece(getPiecePtrAt(grid,x,y));
             if (gOutputSettings.spaceBetween)
                 printf(" ");
         }
