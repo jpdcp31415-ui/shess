@@ -78,7 +78,7 @@ void moveCommand(void)
         printf("Cannot move empty space\n");
         return;
     }
-    else if (areOppositeColour(gCurrChessGame.player,pieceAtPosition.colour))
+    else if (gCurrChessGame.player == oppositeColour(pieceAtPosition.colour))
     {
         printf("Cannot move piece from opposite player\n");
         return;
@@ -92,7 +92,7 @@ void moveCommand(void)
 
     const Piece pieceAtNextPosition = getCurrPieceAtVec(&nextPosition);
 
-    if (equalPlayer(gCurrChessGame.player,pieceAtNextPosition.colour))
+    if (gCurrChessGame.player == pieceAtNextPosition.colour)
     {
         printf("You cannot attack your own pieces!\n");
         return;
@@ -102,7 +102,7 @@ void moveCommand(void)
 
     flipCurrChessGame();
     printCurrChessGame();
-    gCurrChessGame.player = oppositePlayer(gCurrChessGame.player);
+    gCurrChessGame.player = oppositeColour(gCurrChessGame.player);
 }
 
 typedef struct

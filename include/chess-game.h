@@ -3,20 +3,9 @@
 
 #include "board.h"
 
-typedef enum
-{
-    NO_PLAYER,
-    WHITE_PLAYER,
-    BLACK_PLAYER,
-} Player;
+#define NULL_PLAYER NULL_COLOUR
 
-Player colourToPlayer(const Colour c);
-
-Colour playerToColour(const Player p);
-
-bool equalPlayer(const Player p, const Colour c);
-
-bool areOppositeColour(const Player p, const Colour c);
+typedef Colour Player;
 
 typedef struct
 {
@@ -54,7 +43,5 @@ void setChessGame(const ChessGame* game1, ChessGame* game2);
 void resetChessGame(ChessGame* game);
 
 void resetCurrChessGame(void);
-
-Player oppositePlayer(const Player p);
 
 #endif

@@ -119,10 +119,10 @@ bool isCurrInCheck(const ChessGame* game)
         {
             const Piece loopPiece = getPieceAt(gameFlipped.board,x,y);
 
-            if (isBlankSpace(&loopPiece) || equalPlayer(game->player,loopPiece.colour)) continue;
+            if (isBlankSpace(&loopPiece) || game->player == loopPiece.colour) continue;
 
             const IntVec2D kingPosition = whereKingIs(gameFlipped.board,
-                                                      playerToColour(game->player));
+                                                      game->player);
 
             const ChessMove possibleAttack =
             {
@@ -132,7 +132,7 @@ bool isCurrInCheck(const ChessGame* game)
 
             if (hasMove(&possibleAttack.move,&loopPiece)  &&
                 isValidMove(&gameFlipped,&possibleAttack) &&
-                loopPiece.colour == oppositeColour(playerToColour(game->player)))
+                loopPiece.colour == oppositeColour(game->player))
                 return true;
         }
 
@@ -141,7 +141,7 @@ bool isCurrInCheck(const ChessGame* game)
 
 bool kingCondFunc(const ChessGame* game, const ChessMove* chessMove)
 {
-    ChessGame gameMoved = {.player = NO_PLAYER};
+    ChessGame gameMoved = {.player = NULL_PLAYER};
 
     setChessGame(game,&gameMoved);
 

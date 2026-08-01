@@ -2,32 +2,6 @@
 #include "../include/board.h"
 #include "../include/chess-game.h"
 
-Player colourToPlayer(const Colour c)
-{
-    return (c == WHITE) ? WHITE_PLAYER :
-           (c == BLACK) ? BLACK_PLAYER :
-           NO_PLAYER;
-}
-
-Colour playerToColour(const Player p)
-{
-    return (p == WHITE_PLAYER) ? WHITE :
-           (p == BLACK_PLAYER) ? BLACK :
-           NULL_COLOUR;
-}
-
-bool equalPlayer(const Player p, const Colour c)
-{
-    return (p == WHITE_PLAYER && c == WHITE) ||
-           (p == BLACK_PLAYER && c == BLACK);
-}
-
-bool areOppositeColour(const Player p, const Colour c)
-{
-    return (p == WHITE_PLAYER && c == BLACK) ||
-           (p == BLACK_PLAYER && c == WHITE);
-}
-
 static const ChessGame kStartChessGame =
 {
     .board = {
@@ -41,7 +15,7 @@ static const ChessGame kStartChessGame =
          {WHITE,KING},{WHITE,BISHOP},{WHITE,KNIGHT},{WHITE,ROOK}},
     },
 
-    .player = WHITE_PLAYER,
+    .player = WHITE,
 
     {
         {true,true,true,true,true,true,true,true}, // black player side
@@ -51,7 +25,7 @@ static const ChessGame kStartChessGame =
     },
 };
 
-ChessGame gCurrChessGame = {.player = WHITE_PLAYER}; // game is set in the commandLoop function
+ChessGame gCurrChessGame = {.player = WHITE}; // game is set in the commandLoop function
 
 Piece getCurrPieceAt(const int x, const int y)
 {
@@ -107,7 +81,7 @@ bool* initPositionPtrAtVec(ChessGame* game, const IntVec2D* vec)
 
 const ChessGame* flippedChessGame(const ChessGame* game)
 {
-    static ChessGame gameCopy = {.player = NO_PLAYER};
+    static ChessGame gameCopy = {.player = NULL_PLAYER};
 
     setChessGame(game,&gameCopy);
 
@@ -153,10 +127,4 @@ void resetChessGame(ChessGame* game)
 void resetCurrChessGame(void)
 {
     resetChessGame(&gCurrChessGame);
-}
-
-Player oppositePlayer(const Player p)
-{
-    assert((p == WHITE_PLAYER || p == BLACK_PLAYER) && "Player is invalid");
-    return (p == WHITE_PLAYER) ? BLACK_PLAYER : WHITE_PLAYER;
 }
