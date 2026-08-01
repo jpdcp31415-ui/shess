@@ -5,9 +5,14 @@
 
 typedef enum
 {
+    NO_PLAYER,
     WHITE_PLAYER,
     BLACK_PLAYER,
 } Player;
+
+Player colourToPlayer(const Colour c);
+
+Colour playerToColour(const Player p);
 
 bool equalPlayer(const Player p, const Colour c);
 

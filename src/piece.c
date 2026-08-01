@@ -1,9 +1,14 @@
 #include "../include/piece.h"
 
+bool equalPiece(const Piece* p1, const Piece* p2)
+{
+    return p1->colour == p2->colour &&
+           p1->type   == p2->type;
+}
+
 bool isBlankSpace(const Piece* p)
 {
-    return (p->colour == NULL_COLOUR &&
-            p->type   == NULL_TYPE);
+    return equalPiece(p,&(Piece){NULL_COLOUR,NULL_TYPE});
 }
 
 void assertPiece(const Piece* p)

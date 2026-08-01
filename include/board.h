@@ -6,6 +6,10 @@
 
 typedef Piece Board[8][8];
 
+bool isInBoardBounds(const int x, const int y);
+
+bool isVecInBoardBounds(const IntVec2D* vec);
+
 Piece getPieceAt(const Board board, const int x, const int y);
 
 Piece getPieceAtVec(const Board board, const IntVec2D* vec);
@@ -14,8 +18,8 @@ Piece* getPiecePtrAt(Board board, const int x, const int y);
 
 Piece* getPiecePtrAtVec(Board board, const IntVec2D* vec);
 
-bool isInBoardBounds(const int x, const int y);
+const Piece* getKPiecePtrAt(const Board board, const int x, const int y);
 
-bool isVecInBoardBounds(const IntVec2D* vec);
+const Piece* getKPiecePtrAtVec(const Board board, const IntVec2D* vec);
 
 #endif

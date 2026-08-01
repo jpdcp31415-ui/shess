@@ -30,6 +30,8 @@ typedef struct
     Type type;
 } Piece;
 
+bool equalPiece(const Piece* p1, const Piece* p2);
+
 bool isBlankSpace(const Piece* p);
 
 void assertPiece(const Piece* p);

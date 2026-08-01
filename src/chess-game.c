@@ -2,6 +2,20 @@
 #include "../include/board.h"
 #include "../include/chess-game.h"
 
+Player colourToPlayer(const Colour c)
+{
+    return (c == WHITE) ? WHITE_PLAYER :
+           (c == BLACK) ? BLACK_PLAYER :
+           NO_PLAYER;
+}
+
+Colour playerToColour(const Player p)
+{
+    return (p == WHITE_PLAYER) ? WHITE :
+           (p == BLACK_PLAYER) ? BLACK :
+           NULL_COLOUR;
+}
+
 bool equalPlayer(const Player p, const Colour c)
 {
     return (p == WHITE_PLAYER && c == WHITE) ||

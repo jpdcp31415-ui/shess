@@ -22,7 +22,7 @@ Piece getPieceAt(const Board board, const int x, const int y)
 Piece getPieceAtVec(const Board board, const IntVec2D* vec)
 {
     assert(isInBoardBounds(vec->x,vec->y) && "Getting piece that is out of bounds!");
-    return board[vec->y][vec->x];
+    return getPieceAt(board,vec->x,vec->y);
 }
 
 Piece* getPiecePtrAt(Board board, const int x, const int y)
@@ -34,5 +34,17 @@ Piece* getPiecePtrAt(Board board, const int x, const int y)
 Piece* getPiecePtrAtVec(Board board, const IntVec2D* vec)
 {
     assert(isInBoardBounds(vec->x,vec->y) && "Getting piece that is out of bounds!");
-    return &(board[vec->y][vec->x]);
+    return getPiecePtrAt(board,vec->x,vec->y);
+}
+
+const Piece* getKPiecePtrAt(const Board board, const int x, const int y)
+{
+    assert(isInBoardBounds(x,y) && "Getting piece that is out of bounds!");
+    return &(board[y][x]);
+}
+
+const Piece* getKPiecePtrAtVec(const Board board, const IntVec2D* vec)
+{
+    assert(isInBoardBounds(vec->x,vec->y) && "Getting piece that is out of bounds!");
+    return getKPiecePtrAt(board,vec->x,vec->y);
 }
