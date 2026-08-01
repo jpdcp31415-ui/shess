@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -std=c99 -O2 -Wall -Werror -Wextra
+CFLAGS = -std=c99 -O2 -Wall -Werror -Wextra -fsanitize=address -g
 
 # 1. Grab all .c files in the current directory
 SRCS = $(wildcard ./src/*.c)

@@ -72,6 +72,7 @@ bool hasMove(const IntVec2D* move, const Piece* piece)
     assertPiece(piece);
 
     const PieceTraits* traits = getTraits(piece);
+
     for (int i = 0; i < traits->numMoves; i++)
     {
         const IntVec2D moveMatch = traits->moves[i];

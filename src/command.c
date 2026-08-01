@@ -21,17 +21,14 @@ void printCurrChessGame(void)
     printBoard(gCurrChessGame.board);
 }
 
-void movePieceUncond(ChessGame* game, const ChessMove* chMove)
+void printCurrInits(void)
 {
-    const IntVec2D nextPosition = addVecs(&chMove->position, &chMove->move);
-    *getPiecePtrAtVec(game->board,&nextPosition) = *getPiecePtrAtVec(game->board,&chMove->position);
-    *getPiecePtrAtVec(game->board,&chMove->position) = (Piece){NULL_COLOUR, NULL_TYPE};
-
-    if ((chMove->position.x >= 0 && chMove->position.x <= 7) &&
-        (chMove->position.y == 0 || chMove->position.y == 1  ||
-         chMove->position.y == 6 || chMove->position.y == 7)
-         && !isBlankSpace(getPiecePtrAtVec(game->board,&chMove->position)))
-        *initPositionAtVec(game,&chMove->position) = false;
+    for (int y = 0; y < 8; y++)
+    {
+        for (int x = 0; x < 8; x++)
+            printf("%d, ",initPositionAt(&gCurrChessGame,x,y));
+        printf("\n");
+    }
 }
 
 void moveCommand(void)
@@ -225,7 +222,6 @@ void commandLoop(void)
            "And use \"help [command]\" for text about the command\n");
 
     resetCurrChessGame();
-
     printCurrChessGame();
 
     while (gProgramIsRunning)

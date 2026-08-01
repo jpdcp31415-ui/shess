@@ -43,7 +43,6 @@ static const ChessGame kStartChessGame =
 
     .player = WHITE_PLAYER,
 
-    .inInitPositions = 
     {
         {true,true,true,true,true,true,true,true}, // black player side
         {true,true,true,true,true,true,true,true},
@@ -74,40 +73,66 @@ Piece* getCurrPiecePtrAtVec(const IntVec2D* vec)
     return getPiecePtrAtVec(gCurrChessGame.board,vec);
 }
 
-bool* initPositionAt(ChessGame* game, const int x, const int y)
+bool initPositionAt(const ChessGame* game, const int x, const int y)
 {
-    static bool notInInitBoundsVar = false;
+    assert(isInBoardBounds(x,y) && "There are no pieces here!");
 
-    const bool inInitBounds =
-        (x >= 0 && x <= 7) &&
-        (y == 0 || y == 1  ||
-         y == 6 || y == 7);
+    if (!(y < 2 || y > 5))
+        return false;
 
-    return (inInitBounds ? &game->inInitPositions[y][x] : &notInInitBoundsVar);
+    return game->inInitPositions[(y > 5) ? (y - 4) : y][x];
 }
 
-bool* initPositionAtVec(ChessGame* game, const IntVec2D* vec)
+bool initPositionAtVec(const ChessGame* game, const IntVec2D* vec)
 {
     return initPositionAt(game,vec->x,vec->y);
 }
 
-void flipChessGame(ChessGame* game)
+bool* initPositionPtrAt(ChessGame* game, const int x, const int y)
 {
+    static bool notInInitBoundsVar = false;
+
+    assert(isInBoardBounds(x,y) && "There are no pieces here!");
+
+    if (!(y < 2 || y > 5))
+        return &notInInitBoundsVar;
+
+    return &game->inInitPositions[(y > 5) ? (y - 4) : y][x];
+}
+
+bool* initPositionPtrAtVec(ChessGame* game, const IntVec2D* vec)
+{
+    return initPositionPtrAt(game,vec->x,vec->y);
+}
+
+const ChessGame* flippedChessGame(const ChessGame* game)
+{
+    static ChessGame gameCopy = {.player = NO_PLAYER};
+
+    setChessGame(game,&gameCopy);
+
     for (int y=0; y<4; y++)
         for (int x=0; x<8; x++)
         {
-            const Piece elmntCp = *getPiecePtrAt(game->board,x,y);
-            *getPiecePtrAt(game->board,x,y) = *getPiecePtrAt(game->board,x,7-y);
-            *getPiecePtrAt(game->board,x,7-y) = elmntCp;
+            const Piece elmntCp = *getPiecePtrAt(gameCopy.board,x,y);
+            *getPiecePtrAt(gameCopy.board,x,y) = *getPiecePtrAt(gameCopy.board,x,7-y);
+            *getPiecePtrAt(gameCopy.board,x,7-y) = elmntCp;
         }
 
     for (int y=0; y<2; y++)
         for (int x=0; x<8; x++)
         {
-            const bool elmntCp = *initPositionAt(game,x,y);
-            *initPositionAt(game,x,y) = *initPositionAt(game,x,7-y);
-            *initPositionAt(game,x,7-y) = elmntCp;
+            const bool elmntCp = *initPositionPtrAt(&gameCopy,x,y);
+            *initPositionPtrAt(&gameCopy,x,y) = *initPositionPtrAt(&gameCopy,x,3-y);
+            *initPositionPtrAt(&gameCopy,x,3-y) = elmntCp;
         }
+
+    return &gameCopy;
+}
+
+void flipChessGame(ChessGame* game)
+{
+    setChessGame(flippedChessGame(game),game);
 }
 
 void flipCurrChessGame(void)

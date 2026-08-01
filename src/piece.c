@@ -2,8 +2,8 @@
 
 bool equalPiece(const Piece* p1, const Piece* p2)
 {
-    return p1->colour == p2->colour &&
-           p1->type   == p2->type;
+    return (p1->colour == p2->colour) &&
+           (p1->type   == p2->type);
 }
 
 bool isBlankSpace(const Piece* p)

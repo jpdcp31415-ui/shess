@@ -16,6 +16,8 @@ typedef struct
     const Piece capturing;
 } PieceMove;
 
-bool isValidMove(ChessGame* game, const ChessMove* chessMove);
+void movePieceUncond(ChessGame* game, const ChessMove* chMove);
+
+bool isValidMove(const ChessGame* game, const ChessMove* chessMove);
 
 #endif

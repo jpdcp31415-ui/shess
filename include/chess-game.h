@@ -35,11 +35,17 @@ Piece* getCurrPiecePtrAt(const int x, const int y);
 
 Piece* getCurrPiecePtrAtVec(const IntVec2D* vec);
 
-bool* initPositionAt(ChessGame* game, const int x, const int y);
+bool initPositionAt(const ChessGame* game, const int x, const int y);
 
-bool* initPositionAtVec(ChessGame* game, const IntVec2D* vec);
+bool initPositionAtVec(const ChessGame* game, const IntVec2D* vec);
 
-void flipChessGame(ChessGame* grid);
+bool* initPositionPtrAt(ChessGame* game, const int x, const int y);
+
+bool* initPositionPtrAtVec(ChessGame* game, const IntVec2D* vec);
+
+void flipChessGame(ChessGame* game);
+
+const ChessGame* flippedChessGame(const ChessGame* game);
 
 void flipCurrChessGame(void);
 
