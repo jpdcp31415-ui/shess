@@ -131,7 +131,7 @@ void printPiece(const Piece* p)
     }
 }
 
-void printBoard(Board grid)
+void printBoard(const Board grid)
 {
     for (int y=0; y<8; y++)
     {
@@ -139,7 +139,7 @@ void printBoard(Board grid)
             printf("%d ", 7-y);
         for (int x=0; x<8; x++)
         {
-            printPiece(getPiecePtrAt(grid,x,y));
+            printPiece(getKPiecePtrAt(grid,x,y));
             if (gOutputSettings.spaceBetween)
                 printf(" ");
         }

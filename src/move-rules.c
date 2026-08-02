@@ -112,16 +112,16 @@ IntVec2D whereKingIs(const Board board, const Colour kingColour)
 
 bool isCurrInCheck(const ChessGame* game)
 {
-    const ChessGame gameFlipped = *flippedChessGame(game);
+    const ChessGame* gameFlippedPtr = flippedChessGamePtr(game);
 
     for (int y = 0; y < 8; y++)
         for (int x = 0; x < 8; x++)
         {
-            const Piece loopPiece = getPieceAt(gameFlipped.board,x,y);
+            const Piece loopPiece = getPieceAt(gameFlippedPtr->board,x,y);
 
             if (isBlankSpace(&loopPiece) || game->player == loopPiece.colour) continue;
 
-            const IntVec2D kingPosition = whereKingIs(gameFlipped.board,
+            const IntVec2D kingPosition = whereKingIs(gameFlippedPtr->board,
                                                       game->player);
 
             const ChessMove possibleAttack =
@@ -131,12 +131,18 @@ bool isCurrInCheck(const ChessGame* game)
             };
 
             if (hasMove(&possibleAttack.move,&loopPiece)  &&
-                isValidMove(&gameFlipped,&possibleAttack) &&
+                isValidMove(gameFlippedPtr,&possibleAttack) &&
                 loopPiece.colour == oppositeColour(game->player))
                 return true;
         }
 
     return false;
+}
+
+bool pieceMayMoveTo(const ChessGame* game, const IntVec2D* position)
+{
+    (void)game,(void)position;
+    return true;
 }
 
 bool kingCondFunc(const ChessGame* game, const ChessMove* chessMove)
