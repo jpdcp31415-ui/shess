@@ -79,7 +79,7 @@ bool* initPositionPtrAtVec(ChessGame* game, const IntVec2D* vec)
     return initPositionPtrAt(game,vec->x,vec->y);
 }
 
-const ChessGame* flippedChessGamePtr(const ChessGame* game)
+const ChessGame* flippedKChessGamePtr(const ChessGame* game)
 {
     static ChessGame gameCopy = {.player = NULL_PLAYER};
 
@@ -106,7 +106,7 @@ const ChessGame* flippedChessGamePtr(const ChessGame* game)
 
 void flipChessGame(ChessGame* game)
 {
-    setChessGame(flippedChessGamePtr(game),game);
+    setChessGame(flippedKChessGamePtr(game),game);
 }
 
 void flipCurrChessGame(void)

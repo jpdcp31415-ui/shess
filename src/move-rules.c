@@ -110,27 +110,36 @@ IntVec2D whereKingIs(const Board board, const Colour kingColour)
     assert(!"King was not found!");
 }
 
-bool isCurrInCheck(const ChessGame* game)
+#include <stdio.h>
+
+bool pieceMayMoveTo(const ChessGame* game, const IntVec2D* position)
 {
-    const ChessGame* gameFlippedPtr = flippedChessGamePtr(game);
+    assert(game->player != NULL_PLAYER && "Cannot check for piece moves without current player!");
+
+    const ChessGame* gameFlippedPtr = flippedKChessGamePtr(game);
+
+    const IntVec2D flippedPosition = (IntVec2D){position->x,7-position->y};
+
+    const Piece pieceAtFlippedPos = getPieceAtVec(gameFlippedPtr->board,&flippedPosition);
+
+    assert(game->player == pieceAtFlippedPos.colour && "Cannot move piece from opposite player!");
 
     for (int y = 0; y < 8; y++)
         for (int x = 0; x < 8; x++)
         {
             const Piece loopPiece = getPieceAt(gameFlippedPtr->board,x,y);
 
-            if (isBlankSpace(&loopPiece) || game->player == loopPiece.colour) continue;
-
-            const IntVec2D kingPosition = whereKingIs(gameFlippedPtr->board,
-                                                      game->player);
+            if (isBlankSpace(&loopPiece) ||
+                game->player == loopPiece.colour)
+                continue;
 
             const ChessMove possibleAttack =
             {
-                .position = kingPosition,
-                .move = subVecs(&(IntVec2D){x,y},&kingPosition)
+                .position = (IntVec2D){x,y},
+                .move = subVecs(&flippedPosition,&(IntVec2D){x,y})
             };
 
-            if (hasMove(&possibleAttack.move,&loopPiece)  &&
+            if (hasMove(&possibleAttack.move,&loopPiece)    &&
                 isValidMove(gameFlippedPtr,&possibleAttack) &&
                 loopPiece.colour == oppositeColour(game->player))
                 return true;
@@ -139,20 +148,17 @@ bool isCurrInCheck(const ChessGame* game)
     return false;
 }
 
-bool pieceMayMoveTo(const ChessGame* game, const IntVec2D* position)
+bool isCurrInCheck(const ChessGame* game)
 {
-    (void)game,(void)position;
-    return true;
+    const IntVec2D kingPosition = whereKingIs(game->board,game->player);
+    return pieceMayMoveTo(game,&kingPosition);
 }
 
 bool kingCondFunc(const ChessGame* game, const ChessMove* chessMove)
 {
     ChessGame gameMoved = {.player = NULL_PLAYER};
-
     setChessGame(game,&gameMoved);
-
     movePieceUncond(&gameMoved,chessMove);
-
     return !isCurrInCheck(&gameMoved);
 }
 

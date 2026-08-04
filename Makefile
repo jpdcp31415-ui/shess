@@ -8,10 +8,10 @@ OBJS = $(patsubst ./src/%.c, ./obj/%.o, $(SRCS))
 TARGET = main 
 
 $(TARGET): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $(TARGET)
+	@$(CC) $(CFLAGS) $(OBJS) -o $(TARGET)
 
 ./obj/%.o: ./src/%.c
-	$(CC) -c -Iinc -o $@ $< $(CFLAGS) 
+	@$(CC) -c -Iinc -o $@ $< $(CFLAGS) 
 
 clean:
 	rm -f *.o $(TARGET)

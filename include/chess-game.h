@@ -34,7 +34,7 @@ bool* initPositionPtrAtVec(ChessGame* game, const IntVec2D* vec);
 
 void flipChessGame(ChessGame* game);
 
-const ChessGame* flippedChessGamePtr(const ChessGame* game);
+const ChessGame* flippedKChessGamePtr(const ChessGame* game);
 
 void flipCurrChessGame(void);
 
