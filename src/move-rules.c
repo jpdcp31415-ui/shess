@@ -110,8 +110,6 @@ IntVec2D whereKingIs(const Board board, const Colour kingColour)
     assert(!"King was not found!");
 }
 
-#include <stdio.h>
-
 bool pieceMayMoveTo(const ChessGame* game, const IntVec2D* position)
 {
     assert(game->player != NULL_PLAYER && "Cannot check for piece moves without current player!");
@@ -129,8 +127,7 @@ bool pieceMayMoveTo(const ChessGame* game, const IntVec2D* position)
         {
             const Piece loopPiece = getPieceAt(gameFlippedPtr->board,x,y);
 
-            if (isBlankSpace(&loopPiece) ||
-                game->player == loopPiece.colour)
+            if (isBlankSpace(&loopPiece) || game->player == loopPiece.colour)
                 continue;
 
             const ChessMove possibleAttack =
@@ -140,8 +137,7 @@ bool pieceMayMoveTo(const ChessGame* game, const IntVec2D* position)
             };
 
             if (hasMove(&possibleAttack.move,&loopPiece)    &&
-                isValidMove(gameFlippedPtr,&possibleAttack) &&
-                loopPiece.colour == oppositeColour(game->player))
+                isValidMove(gameFlippedPtr,&possibleAttack))
                 return true;
         }
 
