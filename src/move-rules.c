@@ -89,10 +89,9 @@ MoveErr pawnCondFunc(const ChessGame* game, const ChessMove* chessMove)
         if (!initPositionAtVec(game,&chessMove->position)) return NOT_INIT_POSITION;
         if (!isBlankSpace(&pieceAtNextPosition))           return CANT_ATTACK_FRONT;
         if (!isBlankSpace(&pieceAtMiddlePosition))         return PATH_NOT_CLEAR;
-        return NO_MOVE_ERR;
     }
 
-    return DOESNT_HAVE_MOVE;
+    return NO_MOVE_ERR;
 }
 
 // this is always true because of
@@ -136,7 +135,7 @@ MoveErr isPathClear(const ChessGame* game, const ChessMove* chessMove)
     return NO_MOVE_ERR;
 }
 
-bool isKingRoqueMove(const IntVec2D* move)
+bool isKingCastleMove(const IntVec2D* move)
 {
     return equalVecs(move,&(IntVec2D){-2,0}) ||
            equalVecs(move,&(IntVec2D){2,0});
