@@ -24,27 +24,31 @@ typedef enum
     OOB_POSITION,
     OOB_MOVE,
 
+    MOVER_IS_BLANK,
+    OPPOSITE_PLAYER_MOVE,
     DOESNT_HAVE_MOVE,
 
-    OPPOSITE_PLAYER_MOVE,
-    SAME_PLAYER_ATTACK,
-
-    NO_PIECE_TO_ATTACK, /* When pawn is moving diagonally */
-    NOT_INIT_POSITION, /* Moving pawn 2 spaces forward*/
+    NO_PIECE_TO_ATTACK, // When pawn is moving diagonally
+    NOT_INIT_POSITION, // Moving pawn 2 spaces forward 
+    CANT_ATTACK_FRONT,
     PATH_NOT_CLEAR,
 
-    /* MOVE CONDITIONS FOR CHECK AND CHECKMATE */
-    /* CANT_MOVE_KING, */
-    /* CANT_BLOCK_CHECK, */
-    /* CANT_CAPTURE_OPP_PIECE,? */
+    // MOVE CONDITIONS FOR CHECK AND CHECKMATE
+    // CANT_MOVE_KING, 
+    // CANT_BLOCK_CHECK, 
+    // CANT_CAPTURE_OPP_PIECE,?
 
-    /* SPECIAL MOVES*/
+    /* SPECIAL MOVES */
     CASTLING_CHECK,
     CANT_EN_PASSENT,
 
     IS_STILL_CHECK,
     MOVE_CAUSES_CHECK,
+
+    SAME_PLAYER_ATTACK,
 } MoveErr;
+
+const char* getMoveErrReason(const MoveErr mvErr);
 
 typedef enum
 {
@@ -59,6 +63,6 @@ GameState getChessGameState(const ChessGame* game);
 
 void movePieceUncond(ChessGame* game, const ChessMove* chMove);
 
-bool isValidMove(const ChessGame* game, const ChessMove* chessMove);
+MoveErr getMoveErr(const ChessGame* game, const ChessMove* chessMove);
 
 #endif

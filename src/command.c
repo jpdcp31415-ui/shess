@@ -84,9 +84,16 @@ void moveCommand(void)
         return;
     }
 
-    if (!hasMove(&currChessMove.move, &pieceAtPosition) || !isValidMove(&gCurrChessGame,&currChessMove))
+    if (!hasMove(&currChessMove.move, &pieceAtPosition))
     {
-        printf("Move is not valid for this piece\n");
+        printf("Piece does not have this move!\n");
+        return;
+    }
+
+    const MoveErr mvErr = getMoveErr(&gCurrChessGame,&currChessMove);
+    if (mvErr != NO_MOVE_ERR)
+    {
+        printf("%s",getMoveErrReason(mvErr));
         return;
     }
 
