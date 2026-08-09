@@ -8,13 +8,19 @@ typedef struct
 {
     const IntVec2D position;
     const IntVec2D move;
-} ChessMove;
+} BoardMove;
 
 typedef struct
 {
-    const Piece moving;
-    const Piece capturing;
+    const Piece mover;
+    const Piece captured;
 } PieceMove;
+
+typedef struct 
+{
+    const BoardMove boardMove;
+    const PieceMove pieceMove;
+} ChessMove;
 
 typedef enum
 {
@@ -50,6 +56,8 @@ typedef enum
 
 const char* getMoveErrReason(const MoveErr mvErr);
 
+MoveErr getOOBMoveErr(const BoardMove* boardMove);
+
 typedef enum
 {
     DEF_GAME_STATE,
@@ -61,7 +69,7 @@ typedef enum
 
 GameState getChessGameState(const ChessGame* game);
 
-void movePieceUncond(ChessGame* game, const ChessMove* chMove);
+void movePieceUncond(ChessGame* game, const BoardMove* boardMove);
 
 MoveErr getMoveErr(const ChessGame* game, const ChessMove* chessMove);
 

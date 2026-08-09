@@ -31,11 +31,11 @@ void printCurrInits(void)
     }
 }
 
-void moveCommand(void)
+const char* getBoardMove(BoardMove* fromBoardMove)
 {
     ErrorCode errCodePosX = 0, errCodePosY = 0, errCodeMoveX = 0, errCodeMoveY = 0;
 
-    ChessMove currChessMove = {
+    BoardMove toBoardMove = {
         .position = {getPosNumber(&errCodePosX),7-getPosNumber(&errCodePosY)},
         .move = {getNumber(&errCodeMoveX),-getNumber(&errCodeMoveY)}
     };
@@ -43,69 +43,62 @@ void moveCommand(void)
     if ((errCodePosX  == INPUT_ERR || errCodePosY  == INPUT_ERR) ||
         (errCodeMoveX == INPUT_ERR || errCodeMoveY == INPUT_ERR))
     {
-        printf("Did not move because of failed input\n");
         clearInput();
-        return;
+        return "Did not move because of failed input\n";
     }
     else if (errCodePosX == NON_POS_ERR || errCodePosY == NON_POS_ERR)
     {
-        printf("Error: position specified has a negative coodinate");
         clearInput();
-        return;
+        return "Position specified has a negative coodinate";
     }
-    else if (!isVecInBoardBounds(&currChessMove.position))
+
+    memcpy(fromBoardMove,&toBoardMove,sizeof(BoardMove));
+    return NULL;
+}
+
+void moveCommand(void)
+{
+    BoardMove firstBoardMove = {{0,0},{0,0}};
+
+    const char* inputErrReason = getBoardMove(&firstBoardMove);
+
+    if (inputErrReason != NULL)
     {
-        printf("Error: position specified is out of bounds\n");
-        clearInput();
+        printf("Error: %s",inputErrReason);
         return;
     }
 
-    const IntVec2D nextPosition = addVecs(&currChessMove.position,&currChessMove.move);
+    const MoveErr varOOBErr = getOOBMoveErr(&firstBoardMove);
 
-    if (!isVecInBoardBounds(&nextPosition))
+    if (varOOBErr != NO_MOVE_ERR)
     {
-        printf("Error: position + move specified is out of bounds\n");
-        clearInput();
+        printf("Error: %s", getMoveErrReason(varOOBErr));
         return;
     }
 
     clearInput();
 
-    const Piece pieceAtPosition = getCurrPieceAtVec(&currChessMove.position);
+    const BoardMove currBoardMove = firstBoardMove;
 
-    if (isBlankSpace(&pieceAtPosition))
-    {
-        printf("Cannot move empty space\n");
-        return;
-    }
-    else if (gCurrChessGame.player == oppositeColour(pieceAtPosition.colour))
-    {
-        printf("Cannot move piece from opposite player\n");
-        return;
-    }
+    const IntVec2D nextPosition = addVecs(&currBoardMove.position,&currBoardMove.move);
 
-    if (!hasMove(&currChessMove.move, &pieceAtPosition))
+    const PieceMove currPieceMove = 
     {
-        printf("Piece does not have this move!\n");
-        return;
-    }
+        .mover = getCurrPieceAtVec(&currBoardMove.position),
+        .captured = getCurrPieceAtVec(&nextPosition),
+    };
+
+    const ChessMove currChessMove = {currBoardMove,currPieceMove};
 
     const MoveErr mvErr = getMoveErr(&gCurrChessGame,&currChessMove);
+
     if (mvErr != NO_MOVE_ERR)
     {
-        printf("%s",getMoveErrReason(mvErr));
+        printf("Error: %s",getMoveErrReason(mvErr));
         return;
     }
 
-    const Piece pieceAtNextPosition = getCurrPieceAtVec(&nextPosition);
-
-    if (gCurrChessGame.player == pieceAtNextPosition.colour)
-    {
-        printf("You cannot attack your own pieces!\n");
-        return;
-    }
-
-    movePieceUncond(&gCurrChessGame,&currChessMove);
+    movePieceUncond(&gCurrChessGame,&currBoardMove);
 
     flipCurrChessGame();
     printCurrChessGame();
