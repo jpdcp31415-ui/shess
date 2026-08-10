@@ -243,19 +243,14 @@ MoveErr getMoveErr(const ChessGame* game, const ChessMove* chessMove)
     if (getOOBMoveErr(&chessMove->boardMove) != NO_MOVE_ERR)
         return getOOBMoveErr(&chessMove->boardMove);
 
-    const Piece pieceAtPosition = getCurrPieceAtVec(&chessMove->boardMove.position);
-
-    if (isBlankSpace(&pieceAtPosition))
+    if (isBlankSpace(&chessMove->pieceMove.mover))
         return MOVER_IS_BLANK;
-    if (game->player == oppositeColour(pieceAtPosition.colour))
+    if (game->player == oppositeColour(chessMove->pieceMove.mover.colour))
         return OPPOSITE_PLAYER_MOVE;
-    if (!hasMove(&chessMove->boardMove.move, &pieceAtPosition))
+    if (!hasMove(&chessMove->boardMove.move, &chessMove->pieceMove.mover))
         return DOESNT_HAVE_MOVE;
 
-    const IntVec2D nextPosition = addVecs(&chessMove->boardMove.position,&chessMove->boardMove.move);
-    const Piece pieceAtNextPosition = getCurrPieceAtVec(&nextPosition);
-
-    if (game->player == pieceAtNextPosition.colour)
+    if (game->player == chessMove->pieceMove.captured.colour)
         return SAME_PLAYER_ATTACK;
 
     return getCondFunc(getKPiecePtrAtVec(game->board,&chessMove->boardMove.position))(game,&chessMove->boardMove);
