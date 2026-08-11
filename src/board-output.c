@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "../include/board-output.h"
 #include "../include/io-plus.h"
+#include <string.h>
 
 typedef enum
 {
@@ -92,10 +93,14 @@ char getPiece1Ch(const Piece* p)
 {
     assertPiece(p);
 
-    static const char pieceChArr[] = " pnbrqk";
+    const char emptySpaceCh = ((gOutputSettings.emptySpaceAsUnderscore) ? '_' : ' ');
+    
+    if (isBlankSpace(p)) return emptySpaceCh;
+
+    static const char pieceChArr[] = "pnbrqk";
 
     return (p->colour == (gOutputSettings.whiteIsUpper ? WHITE : BLACK)) ?
-            toupper(pieceChArr[p->type]) : pieceChArr[p->type];
+            toupper(pieceChArr[p->type-1]) : pieceChArr[p->type-1];
 }
 
 const char* getPiece2Ch(const Piece* p)
@@ -104,7 +109,9 @@ const char* getPiece2Ch(const Piece* p)
 
     static char str[3] = "";
 
-    str[0] = (p->colour == NULL_COLOUR) ? ' ' : 
+    const char emptySpaceCh = ((gOutputSettings.emptySpaceAsUnderscore) ? '_' : ' ');
+
+    str[0] = (p->colour == NULL_COLOUR) ?  emptySpaceCh : 
              (p->colour == WHITE) ? 'w' : 'b';
 
     switch (p->type)
@@ -115,7 +122,7 @@ const char* getPiece2Ch(const Piece* p)
     case ROOK:      str[1] = 'r'; break;
     case QUEEN:     str[1] = 'q'; break;
     case KING:      str[1] = 'k'; break;
-    case NULL_TYPE: str[1] = ' '; break;
+    case NULL_TYPE: str[1] = emptySpaceCh; break;
     }
 
     return str;
@@ -154,6 +161,8 @@ void printBoard(const Board grid)
             printf("%d", x);
             if (gOutputSettings.spaceBetween)
                 printf(" ");
+            if (gOutputSettings.printMode == TWO_CHARS)
+                printf(" ");
         }
         printf("\n");
     }
@@ -165,10 +174,10 @@ char getAndMatchCh(const char* const matchChs)
 
     while (true)
     {
-        for (int i = 0; matchChs[i] != '\0'; i++)
-            if (tolower(inputtedCh) == matchChs[i] ||
-                toupper(inputtedCh) == matchChs[i])
-                return inputtedCh;
+        if (strchr(matchChs,tolower(inputtedCh)) ||
+            strchr(matchChs,toupper(inputtedCh)))
+            return inputtedCh;
+
         printf("Error: %c is not a valid character. Try again: ", inputtedCh);
     }
 }
@@ -191,19 +200,25 @@ getAgain:
         goto getAgain;
     }
 
-    // short versions for address of anonymous? variable
     const Piece whitePawn = {WHITE, PAWN};
     const Piece blackPawn = {BLACK, PAWN};
 
     // Invert colours of emojis
-    if (gOutputSettings.printMode == EMOJI)
+    if (gOutputSettings.printMode == EMOJI || gOutputSettings.printMode == ONE_CHAR)
     {
         printf("Do you want to invert the colours of the pieces (only displaying)\n");
-        printf("White pawn: %s, Black pawn: %s\n",
-                getPieceEmoji(&whitePawn),
-                getPieceEmoji(&blackPawn));
-        gOutputSettings.invertColours = getYesOrNo();
 
+        printf("White pawn: ");
+                printPiece(&whitePawn),
+        printf(", Black pawn: ");
+                printPiece(&blackPawn),
+        printf("\n");
+
+        gOutputSettings.invertColours = getYesOrNo();
+    }
+
+    if (gOutputSettings.printMode == EMOJI)
+    {
         printf("How many spaces do you want for an empty space to be displayed?: ");
 
         ErrorCode errCode = NO_ERRS;
@@ -228,8 +243,7 @@ getAgain:
                 printf("Number of spaces can only be 1 or 2. Try again: ");
                 clearInput();
             }
-            else
-                break;
+            else break;
         }
     }
 

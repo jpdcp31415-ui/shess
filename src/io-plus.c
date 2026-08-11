@@ -1,14 +1,14 @@
 #include "../include/io-plus.h"
 
-char* getLine(void)
+void getLine(char* str)
 {
-	return fgets((char[MAX_LINE_LENGTH]){""}, MAX_LINE_LENGTH, stdin);
+	fgets(str, MAX_LINE_LENGTH, stdin);
 }
 
 void clearInput(void)
 {
     if (getchar() != '\n')
-        getLine();
+        fgets((char[MAX_LINE_LENGTH]){""}, MAX_LINE_LENGTH, stdin);
 }
 
 void clearOutput(void)
@@ -18,7 +18,7 @@ void clearOutput(void)
 
 char* getStr(void)
 {
-    static char str[MAX_STR_LENGTH] = "";
+    static char str[MAX_CMD_LENGTH] = "";
     assert(scanf("%s", str) && "Input failed when getting string");
     return str;
 }

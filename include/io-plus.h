@@ -13,9 +13,9 @@
 #include <stdbool.h>
 
 #define MAX_LINE_LENGTH 256
-#define MAX_STR_LENGTH 64
+#define MAX_CMD_LENGTH 64
 
-char* getLine(void);
+void getLine(char* str);
 
 void clearInput(void);
 
