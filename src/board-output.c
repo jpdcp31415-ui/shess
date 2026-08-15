@@ -183,90 +183,90 @@ char getAndMatchCh(const char* const matchChs)
 }
 /* remember to use this function /\/\/\ */
 
-void runSetup(void)
-{
-    printf("Starting Setup:\n"); 
-    
-    // Print mode
-    printf("Do you want to use Emojis or ASCII (one or two chars) for the pieces? (E/1/2): ");
-getAgain:
-    switch (getSingleChar())
-    {
-    case '1': gOutputSettings.printMode = ONE_CHAR;  break;
-    case '2': gOutputSettings.printMode = TWO_CHARS; break; // this is the classic way
-    case 'E': gOutputSettings.printMode = EMOJI;     break;
-    default:
-        printf("Inputted character is invalid.\nTry again: ");
-        goto getAgain;
-    }
-
-    const Piece whitePawn = {WHITE, PAWN};
-    const Piece blackPawn = {BLACK, PAWN};
-
-    // Invert colours of emojis
-    if (gOutputSettings.printMode == EMOJI || gOutputSettings.printMode == ONE_CHAR)
-    {
-        printf("Do you want to invert the colours of the pieces (only displaying)\n");
-
-        printf("White pawn: ");
-                printPiece(&whitePawn),
-        printf(", Black pawn: ");
-                printPiece(&blackPawn),
-        printf("\n");
-
-        gOutputSettings.invertColours = getYesOrNo();
-    }
-
-    if (gOutputSettings.printMode == EMOJI)
-    {
-        printf("How many spaces do you want for an empty space to be displayed?: ");
-
-        ErrorCode errCode = NO_ERRS;
-
-        while (true)
-        {
-            gOutputSettings.emptySpaceAs1or2Ch = getPosNumber(&errCode);
-
-            if (errCode == NON_POS_ERR)
-            {
-                clearInput();
-                printf("Error: Number inputted is not positive: ");
-            }
-            else if (errCode == INPUT_ERR)
-            {
-                clearInput();
-                printf("Error: Input didn't go well. Try again: ");
-            }
-            else if (!(gOutputSettings.emptySpaceAs1or2Ch == 1 ||
-                       gOutputSettings.emptySpaceAs1or2Ch == 2))
-            {
-                printf("Number of spaces can only be 1 or 2. Try again: ");
-                clearInput();
-            }
-            else break;
-        }
-    }
-
-    // Space between pieces    
-	printf("Preview with space: ");
-    printPiece(&whitePawn); printf(" "); printPiece(&whitePawn);
-
-    printf("\n");
-
-	printf("Preview without space: ");
-    printPiece(&whitePawn); printPiece(&whitePawn);
-
-    printf("\n");
-
-    printf("Do you want spaces between the pieces? (Y/n): ");
-    gOutputSettings.spaceBetween = getYesOrNo();
-    
-    // Display empty spaces as underscores
-    printf("Do you want empty spaces to be displayed as \"_\" (y/N): ");
-    gOutputSettings.emptySpaceAsUnderscore = getYesOrNo();
-
-    printf("Do you want for coordinates to be displayed? (Y/n): ");
-    gOutputSettings.printCoords = getYesOrNo();
-
-    printf("Ending Setup\n");  
-}
+/* void runSetup(void) */
+/* { */
+/*     printf("Starting Setup:\n");  */
+/*      */
+/*     // Print mode */
+/*     printf("Do you want to use Emojis or ASCII (one or two chars) for the pieces? (E/1/2): "); */
+/* getAgain: */
+/*     switch (getSingleChar()) */
+/*     { */
+/*     case '1': gOutputSettings.printMode = ONE_CHAR;  break; */
+/*     case '2': gOutputSettings.printMode = TWO_CHARS; break; // this is the classic way */
+/*     case 'E': gOutputSettings.printMode = EMOJI;     break; */
+/*     default: */
+/*         printf("Inputted character is invalid.\nTry again: "); */
+/*         goto getAgain; */
+/*     } */
+/*  */
+/*     const Piece whitePawn = {WHITE, PAWN}; */
+/*     const Piece blackPawn = {BLACK, PAWN}; */
+/*  */
+/*     // Invert colours of emojis */
+/*     if (gOutputSettings.printMode == EMOJI || gOutputSettings.printMode == ONE_CHAR) */
+/*     { */
+/*         printf("Do you want to invert the colours of the pieces (only displaying)\n"); */
+/*  */
+/*         printf("White pawn: "); */
+/*                 printPiece(&whitePawn), */
+/*         printf(", Black pawn: "); */
+/*                 printPiece(&blackPawn), */
+/*         printf("\n"); */
+/*  */
+/*         gOutputSettings.invertColours = getYesOrNo(); */
+/*     } */
+/*  */
+/*     if (gOutputSettings.printMode == EMOJI) */
+/*     { */
+/*         printf("How many spaces do you want for an empty space to be displayed?: "); */
+/*  */
+/*         ErrorCode errCode = NO_ERRS; */
+/*  */
+/*         while (true) */
+/*         { */
+/*             gOutputSettings.emptySpaceAs1or2Ch = getPosNumber(&errCode); */
+/*  */
+/*             if (errCode == NON_POS_ERR) */
+/*             { */
+/*                 clearInput(); */
+/*                 printf("Error: Number inputted is not positive: "); */
+/*             } */
+/*             else if (errCode == INPUT_ERR) */
+/*             { */
+/*                 clearInput(); */
+/*                 printf("Error: Input didn't go well. Try again: "); */
+/*             } */
+/*             else if (!(gOutputSettings.emptySpaceAs1or2Ch == 1 || */
+/*                        gOutputSettings.emptySpaceAs1or2Ch == 2)) */
+/*             { */
+/*                 printf("Number of spaces can only be 1 or 2. Try again: "); */
+/*                 clearInput(); */
+/*             } */
+/*             else break; */
+/*         } */
+/*     } */
+/*  */
+/*     // Space between pieces     */
+/* 	printf("Preview with space: "); */
+/*     printPiece(&whitePawn); printf(" "); printPiece(&whitePawn); */
+/*  */
+/*     printf("\n"); */
+/*  */
+/* 	printf("Preview without space: "); */
+/*     printPiece(&whitePawn); printPiece(&whitePawn); */
+/*  */
+/*     printf("\n"); */
+/*  */
+/*     printf("Do you want spaces between the pieces? (Y/n): "); */
+/*     gOutputSettings.spaceBetween = getYesOrNo(); */
+/*      */
+/*     // Display empty spaces as underscores */
+/*     printf("Do you want empty spaces to be displayed as \"_\" (y/N): "); */
+/*     gOutputSettings.emptySpaceAsUnderscore = getYesOrNo(); */
+/*  */
+/*     printf("Do you want for coordinates to be displayed? (Y/n): "); */
+/*     gOutputSettings.printCoords = getYesOrNo(); */
+/*  */
+/*     printf("Ending Setup\n");   */
+/* } */

@@ -1,72 +1,29 @@
 #include <string.h>
+#include "../include/command.h"
 #include "../include/board-output.h"
 #include "../include/io-plus.h"
 #include "../include/move-rules.h"
 #include "../include/chess-game.h"
 #include "../include/piece-traits.h"
 
-static bool gProgramIsRunning = true;
-
-void endProgram(void)
-{
-    gProgramIsRunning = false;
-}
-
-void helpCommand(void);
-
-void listCommands(void);
-
-void printCurrChessGame(void)
-{
-    printBoard(gCurrChessGame.board);
-}
-
-void printCurrInits(void)
-{
-    for (int y = 0; y < 8; y++)
-    {
-        for (int x = 0; x < 8; x++)
-            printf("%d, ",initPositionAt(&gCurrChessGame,x,y));
-        printf("\n");
-    }
-}
-
-const char* getBoardMove(BoardMove* fromBoardMove)
-{
-    ErrorCode errCodePosX = 0, errCodePosY = 0, errCodeMoveX = 0, errCodeMoveY = 0;
-
-    BoardMove toBoardMove = {
-        .position = {getPosNumber(&errCodePosX),7-getPosNumber(&errCodePosY)},
-        .move = {getNumber(&errCodeMoveX),-getNumber(&errCodeMoveY)}
-    };
-
-    if ((errCodePosX  == INPUT_ERR || errCodePosY  == INPUT_ERR) ||
-        (errCodeMoveX == INPUT_ERR || errCodeMoveY == INPUT_ERR))
-    {
-        clearInput();
-        return "Did not move because of failed input\n";
-    }
-    else if (errCodePosX == NON_POS_ERR || errCodePosY == NON_POS_ERR)
-    {
-        clearInput();
-        return "Position specified has a negative coodinate";
-    }
-
-    memcpy(fromBoardMove,&toBoardMove,sizeof(BoardMove));
-    return NULL;
-}
-
-void moveCommand(void)
+void moveCommand(const char* input, const char* usage, const int numArgs)
 {
     BoardMove firstBoardMove = {{0,0},{0,0}};
 
-    const char* inputErrReason = getBoardMove(&firstBoardMove);
+    const int n = sscanf(input, usage,
+            &firstBoardMove.position.x,
+            &firstBoardMove.position.y,
+            &firstBoardMove.move.x,
+            &firstBoardMove.move.y);
 
-    if (inputErrReason != NULL)
+    if (n != numArgs)
     {
-        printf("Error: %s",inputErrReason);
+        printf("Error: Input did not go as expected!\n");
         return;
     }
+
+    firstBoardMove.position.y = 7-firstBoardMove.position.y;
+    firstBoardMove.move.y = -firstBoardMove.move.y;
 
     const MoveErr varOOBErr = getOOBMoveErr(&firstBoardMove);
 
@@ -75,8 +32,6 @@ void moveCommand(void)
         printf("Error: %s", getMoveErrReason(varOOBErr));
         return;
     }
-
-    clearInput();
 
     const BoardMove currBoardMove = firstBoardMove;
 
@@ -105,12 +60,64 @@ void moveCommand(void)
     gCurrChessGame.player = oppositeColour(gCurrChessGame.player);
 }
 
-typedef struct
+void helpCommand(const char* input, const char* usage, const int numArgs)
 {
-    const char* const name;
-    void(*getAndRun)(void);
-    const char* const helpText;
-} Command;
+    char cmd[MAX_CMD_LENGTH] = "";
+
+    const int n = sscanf(input, usage, cmd);
+
+    if (n != numArgs)
+    {
+        printf("Error: Input did not go as expected!\n");
+        return;
+    }
+
+    const Command* cmdPtr = findCmdPtr(cmd);
+    if (cmdPtr != NULL)
+    {
+        printf("%s\n", cmdPtr->helpText);
+        return;
+    }
+
+    const NoArgsCommand* noArgsCmdPtr = findNoArgsCmdPtr(cmd);
+    if (noArgsCmdPtr != NULL)
+    {
+        printf("%s\n", noArgsCmdPtr->helpText);
+        return;
+    }
+
+    printf("Error: Command %s does not exist!\n", cmd);
+}
+
+const Command kCmdList[] = 
+{
+    {
+        .name = "move",
+        .run = moveCommand,
+        .helpText = "Moves the pieces using x and y or chess notation",
+        .usage = "%d %d %d %d",
+        .numArgs = 4,
+    },
+
+    {
+        .name = "help",
+        .run = helpCommand,
+        .helpText = "Displays text about the command",
+        .usage = "%s",
+        .numArgs = 1,
+    },
+
+    /* { */
+    /*     .name = "set", */
+    /*     .run = setupCommand, */
+    /*     .helpText = "This command allows you to set any of the available settings that exist for this program", */
+    /* }, */
+
+    { // this is going to be like a null terminator
+        .name = "",
+    },
+
+};
 
 // This is a placeholder funtion for incomplete commands
 void fooCmdFunc(void)
@@ -118,60 +125,59 @@ void fooCmdFunc(void)
     printf("This is a placeholder function!\n");
 }
 
-static const Command CMD_LIST[] =
+static bool gProgramIsRunning = true;
+void endProgram(void)
+{
+    gProgramIsRunning = false;
+}
+
+void printCurrChessGame(void)
+{
+    printBoard(gCurrChessGame.board);
+}
+
+void listCommands(void)
+{
+    for (int i = 0; strcmp(kCmdList[i].name, "") != 0; i++)
+        printf("%s\n", kCmdList[i].name);
+}
+
+const NoArgsCommand kNoArgsCmdList[] =
 {
     {
         .name = "print",
-        .getAndRun = printCurrChessGame,
+        .run = printCurrChessGame,
         .helpText = "Prints the current state of the board to the console",
     },
 
     {
         .name = "flip",
-        .getAndRun = flipCurrChessGame,
+        .run = flipCurrChessGame,
         .helpText = "Flips the board vertically",
     },
 
     {
         .name = "restart",
-        .getAndRun = resetCurrChessGame,
+        .run = resetCurrChessGame,
         .helpText = "Resets the board to its initial state",
     },
 
     {
-        .name = "setup",
-        .getAndRun = runSetup,
-        .helpText = "Makes a series of questions appear to costumize your chess experience!",
-    },
-
-    {
         .name = "quit",
-        .getAndRun = endProgram,
+        .run = endProgram,
         .helpText = "Prints the current state of the board to the console",
     },
 
     {
-        .name = "move",
-        .getAndRun = moveCommand,
-        .helpText = "Moves the pieces using x and y or chess notation",
-    },
-   
-    {
         .name = "clear",
-        .getAndRun = clearOutput,
+        .run = clearOutput,
         .helpText = "Clears the output from the console",
     },
 
     {
         .name = "list",
-        .getAndRun = listCommands,
+        .run = listCommands,
         .helpText = "Lists all avaliable commands",
-    },
-
-    {
-        .name = "help",
-        .getAndRun = helpCommand,
-        .helpText = "Displays text about the command",
     },
 
     { // this is going to be like a null terminator
@@ -180,42 +186,57 @@ static const Command CMD_LIST[] =
 
 };
 
-int indexOfCmd(const char* const cmd)
+const NoArgsCommand* findNoArgsCmdPtr(const char* cmd)
 {
-    for (int i = 0; strcmp(CMD_LIST[i].name, "") != 0; i++)
-        if (strcmp(cmd, CMD_LIST[i].name) == 0)
-            return i;
-
-    printf("Error: %s command does not exist\n", cmd);
-    clearInput();
-    return -1;
+    for (int i = 0; strcmp(kNoArgsCmdList[i].name, "") != 0; i++)
+        if (strcmp(cmd, kNoArgsCmdList[i].name) == 0)
+            return &kNoArgsCmdList[i];
+    
+    return NULL;
 }
 
-void helpCommand(void)
+const Command* findCmdPtr(const char* cmd)
 {
-    char cmd[MAX_STR_LENGTH] = "";
-    strcpy(cmd,getStr());
-    if (indexOfCmd(cmd) != -1)
-        printf("%s\n", CMD_LIST[indexOfCmd(cmd)].helpText);
+    for (int i = 0; strcmp(kCmdList[i].name, "") != 0; i++)
+        if (strcmp(cmd, kCmdList[i].name) == 0)
+            return &kCmdList[i];
+
+    return NULL;
 }
 
-void listCommands(void)
+void runCmdStr(const char* cmd, const char* input)
 {
-    for (int i = 0; strcmp(CMD_LIST[i].name, "") != 0; i++)
-        printf("%s\n", CMD_LIST[i].name);
+    const Command* cmdPtr = findCmdPtr(cmd);
+    if (cmdPtr != NULL)
+    {
+        cmdPtr->run(input,cmdPtr->usage,cmdPtr->numArgs);
+        return;
+    }
+
+    const NoArgsCommand* noArgsCmdPtr = findNoArgsCmdPtr(cmd);
+    if (noArgsCmdPtr != NULL) 
+    {
+        noArgsCmdPtr->run();
+        return;
+    }
+
+    printf("Error: Command %s does not exist!\n", cmd);
 }
 
-void getAndRunCommand(const char* const cmd)
+bool allCharsAreWS(const char* str)
 {
-    if (indexOfCmd(cmd) != -1)
-        CMD_LIST[indexOfCmd(cmd)].getAndRun();
+    for (int i=0; i<(int)strlen(str); i++)
+        if (!isspace(str[i]))
+            return false;
+
+    return true;
 }
 
 void commandLoop(void)
 {
     clearOutput();
 
-    char command[MAX_STR_LENGTH] = "";
+    char inputLine[MAX_LINE_LENGTH] = "";
 
     printf("Welcome to minimal-chess!\n"
            "Use \"list\" to list all commands\n"
@@ -224,10 +245,21 @@ void commandLoop(void)
     resetCurrChessGame();
     printCurrChessGame();
 
+    char cmdStr[MAX_CMD_LENGTH] = "";
+
     while (gProgramIsRunning)
     {
         printf(">> ");
-        strcpy(command,getStr());
-        getAndRunCommand(command);
+
+        getLine(inputLine);
+
+        if (allCharsAreWS(inputLine)) continue;
+
+        sscanf(inputLine,"%s",cmdStr);
+
+        const char* cmdArgs = strchr(inputLine,' ') == NULL ?
+                              "" : strchr(inputLine,' ');
+
+        runCmdStr(cmdStr,cmdArgs);
     }
 }

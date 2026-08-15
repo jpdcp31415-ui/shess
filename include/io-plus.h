@@ -28,8 +28,6 @@ typedef enum
     NON_POS_ERR,
 } ErrorCode;
 
-char* getStr(void);
-
 char getSingleChar(void);
 
 bool getYesOrNo(void);

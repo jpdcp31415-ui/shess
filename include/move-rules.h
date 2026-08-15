@@ -6,20 +6,20 @@
 
 typedef struct 
 {
-    const IntVec2D position;
-    const IntVec2D move;
+    IntVec2D position;
+    IntVec2D move;
 } BoardMove;
 
 typedef struct
 {
-    const Piece mover;
-    const Piece captured;
+    Piece mover;
+    Piece captured;
 } PieceMove;
 
 typedef struct 
 {
-    const BoardMove boardMove;
-    const PieceMove pieceMove;
+    BoardMove boardMove;
+    PieceMove pieceMove;
 } ChessMove;
 
 typedef enum

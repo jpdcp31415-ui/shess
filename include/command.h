@@ -1,20 +1,44 @@
 #include <stdbool.h>
 
-void endProgram(void);
+typedef struct
+{
+    const char* const name;
+    void(*run)(const char* input, const char* usage, const int numArgs);
+    const char* const helpText;
+    const char* usage;
+    const int numArgs;
+} Command;
 
-void helpCommand(void);
-
-void listCommands(void);
+extern const Command kCmdList[];
 
 typedef struct
 {
     const char* const name;
-    void(*getAndRun)(void);
+    void(*run)(void);
     const char* const helpText;
-} Command;
+} NoArgsCommand;
 
-// This is a placeholder funtion for incomplete commands
-void fooCmdFunc(void);
+extern const NoArgsCommand kNoArgsCmdList[];
+
+/* Command functions */
+
+void moveCommand(const char* input, const char* usage, const int numArgs);
+
+void helpCommand(const char* input, const char* usage, const int numArgs);
+
+void printCurrChessGame(void);
+
+void listCommands(void);
+
+void endProgram(void);
+
+void fooCmdFunc(void); // Placeholder function for incomplete commands
+
+/* Finding the command */
+
+const Command* findCmdPtr(const char* cmd);
+
+const NoArgsCommand* findNoArgsCmdPtr(const char* cmd);
 
 int indexOfCmd(const char* const cmd);
 
