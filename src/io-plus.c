@@ -5,12 +5,6 @@ void getLine(char* str)
 	fgets(str, MAX_LINE_LENGTH, stdin);
 }
 
-void clearInput(void)
-{
-    if (getchar() != '\n')
-        fgets((char[MAX_LINE_LENGTH]){""}, MAX_LINE_LENGTH, stdin);
-}
-
 void clearOutput(void)
 {
 	printf("\e[1;1H\e[2J");

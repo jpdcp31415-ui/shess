@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.15)
 
 project(chess-minimal)
 
@@ -26,4 +26,12 @@ add_executable(
     include/move-rules.h
     include/piece-traits.h
     include/piece.h
+)
+
+target_compile_options( main PRIVATE
+    -Wall
+    -Werror
+    -Wextra
+    -O2
+    -std=c99
 )
