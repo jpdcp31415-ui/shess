@@ -138,6 +138,9 @@ void printCurrChessGame(void)
 
 void listCommands(void)
 {
+    for (int i = 0; strcmp(kNoArgsCmdList[i].name, "") != 0; i++)
+        printf("%s\n", kNoArgsCmdList[i].name);
+
     for (int i = 0; strcmp(kCmdList[i].name, "") != 0; i++)
         printf("%s\n", kCmdList[i].name);
 }
@@ -148,12 +151,6 @@ const NoArgsCommand kNoArgsCmdList[] =
         .name = "print",
         .run = printCurrChessGame,
         .helpText = "Prints the current state of the board to the console",
-    },
-
-    {
-        .name = "flip",
-        .run = flipCurrChessGame,
-        .helpText = "Flips the board vertically",
     },
 
     {
