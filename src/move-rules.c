@@ -211,6 +211,8 @@ bool isCurrInCheck(const ChessGame* game)
     return pieceMayMoveTo(game,&kingPosition);
 }
 
+bool isWinFor(const ChessGame game, const Colour c);
+
 MoveErr kingCondFunc(const ChessGame* game, const BoardMove* boardMove)
 {
     const bool isInCheck = isCurrInCheck(movedKChessGamePtr(game,boardMove));
