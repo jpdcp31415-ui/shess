@@ -246,7 +246,7 @@ void commandLoop(void)
 
     while (gProgramIsRunning)
     {
-        printf(">> ");
+        printf("$ ");
 
         getLine(inputLine);
 
