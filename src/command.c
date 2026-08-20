@@ -93,6 +93,7 @@ const Command kCmdList[] =
 {
     {
         .name = "move",
+        .shortName = "mv",
         .run = moveCommand,
         .helpText = "Moves the pieces using x and y or chess notation",
         .usage = "%d %d %d %d",
@@ -101,6 +102,7 @@ const Command kCmdList[] =
 
     {
         .name = "help",
+        .shortName = "help",
         .run = helpCommand,
         .helpText = "Displays text about the command",
         .usage = "%s",
@@ -139,40 +141,56 @@ void printCurrChessGame(void)
 void listCommands(void)
 {
     for (int i = 0; strcmp(kNoArgsCmdList[i].name, "") != 0; i++)
-        printf("%s\n", kNoArgsCmdList[i].name);
+    {
+        if (strcmp(kNoArgsCmdList[i].name,kNoArgsCmdList[i].shortName) != 0)
+            printf("%s / %s\n", kNoArgsCmdList[i].name, kNoArgsCmdList[i].shortName);
+        else
+            printf("%s\n", kNoArgsCmdList[i].name);
+    }
 
     for (int i = 0; strcmp(kCmdList[i].name, "") != 0; i++)
-        printf("%s\n", kCmdList[i].name);
+    {
+        const Command* cmd = &kCmdList[i];
+        if (strcmp(cmd->name,cmd->shortName) != 0)
+            printf("%s / %s [%s]\n", cmd->name, cmd->shortName, cmd->usage);
+        else
+            printf("%s [%s]\n", cmd->name, cmd->usage);
+    }
 }
 
 const NoArgsCommand kNoArgsCmdList[] =
 {
     {
         .name = "print",
+        .shortName = "pr",
         .run = printCurrChessGame,
         .helpText = "Prints the current state of the board to the console",
     },
 
     {
         .name = "restart",
+        .shortName = "rs",
         .run = resetCurrChessGame,
         .helpText = "Resets the board to its initial state",
     },
 
     {
         .name = "quit",
+        .shortName = "qt",
         .run = endProgram,
         .helpText = "Prints the current state of the board to the console",
     },
 
     {
         .name = "clear",
+        .shortName = "clr",
         .run = clearOutput,
         .helpText = "Clears the output from the console",
     },
 
     {
         .name = "list",
+        .shortName = "ls",
         .run = listCommands,
         .helpText = "Lists all avaliable commands",
     },
@@ -186,7 +204,8 @@ const NoArgsCommand kNoArgsCmdList[] =
 const NoArgsCommand* findNoArgsCmdPtr(const char* cmd)
 {
     for (int i = 0; strcmp(kNoArgsCmdList[i].name, "") != 0; i++)
-        if (strcmp(cmd, kNoArgsCmdList[i].name) == 0)
+        if (strcmp(cmd, kNoArgsCmdList[i].name) == 0 ||
+            strcmp(cmd, kNoArgsCmdList[i].shortName) == 0)
             return &kNoArgsCmdList[i];
     
     return NULL;
@@ -195,7 +214,8 @@ const NoArgsCommand* findNoArgsCmdPtr(const char* cmd)
 const Command* findCmdPtr(const char* cmd)
 {
     for (int i = 0; strcmp(kCmdList[i].name, "") != 0; i++)
-        if (strcmp(cmd, kCmdList[i].name) == 0)
+        if (strcmp(cmd, kCmdList[i].name) == 0 ||
+            strcmp(cmd, kCmdList[i].shortName) == 0)
             return &kCmdList[i];
 
     return NULL;

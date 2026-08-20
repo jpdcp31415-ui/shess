@@ -3,6 +3,7 @@
 typedef struct
 {
     const char* const name;
+    const char* const shortName;
     void(*run)(const char* input, const char* usage, const int numArgs);
     const char* const helpText;
     const char* usage;
@@ -14,6 +15,7 @@ extern const Command kCmdList[];
 typedef struct
 {
     const char* const name;
+    const char* const shortName;
     void(*run)(void);
     const char* const helpText;
 } NoArgsCommand;
