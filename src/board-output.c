@@ -1,7 +1,9 @@
 #include <stdio.h>
+#include <string.h>
+
 #include "../include/board-output.h"
 #include "../include/io-plus.h"
-#include <string.h>
+#include "../include/assert-toggle.h"
 
 typedef enum
 {
@@ -74,9 +76,7 @@ const char* getDefPieceEmoji(const Piece* p)
         case NULL_TYPE:;
        }
     
-    assert(false && "Error: piece was not asserted!\n");
-
-    return "HOW DID YOU GET HERE!";
+    EXIT_MSG(!"Error: piece was not asserted!\n");
 }
 
 const char* getPieceEmoji(const Piece* p)

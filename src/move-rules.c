@@ -1,5 +1,6 @@
 #include "../include/piece-traits.h"
 #include "../include/move-rules.h"
+#include "../include/assert-toggle.h"
 
 const char* getMoveErrReason(const MoveErr mvErr)
 {
@@ -27,7 +28,7 @@ const char* getMoveErrReason(const MoveErr mvErr)
     case SAME_PLAYER_ATTACK:   return "You can't attack your own pieces!\n";
     }
 
-    assert(!"There are no more move errors!");
+    EXIT_MSG(!"There are no more move errors!");
 }
 
 PieceMove getAsPieceMove(const ChessGame* game, const BoardMove* boardMove)
@@ -128,7 +129,7 @@ IntVec2D getDirecVec(const IntVec2D* move, const Piece* piece)
         if (isVecDivByVec(move,&traits->moves[i]))
             return traits->moves[i];
 
-    assert(!"Direction vector not found!");
+    EXIT_MSG(!"Direction vector not found!");
 }
 
 MoveErr isPathClear(const ChessGame* game, const BoardMove* boardMove)
@@ -166,12 +167,12 @@ IntVec2D whereKingIs(const Board board, const Colour kingColour)
             if (equalPiece(getKPiecePtrAt(board,x,y),&(Piece){kingColour,KING}))
                 return (IntVec2D){x,y};
 
-    assert(!"King was not found!");
+    EXIT_MSG(!"King was not found!");
 }
 
 ChessMove getPossibleAttack(const ChessGame* game, const IntVec2D* position)
 {
-    assert(game->player != NULL_PLAYER && "Cannot check for piece moves without current player!");
+    ASSERT(game->player != NULL_PLAYER, "Cannot check for piece moves without current player!");
 
     const ChessGame* gameFlippedPtr = flippedKChessGamePtr(game);
 
@@ -179,7 +180,7 @@ ChessMove getPossibleAttack(const ChessGame* game, const IntVec2D* position)
 
     const Piece pieceAtFlippedPos = getPieceAtVec(gameFlippedPtr->board,&flippedPosition);
 
-    assert(game->player == pieceAtFlippedPos.colour && "Cannot move piece from opposite player!");
+    ASSERT(game->player == pieceAtFlippedPos.colour, "Cannot move piece from opposite player!");
 
     for (int y = 0; y < 8; y++)
         for (int x = 0; x < 8; x++)
@@ -244,7 +245,7 @@ bool isPieceStuckAtVec(const ChessGame* game, const IntVec2D* position)
 
     const Piece pieceAtPosition = getPieceAtVec(usedGame->board,position);
 
-    assert(isBlankSpace(&pieceAtPosition) && "Blank space cannot get stuck!");
+    ASSERT(isBlankSpace(&pieceAtPosition), "Blank space cannot get stuck!");
 
     const PieceTraits* traits = getTraits(&pieceAtPosition);
 
@@ -318,7 +319,7 @@ MoveErr kingCondFunc(const ChessGame* game, const BoardMove* boardMove)
 MoveErr(*getCondFunc(const Piece* p))(const ChessGame*,const BoardMove*)
 {
     assertPiece(p);
-    assert(!isBlankSpace(p) && "Blank space does not have moves!");
+    ASSERT(!isBlankSpace(p), "Blank space does not have moves!");
 
     return (p->type == PAWN)   ? pawnCondFunc   :
            (p->type == KNIGHT) ? knightCondFunc :
@@ -333,7 +334,7 @@ MoveErr getPieceSpecificMoveErr(const ChessGame* game, const BoardMove* boardMov
 
 MoveErr getMoveErr(const ChessGame* game, const ChessMove* chessMove)
 {
-    assert(game->player != NULL_PLAYER && "Cannot move when no player is playing!");
+    ASSERT(game->player != NULL_PLAYER, "Cannot move when no player is playing!");
 
     if (getOOBMoveErr(&chessMove->boardMove) != NO_MOVE_ERR)
         return getOOBMoveErr(&chessMove->boardMove);

@@ -1,8 +1,6 @@
 #ifndef PIECE_H
 #define PIECE_H
 
-#include "assert-toggle.h"
-
 #include <stdbool.h>
 #include <ctype.h>
 

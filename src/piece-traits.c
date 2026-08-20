@@ -1,4 +1,5 @@
 #include "../include/piece-traits.h"
+#include "../include/assert-toggle.h"
 
 static const PieceTraits kTraitsArray[] =
 {
@@ -63,7 +64,7 @@ static const PieceTraits kTraitsArray[] =
 const PieceTraits* getTraits(const Piece* p)
 {
     assertPiece(p);
-    assert(!isBlankSpace(p) && "Error: Blank piece/space shouldn't have traits");
+    ASSERT(!isBlankSpace(p), "Blank piece/space shouldn't have traits");
     return &kTraitsArray[p->type-1];
 }
 

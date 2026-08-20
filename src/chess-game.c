@@ -1,6 +1,7 @@
 #include <string.h>
 #include "../include/board.h"
 #include "../include/chess-game.h"
+#include "../include/assert-toggle.h"
 
 static const ChessGame kStartChessGame =
 {
@@ -49,7 +50,7 @@ Piece* getCurrPiecePtrAtVec(const IntVec2D* vec)
 
 bool initPositionAt(const ChessGame* game, const int x, const int y)
 {
-    assert(isInBoardBounds(x,y) && "There are no pieces here!");
+    ASSERT_FMT(isInBoardBounds(x,y), "There are no pieces here!\n Values: %d, %d", x, y);
 
     if (!(y < 2 || y > 5))
         return false;
@@ -66,7 +67,7 @@ bool* initPositionPtrAt(ChessGame* game, const int x, const int y)
 {
     static bool notInInitBoundsVar = false;
 
-    assert(isInBoardBounds(x,y) && "There are no pieces here!");
+    ASSERT_FMT(isInBoardBounds(x,y), "There are no pieces here!\n Values: %d, %d", x, y);
 
     if (!(y < 2 || y > 5))
         return &notInInitBoundsVar;

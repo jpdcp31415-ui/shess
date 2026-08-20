@@ -1,4 +1,5 @@
 #include "../include/piece.h"
+#include "../include/assert-toggle.h"
 
 bool equalPiece(const Piece* p1, const Piece* p2)
 {
@@ -19,7 +20,8 @@ void assertPiece(const Piece* p)
                           (p->type   >= PAWN    &&
                            p->type   <= KING));
 
-    assert(isValid && "Piece does not exist in the real world");
+    ASSERT_FMT(isValid, "Piece does not exist in the real world\n"
+                        "Piece values as ints: colour %d, type: %d", (int)p->colour, (int)p->type);
 }
 
 
