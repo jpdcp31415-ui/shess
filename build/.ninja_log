@@ -1,0 +1,14 @@
+# ninja log v7
+2	183	1787238972663533389	CMakeFiles/main.dir/src/chess-game.c.o	8e1a09965ec2cdc0
+1	118	1787239064686816851	CMakeFiles/main.dir/src/board.c.o	ee92c12e77f80ce5
+2	107	1787237790313911355	CMakeFiles/main.dir/src/io-plus.c.o	e82527d7083fe3dc
+3	250	1786900561435808299	CMakeFiles/main.dir/src/int-vec-2d.c.o	a8072f1e7ab735e7
+2	113	1787239203283855490	CMakeFiles/main.dir/src/board-output.c.o	c36dc12595c28b6a
+2	36	1787239788413736137	CMakeFiles/main.dir/src/main.c.o	2c9812a59e7041b5
+1	127	1787240148716809024	CMakeFiles/main.dir/src/command.c.o	219b77eb48145ab1
+3	139	1787238972664034841	CMakeFiles/main.dir/src/piece-traits.c.o	612b9e8ef1f33dc4
+2	68	1787239098307860650	CMakeFiles/main.dir/src/piece.c.o	62c0bb59e3ca2d89
+2	300	1787238972663787697	CMakeFiles/main.dir/src/move-rules.c.o	cbb3bf214548c5c5
+127	162	1787240148842809018	main	754c6445f56ba4fc
+2	132	1787240331252800053	CMakeFiles/main.dir/src/command.c.o	219b77eb48145ab1
+132	168	1787240331382800046	main	754c6445f56ba4fc

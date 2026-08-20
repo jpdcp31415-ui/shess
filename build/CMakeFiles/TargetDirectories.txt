@@ -1,0 +1,3 @@
+/home/janni/ChessProg/build/CMakeFiles/main.dir
+/home/janni/ChessProg/build/CMakeFiles/edit_cache.dir
+/home/janni/ChessProg/build/CMakeFiles/rebuild_cache.dir
