@@ -136,7 +136,7 @@ MoveErr isPathClear(const ChessGame* game, const BoardMove* boardMove)
 {
     const Piece pieceAtPosition = getPieceAtVec(game->board,&boardMove->position);
 
-    IntVec2D direcVec = getDirecVec(&boardMove->move,&pieceAtPosition);
+    const IntVec2D direcVec = getDirecVec(&boardMove->move,&pieceAtPosition);
 
     const IntVec2D nextPosition = addVecs(&boardMove->position,&boardMove->move);
 
@@ -292,7 +292,29 @@ bool isPieceStuckAtVec(const ChessGame* game, const IntVec2D* position)
     return true;
 }
 
-bool isWinFor(const ChessGame* game, const Colour c)
+bool canBlockAttackMove(const ChessGame* game, const ChessMove* possibleAttack)
+{
+    const Piece possibleMover = possibleAttack->pieceMove.mover;
+
+    const PieceTraits* traits = getTraits(&possibleMover);
+    ASSERT(traits->multSteps, "Piece mover is not a multi-step piece!");
+
+    const Piece pieceAtPosition = getPieceAtVec(game->board,&possibleAttack->boardMove.position);
+
+    const IntVec2D direcVec = getDirecVec(&possibleAttack->boardMove.move,&pieceAtPosition);
+
+    for (int i = 1; i < 8; i++)
+    {
+        const IntVec2D loopVec = multNumByVec(i,&direcVec);
+        const IntVec2D positionAtLoopVec = addVecs(&possibleAttack->boardMove.position,&loopVec);
+
+        if (pieceMayMoveTo(game,&positionAtLoopVec)) return true;
+    }
+
+    return false;
+}
+
+bool isWinForCurrPlayer(const ChessGame* game)
 {
     const IntVec2D kingPosition = whereKingIs(game->board,game->player);
 
@@ -300,11 +322,10 @@ bool isWinFor(const ChessGame* game, const Colour c)
 
     if (!isPieceStuckAtVec(game,&kingPosition)) return false;
 
-    /* if () */
+    const ChessMove possibleAttack = getPossibleAttack(game,&kingPosition);
+    if (canBlockAttackMove(game,&possibleAttack)) return false;
 
-    (void)c;
-    return false;
-
+    return true;
 }
 
 MoveErr kingCondFunc(const ChessGame* game, const BoardMove* boardMove)
@@ -350,4 +371,9 @@ MoveErr getMoveErr(const ChessGame* game, const ChessMove* chessMove)
         return SAME_PLAYER_ATTACK;
 
     return getCondFunc(getKPiecePtrAtVec(game->board,&chessMove->boardMove.position))(game,&chessMove->boardMove);
+}
+
+bool isValidMove(const ChessGame* game, const ChessMove* chessMove)
+{
+    return getMoveErr(game,chessMove) == NO_MOVE_ERR;
 }

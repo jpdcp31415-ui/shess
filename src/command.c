@@ -8,6 +8,12 @@
 
 void moveCommand(const char* input, const char* usage, const int numArgs)
 {
+    if (isWinForCurrPlayer(&gCurrChessGame))
+    {
+        printf("Yay! %s won the game!", gCurrChessGame.player == WHITE ? "WHITE" : "BLACK");
+        return;
+    }
+
     BoardMove firstBoardMove = {{0,0},{0,0}};
 
     const int n = sscanf(input, usage,

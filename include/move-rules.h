@@ -69,6 +69,8 @@ typedef enum
 
 GameState getChessGameState(const ChessGame* game);
 
+bool isWinForCurrPlayer(const ChessGame* game);
+
 void movePieceUncond(ChessGame* game, const BoardMove* boardMove);
 
 MoveErr getMoveErr(const ChessGame* game, const ChessMove* chessMove);
