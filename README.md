@@ -1,6 +1,6 @@
 # Shess
 
-(logo here)
+![](../Pictures/logo2.svg)
 
 ## What is it?
 
@@ -12,7 +12,7 @@ Note: `3 3` is the move of the piece
 
 ## How do I get all commands?
 
-Get a list of all avaliable commands (including arguments) using `list/ls cmd`
+Get a list of all avaliable commands (including arguments) using `list cmd` or `ls cmd`
 
 ## How it looks
 
