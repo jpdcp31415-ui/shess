@@ -69,7 +69,7 @@ typedef enum
 
 GameState getChessGameState(const ChessGame* game);
 
-bool isWinForCurrPlayer(const ChessGame* game);
+bool isWinForOppPlayer(const ChessGame* game);
 
 void movePieceUncond(ChessGame* game, const BoardMove* boardMove);
 

@@ -170,7 +170,7 @@ IntVec2D whereKingIs(const Board board, const Colour kingColour)
     EXIT_MSG(!"King was not found!");
 }
 
-ChessMove getPossibleAttack(const ChessGame* game, const IntVec2D* position)
+ChessMove getPossibleMoveTo(const ChessGame* game, const IntVec2D* position)
 {
     ASSERT(game->player != NULL_PLAYER, "Cannot check for piece moves without current player!");
 
@@ -194,7 +194,7 @@ ChessMove getPossibleAttack(const ChessGame* game, const IntVec2D* position)
                 .position = (IntVec2D){x,y},
                 .move = subVecs(&flippedPosition,&(IntVec2D){x,y})
             };
-            
+
             const ChessMove possibleChessMove =
             {
                 .boardMove = possibleBoardMove,
@@ -223,16 +223,26 @@ ChessMove getPossibleAttack(const ChessGame* game, const IntVec2D* position)
 }
 
 // the possibility of a piece moving to a specific position
-bool pieceMayMoveTo(const ChessGame* game, const IntVec2D* position)
+bool oppPieceMayMoveTo(const ChessGame* game, const IntVec2D* position)
 {
-    const Piece moverPiece = getPossibleAttack(game,position).pieceMove.mover;
+    const Piece moverPiece = getPossibleMoveTo(game,position).pieceMove.mover;
+    return !isBlankSpace(&moverPiece);
+}
+
+bool currPlayerPieceMayMoveTo(const ChessGame* game, const IntVec2D* position)
+{
+    const ChessGame* _gameFlippedPtr = flippedKChessGamePtr(game);
+
+    ChessGame gameFlipped = {.player = NULL_PLAYER};
+    setChessGame(_gameFlippedPtr,&gameFlipped);
+    const Piece moverPiece = getPossibleMoveTo(&gameFlipped,position).pieceMove.mover;
     return !isBlankSpace(&moverPiece);
 }
 
 bool isCurrInCheck(const ChessGame* game)
 {
     const IntVec2D kingPosition = whereKingIs(game->board,game->player);
-    return pieceMayMoveTo(game,&kingPosition);
+    return oppPieceMayMoveTo(game,&kingPosition);
 }
 
 bool isPieceStuckAtVec(const ChessGame* game, const IntVec2D* position)
@@ -308,13 +318,16 @@ bool canBlockAttackMove(const ChessGame* game, const ChessMove* possibleAttack)
         const IntVec2D loopVec = multNumByVec(i,&direcVec);
         const IntVec2D positionAtLoopVec = addVecs(&possibleAttack->boardMove.position,&loopVec);
 
-        if (pieceMayMoveTo(game,&positionAtLoopVec)) return true;
+        if (currPlayerPieceMayMoveTo(game,&positionAtLoopVec)) return true;
     }
 
     return false;
 }
 
-bool isWinForCurrPlayer(const ChessGame* game)
+// or isLossCurrPlayer
+// or isCheckmateForCurrPlayer
+// or isCheckmate
+bool isWinForOppPlayer(const ChessGame* game)
 {
     const IntVec2D kingPosition = whereKingIs(game->board,game->player);
 
@@ -322,7 +335,7 @@ bool isWinForCurrPlayer(const ChessGame* game)
 
     if (!isPieceStuckAtVec(game,&kingPosition)) return false;
 
-    const ChessMove possibleAttack = getPossibleAttack(game,&kingPosition);
+    const ChessMove possibleAttack = getPossibleMoveTo(game,&kingPosition);
     if (canBlockAttackMove(game,&possibleAttack)) return false;
 
     return true;

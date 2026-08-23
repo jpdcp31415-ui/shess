@@ -8,7 +8,7 @@
 
 void moveCommand(const char* input, const char* usage, const int numArgs)
 {
-    if (isWinForCurrPlayer(&gCurrChessGame))
+    if (isWinForOppPlayer(&gCurrChessGame))
     {
         printf("Yay! %s won the game!", gCurrChessGame.player == WHITE ? "WHITE" : "BLACK");
         return;
