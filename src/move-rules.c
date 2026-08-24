@@ -174,25 +174,21 @@ ChessMove getPossibleMoveTo(const ChessGame* game, const IntVec2D* position)
 {
     ASSERT(game->player != NULL_PLAYER, "Cannot check for piece moves without current player!");
 
-    const ChessGame* gameFlippedPtr = flippedKChessGamePtr(game);
+    const Piece pieceAtPosition = getPieceAtVec(game->board,position);
 
-    const IntVec2D flippedPosition = (IntVec2D){position->x,7-position->y};
-
-    const Piece pieceAtFlippedPos = getPieceAtVec(gameFlippedPtr->board,&flippedPosition);
-
-    ASSERT(game->player == pieceAtFlippedPos.colour, "Cannot move piece from opposite player!");
+    ASSERT(game->player == pieceAtPosition.colour, "Cannot move piece from opposite player!");
 
     for (int y = 0; y < 8; y++)
         for (int x = 0; x < 8; x++)
         {
-            const Piece loopPiece = getPieceAt(gameFlippedPtr->board,x,y);
+            const Piece loopPiece = getPieceAt(game->board,x,y);
 
-            if (isBlankSpace(&loopPiece) || game->player == loopPiece.colour) continue;
+            if (isBlankSpace(&loopPiece) || game->player != loopPiece.colour) continue;
 
             const BoardMove possibleBoardMove =
             {
                 .position = (IntVec2D){x,y},
-                .move = subVecs(&flippedPosition,&(IntVec2D){x,y})
+                .move = subVecs(position,&(IntVec2D){x,y})
             };
 
             const ChessMove possibleChessMove =
@@ -202,7 +198,7 @@ ChessMove getPossibleMoveTo(const ChessGame* game, const IntVec2D* position)
             };
 
             if (hasMove(&possibleBoardMove.move,&loopPiece) &&
-                getMoveErr(gameFlippedPtr,&possibleChessMove) != NO_MOVE_ERR)
+                getMoveErr(game,&possibleChessMove) != NO_MOVE_ERR)
                 return possibleChessMove;
         }
 
@@ -212,27 +208,27 @@ ChessMove getPossibleMoveTo(const ChessGame* game, const IntVec2D* position)
     {
         .boardMove = 
         {
-            .position = flippedPosition,
+            .position = *position,
             .move = {0,0},
         },
         .pieceMove = {
             .mover = {NULL_COLOUR,NULL_TYPE},
-            .captured = pieceAtFlippedPos
+            .captured = pieceAtPosition
         }
     };
 }
 
-// the possibility of a piece moving to a specific position
-bool oppPieceMayMoveTo(const ChessGame* game, const IntVec2D* position)
+bool currPlayerPieceMayMoveTo(const ChessGame* game, const IntVec2D* position)
 {
     const Piece moverPiece = getPossibleMoveTo(game,position).pieceMove.mover;
     return !isBlankSpace(&moverPiece);
 }
 
-bool currPlayerPieceMayMoveTo(const ChessGame* game, const IntVec2D* position)
+// the possibility of a piece moving to a specific position
+bool oppPieceMayMoveTo(const ChessGame* game, const IntVec2D* position)
 {
+    // flip board for the opposite player's perspective
     const ChessGame* _gameFlippedPtr = flippedKChessGamePtr(game);
-
     ChessGame gameFlipped = {.player = NULL_PLAYER};
     setChessGame(_gameFlippedPtr,&gameFlipped);
     const Piece moverPiece = getPossibleMoveTo(&gameFlipped,position).pieceMove.mover;
