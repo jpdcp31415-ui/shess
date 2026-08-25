@@ -75,4 +75,6 @@ void movePieceUncond(ChessGame* game, const BoardMove* boardMove);
 
 MoveErr getMoveErr(const ChessGame* game, const ChessMove* chessMove);
 
+bool isValidMove(const ChessGame* game, const ChessMove* chessMove);
+
 #endif

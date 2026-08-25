@@ -51,10 +51,9 @@ void moveCommand(const char* input, const char* usage, const int numArgs)
 
     const ChessMove currChessMove = {currBoardMove,currPieceMove};
 
-    const MoveErr mvErr = getMoveErr(&gCurrChessGame,&currChessMove);
-
-    if (mvErr != NO_MOVE_ERR)
+    if (!isValidMove(&gCurrChessGame,&currChessMove))
     {
+        const MoveErr mvErr = getMoveErr(&gCurrChessGame,&currChessMove);
         printf("Error: %s",getMoveErrReason(mvErr));
         return;
     }

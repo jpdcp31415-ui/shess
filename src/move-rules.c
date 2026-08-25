@@ -198,7 +198,7 @@ ChessMove getPossibleMoveTo(const ChessGame* game, const IntVec2D* position)
             };
 
             if (hasMove(&possibleBoardMove.move,&loopPiece) &&
-                getMoveErr(game,&possibleChessMove) != NO_MOVE_ERR)
+                isValidMove(game,&possibleChessMove))
                 return possibleChessMove;
         }
 
@@ -270,7 +270,7 @@ bool isPieceStuckAtVec(const ChessGame* game, const IntVec2D* position)
                 .pieceMove = getAsPieceMove(usedGame,&possibleBoardMove)
             };
 
-            if (getMoveErr(usedGame,&possibleChessMove) == NO_MOVE_ERR)
+            if (isValidMove(usedGame,&possibleChessMove))
                 return false;
         }
     else
@@ -291,7 +291,7 @@ bool isPieceStuckAtVec(const ChessGame* game, const IntVec2D* position)
                     .pieceMove = getAsPieceMove(usedGame,&possibleBoardMove)
                 };
 
-                if (getMoveErr(usedGame,&possibleChessMove) == NO_MOVE_ERR)
+                if (isValidMove(usedGame,&possibleChessMove))
                     return false;
             }
 
