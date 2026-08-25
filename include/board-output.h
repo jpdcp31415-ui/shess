@@ -14,7 +14,7 @@ char getPiece1Ch(const Piece* p);
 
 const char* getPiece2Ch(const Piece* p);
 
-void printBoard(const Board grid);
+void printBoard(const Board board);
 
 /* void runSetup(void); */
 

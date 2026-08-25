@@ -1,6 +1,6 @@
 # Shess
 
-![](../Pictures/logo2.svg)
+![](logo.svg)
 
 ## What is it?
 

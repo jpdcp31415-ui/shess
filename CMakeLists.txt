@@ -5,16 +5,17 @@ project(shess)
 add_executable(
     main
 
+    src/main.c
     src/board-output.c
     src/board.c
     src/chess-game.c
     src/command.c
     src/int-vec-2d.c
     src/io-plus.c
-    src/main.c
     src/move-rules.c
     src/piece-traits.c
     src/piece.c
+    src/board-theme.c
 
     include/assert-toggle.h
     include/board-output.h
@@ -26,6 +27,7 @@ add_executable(
     include/move-rules.h
     include/piece-traits.h
     include/piece.h
+    include/board-theme.h
 )
 
 target_compile_options( main PRIVATE

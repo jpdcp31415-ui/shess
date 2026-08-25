@@ -122,7 +122,7 @@ const Command kCmdList[] =
     /* }, */
 
     { // this is going to be like a null terminator
-        .name = "",
+        .name = NULL,
     },
 
 };
@@ -202,14 +202,14 @@ const NoArgsCommand kNoArgsCmdList[] =
     },
 
     { // this is going to be like a null terminator
-        .name = "",
+        .name = NULL,
     },
 
 };
 
 const NoArgsCommand* findNoArgsCmdPtr(const char* cmd)
 {
-    for (int i = 0; strcmp(kNoArgsCmdList[i].name, "") != 0; i++)
+    for (int i = 0; kNoArgsCmdList[i].name != NULL; i++)
         if (strcmp(cmd, kNoArgsCmdList[i].name) == 0 ||
             strcmp(cmd, kNoArgsCmdList[i].shortName) == 0)
             return &kNoArgsCmdList[i];
@@ -219,7 +219,7 @@ const NoArgsCommand* findNoArgsCmdPtr(const char* cmd)
 
 const Command* findCmdPtr(const char* cmd)
 {
-    for (int i = 0; strcmp(kCmdList[i].name, "") != 0; i++)
+    for (int i = 0; kCmdList[i].name != NULL; i++)
         if (strcmp(cmd, kCmdList[i].name) == 0 ||
             strcmp(cmd, kCmdList[i].shortName) == 0)
             return &kCmdList[i];
