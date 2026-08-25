@@ -146,15 +146,16 @@ void printCurrChessGame(void)
 
 void listCommands(void)
 {
-    for (int i = 0; strcmp(kNoArgsCmdList[i].name, "") != 0; i++)
+    for (int i = 0; kNoArgsCmdList[i].name != NULL; i++)
     {
-        if (strcmp(kNoArgsCmdList[i].name,kNoArgsCmdList[i].shortName) != 0)
-            printf("%s / %s\n", kNoArgsCmdList[i].name, kNoArgsCmdList[i].shortName);
+        const NoArgsCommand* cmd = &kNoArgsCmdList[i];
+        if (strcmp(cmd->name,cmd->shortName) != 0)
+            printf("%s / %s\n", cmd->name, cmd->shortName);
         else
-            printf("%s\n", kNoArgsCmdList[i].name);
+            printf("%s\n", cmd->name);
     }
 
-    for (int i = 0; strcmp(kCmdList[i].name, "") != 0; i++)
+    for (int i = 0; kCmdList[i].name != NULL; i++)
     {
         const Command* cmd = &kCmdList[i];
         if (strcmp(cmd->name,cmd->shortName) != 0)

@@ -1,5 +1,5 @@
-#include "../include/board-theme.h"
 #include <string.h>
+#include "../include/board-theme.h"
 
 const Piece pieceMapOrder[] = {
     {NULL_COLOUR,NULL_TYPE},
@@ -59,7 +59,7 @@ const BoardTheme gAllBoardThemes[] =
 const BoardTheme* getKBoardThemePtr(const char* themeName)
 {
     for (int i = 0; gAllBoardThemes[i].themeName != NULL; i++)
-        if (strcmp(gAllBoardThemes[i].themeName,themeName))
+        if (strcmp(gAllBoardThemes[i].themeName,themeName) == 0)
             return &gAllBoardThemes[i];
     
     return NULL;

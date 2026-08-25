@@ -16,8 +16,6 @@ void printBoardRowWithTheme(const char* themeName, const Board board, const int 
 
     for (int row = 0; row < themePtr->tileSize.y; row++)
     {
-        if (gOutputSettings.showPrintCoords)
-            printf(" ");
         for (int x=0; x<8; x++)
         {
             const char* rowTileStr = getStrTileRow(gOutputSettings.boardTheme,
@@ -47,6 +45,11 @@ void printBoardWithTheme(const char* themeName, const Board board)
         }
         printf("\n");
     }
+}
+
+void printBoard(const Board board)
+{
+    printBoardWithTheme(gOutputSettings.boardTheme,board);
 }
 
 char getAndMatchCh(const char* const matchChs)
