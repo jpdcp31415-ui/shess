@@ -16,6 +16,7 @@ add_executable(
     src/piece-traits.c
     src/piece.c
     src/board-theme.c
+    src/settings.c
 
     include/assert-toggle.h
     include/board-output.h
@@ -28,6 +29,7 @@ add_executable(
     include/piece-traits.h
     include/piece.h
     include/board-theme.h
+    include/settings.h
 )
 
 target_compile_options( main PRIVATE

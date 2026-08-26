@@ -1,6 +1,8 @@
+#include "settings.h"
 #include "assert-toggle.h"
 #include "piece.h"
 #include "int-vec-2d.h"
+#include "board.h"
 
 typedef const char* StrTile;
 
@@ -18,7 +20,3 @@ const BoardTheme* getKBoardThemePtr(const char* theme);
 StrTile getStrTile(const char* themeName, const Piece* p);
 
 const char* getStrTileRow(const char* themeName, const Piece* p, const int row);
-
-void printPiece(const Piece*);
-
-void printChessBoard(Piece board[8][8]);
