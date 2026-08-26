@@ -31,12 +31,14 @@ const char* getMoveErrReason(const MoveErr mvErr)
     EXIT_MSG(!"There are no more move errors!");
 }
 
-PieceMove getAsPieceMove(const ChessGame* game, const BoardMove* boardMove)
+PieceMove getAsPieceMove(const Board board, const BoardMove* boardMove)
 {
+    const IntVec2D nextPosition = addVecs(&boardMove->position, &boardMove->move);
+
     return (PieceMove)
     {
-        .mover = getPieceAtVec(game->board,&boardMove->position),
-        .captured = getPieceAtVec(game->board,&boardMove->position)
+        .mover = getPieceAtVec(board,&boardMove->position),
+        .captured = getPieceAtVec(board,&nextPosition)
     };
 }
 
@@ -113,7 +115,7 @@ MoveErr pawnCondFunc(const ChessGame* game, const BoardMove* boardMove)
     return NO_MOVE_ERR;
 }
 
-// this is always true because of
+// this always returns NO_MOVE_ERR because of
 // not having any piece-specific/special moves
 MoveErr knightCondFunc(const ChessGame* game, const BoardMove* boardMove)
 {
@@ -176,14 +178,14 @@ ChessMove getPossibleMoveTo(const ChessGame* game, const IntVec2D* position)
 
     const Piece pieceAtPosition = getPieceAtVec(game->board,position);
 
-    ASSERT(game->player == pieceAtPosition.colour, "Cannot move piece from opposite player!");
+    ASSERT(isBlankSpace(&pieceAtPosition) || game->player != pieceAtPosition.colour, "Cannot attack piece of same colour!");
 
     for (int y = 0; y < 8; y++)
         for (int x = 0; x < 8; x++)
         {
-            const Piece loopPiece = getPieceAt(game->board,x,y);
+            const Piece possibleMover = getPieceAt(game->board,x,y);
 
-            if (isBlankSpace(&loopPiece) || game->player != loopPiece.colour) continue;
+            if (isBlankSpace(&possibleMover) || game->player != possibleMover.colour) continue;
 
             const BoardMove possibleBoardMove =
             {
@@ -194,11 +196,10 @@ ChessMove getPossibleMoveTo(const ChessGame* game, const IntVec2D* position)
             const ChessMove possibleChessMove =
             {
                 .boardMove = possibleBoardMove,
-                .pieceMove = getAsPieceMove(game,&possibleBoardMove)
+                .pieceMove = getAsPieceMove(game->board,&possibleBoardMove)
             };
 
-            if (hasMove(&possibleBoardMove.move,&loopPiece) &&
-                isValidMove(game,&possibleChessMove))
+            if (isValidMove(game,&possibleChessMove))
                 return possibleChessMove;
         }
 
@@ -208,7 +209,7 @@ ChessMove getPossibleMoveTo(const ChessGame* game, const IntVec2D* position)
     {
         .boardMove = 
         {
-            .position = *position,
+            .position = {-1,-1},
             .move = {0,0},
         },
         .pieceMove = {
@@ -229,9 +230,14 @@ bool oppPieceMayMoveTo(const ChessGame* game, const IntVec2D* position)
 {
     // flip board for the opposite player's perspective
     const ChessGame* _gameFlippedPtr = flippedKChessGamePtr(game);
+
     ChessGame gameFlipped = {.player = NULL_PLAYER};
     setChessGame(_gameFlippedPtr,&gameFlipped);
-    const Piece moverPiece = getPossibleMoveTo(&gameFlipped,position).pieceMove.mover;
+    gameFlipped.player = oppositeColour(game->player);
+
+    const IntVec2D flippedPosition = {position->x, 7-position->y};
+
+    const Piece moverPiece = getPossibleMoveTo(&gameFlipped,&flippedPosition).pieceMove.mover;
     return !isBlankSpace(&moverPiece);
 }
 
@@ -267,7 +273,7 @@ bool isPieceStuckAtVec(const ChessGame* game, const IntVec2D* position)
             const ChessMove possibleChessMove =
             {
                 .boardMove = possibleBoardMove,
-                .pieceMove = getAsPieceMove(usedGame,&possibleBoardMove)
+                .pieceMove = getAsPieceMove(usedGame->board,&possibleBoardMove)
             };
 
             if (isValidMove(usedGame,&possibleChessMove))
@@ -288,7 +294,7 @@ bool isPieceStuckAtVec(const ChessGame* game, const IntVec2D* position)
                 const ChessMove possibleChessMove =
                 {
                     .boardMove = possibleBoardMove,
-                    .pieceMove = getAsPieceMove(usedGame,&possibleBoardMove)
+                    .pieceMove = getAsPieceMove(usedGame->board,&possibleBoardMove)
                 };
 
                 if (isValidMove(usedGame,&possibleChessMove))

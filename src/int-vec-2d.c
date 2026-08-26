@@ -58,7 +58,7 @@ bool isDiag(const IntVec2D* v1)
 
 int signof(const double d)
 {
-    return (d < 0.0) ? -1 : (d == 0.0) ? 0 : (d > 0) ? 1 : -2;
+    return (d < 0.0) ? -1 : (d == 0.0) ? 0 : 1;
 }
 
 bool isVecDivByVec(const IntVec2D* v1, const IntVec2D* v2)
