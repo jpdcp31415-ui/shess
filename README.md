@@ -1,6 +1,6 @@
 # Shess
 
-![](logo.svg)
+![](logo.png)
 
 ## What is it?
 
