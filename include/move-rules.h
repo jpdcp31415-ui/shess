@@ -54,6 +54,10 @@ typedef enum
     SAME_PLAYER_ATTACK,
 } MoveErr;
 
+IntVec2D getPawnPromotionPosition(const ChessGame* game);
+
+bool isPawnPromotion(const ChessGame* game);
+
 const char* getMoveErrReason(const MoveErr mvErr);
 
 MoveErr getOOBMoveErr(const BoardMove* boardMove);

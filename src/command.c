@@ -6,6 +6,33 @@
 #include "../include/chess-game.h"
 #include "../include/piece-traits.h"
 
+void promptForPawnPromotion(ChessGame* game)
+{
+    bool inputFailed = true;
+    while (!inputFailed)
+    {
+        printf("Pawn promotion (n/b/r/q)?:");
+        const char pieceChChosen = getSingleChar();
+        Piece pieceChosen = {NULL_COLOUR,NULL_TYPE};
+
+        switch (pieceChChosen)
+        {
+        case 'n': pieceChosen = (Piece){gCurrChessGame.player, KNIGHT}; break;
+        case 'b': pieceChosen = (Piece){gCurrChessGame.player, BISHOP}; break;
+        case 'r': pieceChosen = (Piece){gCurrChessGame.player, ROOK};   break;
+        case 'q': pieceChosen = (Piece){gCurrChessGame.player, QUEEN};  break;
+        default:
+            printf("Please enter another character\n");
+            inputFailed = true;
+        }
+
+        const IntVec2D promPos = getPawnPromotionPosition(game);
+        *getPiecePtrAtVec(game->board,&promPos) = pieceChosen;
+
+        break;
+    }    
+}
+
 void moveCommand(const char* input, const char* usage, const int numArgs)
 {
     if (isWinForOppPlayer(&gCurrChessGame))
@@ -59,6 +86,10 @@ void moveCommand(const char* input, const char* usage, const int numArgs)
     }
 
     movePieceUncond(&gCurrChessGame,&currBoardMove);
+
+    if (isPawnPromotion(&gCurrChessGame))
+    {
+    }
 
     flipCurrChessGame();
     printCurrChessGame();

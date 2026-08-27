@@ -77,6 +77,21 @@ MoveErr getOOBMoveErr(const BoardMove* boardMove)
 
 // each cond func returns whether a move is or not valid
 
+IntVec2D getPawnPromotionPosition(const ChessGame* game)
+{
+    for (int x = 0; x < 8; x++)
+        if (equalPiece(&(Piece){game->player,PAWN}, getKPiecePtrAt(game->board,x,0)))
+            return (IntVec2D){x,0};
+
+    return (IntVec2D){-1,-1};
+}
+
+bool isPawnPromotion(const ChessGame* game)
+{
+    const IntVec2D promPos = getPawnPromotionPosition(game);
+    return !equalVecs(&promPos,&(IntVec2D){-1,-1});
+}
+
 bool isPawnAttackMove(const IntVec2D* move)
 {
     return equalVecs(move,&(IntVec2D){1,-1}) ||
