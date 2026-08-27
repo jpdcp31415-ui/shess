@@ -87,9 +87,7 @@ void moveCommand(const char* input, const char* usage, const int numArgs)
 
     movePieceUncond(&gCurrChessGame,&currBoardMove);
 
-    if (isPawnPromotion(&gCurrChessGame))
-    {
-    }
+    if (isPawnPromotion(&gCurrChessGame)) promptForPawnPromotion(&gCurrChessGame);
 
     flipCurrChessGame();
     printCurrChessGame();
