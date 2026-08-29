@@ -1,3 +1,6 @@
+#ifndef COMMAND_H
+#define COMMAND_H
+
 #include <stdbool.h>
 
 typedef struct
@@ -47,3 +50,5 @@ int indexOfCmd(const char* const cmd);
 void getAndRunCommand(const char* const cmd);
 
 void commandLoop(void);
+
+#endif

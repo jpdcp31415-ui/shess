@@ -270,9 +270,13 @@ bool isPieceStuckAtVec(const ChessGame* game, const IntVec2D* position)
 
     const ChessGame* usedGame = game->player == _pieceAtPosition.colour ? game : flippedGamePtr;
 
-    const Piece pieceAtPosition = getPieceAtVec(usedGame->board,position);
+    const IntVec2D usedPosition = game->player == _pieceAtPosition.colour ?
+                                                  *position :
+                                                  (IntVec2D) {position->x, 7-position->y};
 
-    ASSERT(isBlankSpace(&pieceAtPosition), "Blank space cannot get stuck!");
+    const Piece pieceAtPosition = getPieceAtVec(usedGame->board,&usedPosition);
+
+    ASSERT(!isBlankSpace(&pieceAtPosition), "Blank space cannot get stuck!");
 
     const PieceTraits* traits = getTraits(&pieceAtPosition);
 
@@ -281,9 +285,12 @@ bool isPieceStuckAtVec(const ChessGame* game, const IntVec2D* position)
         {
             const BoardMove possibleBoardMove =
             {
-                .position = *position,
+                .position = usedPosition,
                 .move = traits->moves[i]
             };
+
+            const IntVec2D nextPosition = addVecs(&usedPosition,&traits->moves[i]);
+            if (!isVecInBoardBounds(&nextPosition)) continue;
             
             const ChessMove possibleChessMove =
             {
@@ -302,7 +309,7 @@ bool isPieceStuckAtVec(const ChessGame* game, const IntVec2D* position)
 
                 const BoardMove possibleBoardMove =
                 {
-                    .position = *position,
+                    .position = usedPosition,
                     .move = multMove
                 };
 
@@ -322,6 +329,8 @@ bool isPieceStuckAtVec(const ChessGame* game, const IntVec2D* position)
 bool canBlockAttackMove(const ChessGame* game, const ChessMove* possibleAttack)
 {
     const Piece possibleMover = possibleAttack->pieceMove.mover;
+
+    ASSERT(!isBlankSpace(&possibleMover), "This move is not a valid move!");
 
     const PieceTraits* traits = getTraits(&possibleMover);
     ASSERT(traits->multSteps, "Piece mover is not a multi-step piece!");
@@ -352,7 +361,15 @@ bool isWinForOppPlayer(const ChessGame* game)
 
     if (!isPieceStuckAtVec(game,&kingPosition)) return false;
 
-    const ChessMove possibleAttack = getPossibleMoveTo(game,&kingPosition);
+    // flip board for the opposite player's perspective
+    const ChessGame* _gameFlippedPtr = flippedKChessGamePtr(game);
+
+    ChessGame gameFlipped = {.player = NULL_PLAYER};
+    setChessGame(_gameFlippedPtr,&gameFlipped);
+    gameFlipped.player = oppositeColour(game->player);
+
+    const IntVec2D flippedPosition = {kingPosition.x, 7-kingPosition.y};
+    const ChessMove possibleAttack = getPossibleMoveTo(game,&flippedPosition);
     if (canBlockAttackMove(game,&possibleAttack)) return false;
 
     return true;
