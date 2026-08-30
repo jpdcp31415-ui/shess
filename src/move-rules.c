@@ -214,8 +214,7 @@ ChessMove getPossibleMoveTo(const ChessGame* game, const IntVec2D* position)
                 .pieceMove = getAsPieceMove(game->board,&possibleBoardMove)
             };
 
-            if (isValidMove(game,&possibleChessMove))
-                return possibleChessMove;
+            if (isValidMove(game,&possibleChessMove)) return possibleChessMove;
         }
 
     // sentinel value for cases when there is
@@ -329,7 +328,6 @@ bool isPieceStuckAtVec(const ChessGame* game, const IntVec2D* position)
 bool canBlockAttackMove(const ChessGame* game, const ChessMove* possibleAttack)
 {
     const Piece possibleMover = possibleAttack->pieceMove.mover;
-
     ASSERT(!isBlankSpace(&possibleMover), "This move is not a valid move!");
 
     const PieceTraits* traits = getTraits(&possibleMover);
@@ -370,7 +368,7 @@ bool isWinForOppPlayer(const ChessGame* game)
 
     const IntVec2D flippedPosition = {kingPosition.x, 7-kingPosition.y};
     const ChessMove possibleAttack = getPossibleMoveTo(game,&flippedPosition);
-    if (canBlockAttackMove(game,&possibleAttack)) return false;
+    if (!isBlankSpace(&possibleAttack.pieceMove.mover) && canBlockAttackMove(game,&possibleAttack)) return false;
 
     return true;
 }
