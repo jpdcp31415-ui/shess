@@ -68,6 +68,17 @@ const PieceTraits* getTraits(const Piece* p)
     return &kTraitsArray[p->type-1];
 }
 
+IntVec2D getDirecVec(const IntVec2D* move, const Piece* piece)
+{
+    const PieceTraits* traits = getTraits(piece);
+
+    for (int i = 0; i < traits->numMoves; i++)
+        if (isVecDivByVec(move,&traits->moves[i]))
+            return traits->moves[i];
+
+    EXIT_MSG(!"Direction vector not found!");
+}
+
 bool isMultStep(const Piece* p)
 {
     return getTraits(p)->multSteps;

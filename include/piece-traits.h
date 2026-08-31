@@ -14,6 +14,8 @@ typedef struct
 
 const PieceTraits* getTraits(const Piece*);
 
+IntVec2D getDirecVec(const IntVec2D* move, const Piece* piece);
+
 bool isMultStep(const Piece* p);
 
 bool hasMove(const IntVec2D*, const Piece*);

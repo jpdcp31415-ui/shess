@@ -135,17 +135,6 @@ MoveErr knightCondFunc(const ChessGame* game, const ChessMove* chessMove)
     return NO_MOVE_ERR;
 }
 
-IntVec2D getDirecVec(const IntVec2D* move, const Piece* piece)
-{
-    const PieceTraits* traits = getTraits(piece);
-
-    for (int i = 0; i < traits->numMoves; i++)
-        if (isVecDivByVec(move,&traits->moves[i]))
-            return traits->moves[i];
-
-    EXIT_MSG(!"Direction vector not found!");
-}
-
 bool isPathClear(const ChessGame* game, const BoardMove* boardMove)
 {
     const Piece pieceAtPosition = getPieceAtVec(game->board,&boardMove->position);
