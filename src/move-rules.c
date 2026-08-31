@@ -100,31 +100,28 @@ bool isPawnAttackMove(const IntVec2D* move)
 
 // and promotion
 // AND en passent? (i may not know how to spell)
-MoveErr pawnCondFunc(const ChessGame* game, const BoardMove* boardMove)
+MoveErr pawnCondFunc(const ChessGame* game, const ChessMove* chessMove)
 {
-    const IntVec2D nextPosition = addVecs(&boardMove->position,&boardMove->move);
-    const Piece pieceAtNextPosition = getPieceAtVec(game->board,&nextPosition);
-
-    if (isPawnAttackMove(&boardMove->move))
-        if (isBlankSpace(&pieceAtNextPosition))
+    if (isPawnAttackMove(&chessMove->boardMove.move))
+        if (isBlankSpace(&chessMove->pieceMove.captured))
             return NO_PIECE_TO_ATTACK;
 
-    if (equalVecs(&boardMove->move,&(IntVec2D){0,-1}))
-        if (!isBlankSpace(&pieceAtNextPosition))
+    if (equalVecs(&chessMove->boardMove.move,&(IntVec2D){0,-1}))
+        if (!isBlankSpace(&chessMove->pieceMove.captured))
             return CANT_ATTACK_FRONT;
 
     // the middle position is between the "long" initial pawn move (at X)
                             /*   |   */
                             /*   X   */
                             /*   p   */
-    const IntVec2D middlePosition = addVecs(&boardMove->position,&(IntVec2D){0,-1});
+    const IntVec2D middlePosition = addVecs(&chessMove->boardMove.position,&(IntVec2D){0,-1});
     const Piece pieceAtMiddlePosition = getPieceAtVec(game->board,&middlePosition);
 
-    if (equalVecs(&boardMove->move,&(IntVec2D){0,-2}))
+    if (equalVecs(&chessMove->boardMove.move,&(IntVec2D){0,-2}))
     {
-        if (!initPositionAtVec(game,&boardMove->position)) return NOT_INIT_POSITION;
-        if (!isBlankSpace(&pieceAtNextPosition))           return CANT_ATTACK_FRONT;
-        if (!isBlankSpace(&pieceAtMiddlePosition))         return PATH_NOT_CLEAR;
+        if (!initPositionAtVec(game,&chessMove->boardMove.position)) return NOT_INIT_POSITION;
+        if (!isBlankSpace(&chessMove->pieceMove.captured))           return CANT_ATTACK_FRONT;
+        if (!isBlankSpace(&pieceAtMiddlePosition))                   return PATH_NOT_CLEAR;
     }
 
     return NO_MOVE_ERR;
@@ -132,9 +129,9 @@ MoveErr pawnCondFunc(const ChessGame* game, const BoardMove* boardMove)
 
 // this always returns NO_MOVE_ERR because of
 // not having any piece-specific/special moves
-MoveErr knightCondFunc(const ChessGame* game, const BoardMove* boardMove)
+MoveErr knightCondFunc(const ChessGame* game, const ChessMove* chessMove)
 {
-    (void)game,(void)boardMove;
+    (void)game,(void)chessMove;
     return NO_MOVE_ERR;
 }
 
@@ -149,7 +146,7 @@ IntVec2D getDirecVec(const IntVec2D* move, const Piece* piece)
     EXIT_MSG(!"Direction vector not found!");
 }
 
-MoveErr isPathClear(const ChessGame* game, const BoardMove* boardMove)
+bool isPathClear(const ChessGame* game, const BoardMove* boardMove)
 {
     const Piece pieceAtPosition = getPieceAtVec(game->board,&boardMove->position);
 
@@ -163,12 +160,17 @@ MoveErr isPathClear(const ChessGame* game, const BoardMove* boardMove)
         const IntVec2D positionAtLoopVec = addVecs(&boardMove->position,&loopVec);
         const Piece pieceAtLoopVec = getPieceAtVec(game->board,&positionAtLoopVec);
 
-        if (equalVecs(&positionAtLoopVec,&nextPosition)) return NO_MOVE_ERR;
+        if (equalVecs(&positionAtLoopVec,&nextPosition)) return true;
 
-        if (!isBlankSpace(&pieceAtLoopVec)) return PATH_NOT_CLEAR;
+        if (!isBlankSpace(&pieceAtLoopVec)) return false;
     }
 
-    return NO_MOVE_ERR;
+    return true;
+}
+
+MoveErr multStepCondFunc(const ChessGame* game, const ChessMove* chessMove)
+{
+    return isPathClear(game, &chessMove->boardMove) ? NO_MOVE_ERR : PATH_NOT_CLEAR;
 }
 
 bool isKingCastleMove(const IntVec2D* move)
@@ -279,7 +281,7 @@ bool isPieceStuckAtVec(const ChessGame* game, const IntVec2D* position)
 
     const PieceTraits* traits = getTraits(&pieceAtPosition);
 
-    if (!traits->multSteps)
+    if (!isMultStep(&pieceAtPosition))
         for (int i = 0; i < traits->numMoves; i++)
         {
             const BoardMove possibleBoardMove =
@@ -330,17 +332,17 @@ bool canBlockAttackMove(const ChessGame* game, const ChessMove* possibleAttack)
     const Piece possibleMover = possibleAttack->pieceMove.mover;
     ASSERT(!isBlankSpace(&possibleMover), "This move is not a valid move!");
 
-    const PieceTraits* traits = getTraits(&possibleMover);
-    ASSERT(traits->multSteps, "Piece mover is not a multi-step piece!");
+    ASSERT(isMultStep(&possibleMover), "Piece mover is not a multi-step piece!");
 
-    const Piece pieceAtPosition = getPieceAtVec(game->board,&possibleAttack->boardMove.position);
-
-    const IntVec2D direcVec = getDirecVec(&possibleAttack->boardMove.move,&pieceAtPosition);
+    const IntVec2D direcVec = getDirecVec(&possibleAttack->boardMove.move,
+                                          &possibleAttack->pieceMove.mover);
 
     for (int i = 1; i < 8; i++)
     {
         const IntVec2D loopVec = multNumByVec(i,&direcVec);
         const IntVec2D positionAtLoopVec = addVecs(&possibleAttack->boardMove.position,&loopVec);
+
+        if (!isVecInBoardBounds(&positionAtLoopVec)) continue;
 
         if (currPlayerPieceMayMoveTo(game,&positionAtLoopVec)) return true;
     }
@@ -367,22 +369,37 @@ bool isWinForOppPlayer(const ChessGame* game)
     gameFlipped.player = oppositeColour(game->player);
 
     const IntVec2D flippedPosition = {kingPosition.x, 7-kingPosition.y};
-    const ChessMove possibleAttack = getPossibleMoveTo(game,&flippedPosition);
-    if (!isBlankSpace(&possibleAttack.pieceMove.mover) && canBlockAttackMove(game,&possibleAttack)) return false;
+    const ChessMove possibleAttack = getPossibleMoveTo(&gameFlipped,&flippedPosition);
+
+    if (isBlankSpace(&possibleAttack.pieceMove.mover)) return false;
+
+    if (isMultStep(&possibleAttack.pieceMove.mover))
+        if (canBlockAttackMove(game,&possibleAttack)) return false;
+
+    const IntVec2D nextPosition = addVecs(&possibleAttack.boardMove.position,
+                                          &possibleAttack.boardMove.move);
+    if (currPlayerPieceMayMoveTo(game, &nextPosition)) return false;
 
     return true;
 }
 
-MoveErr kingCondFunc(const ChessGame* game, const BoardMove* boardMove)
+bool doesMoveCauseCheck(const ChessGame* game, const BoardMove* boardMove)
 {
-    const bool isInCheck = isCurrInCheck(movedKChessGamePtr(game,boardMove));
-    if (isInCheck) return MOVE_CAUSES_CHECK;
+    return isCurrInCheck(movedKChessGamePtr(game,boardMove));
+}
+
+MoveErr kingCondFunc(const ChessGame* game, const ChessMove* chessMove)
+{
+    const bool moveCausesCheck = doesMoveCauseCheck(game, &chessMove->boardMove);
+    if (moveCausesCheck) return MOVE_CAUSES_CHECK;
+
+    if (isKingCastleMove(&chessMove->boardMove.move)) return CASTLING_CHECK;
     return NO_MOVE_ERR;
 }
 
 // This is a function that returns a pointer
 // to a function to determine if it is valid
-MoveErr(*getCondFunc(const Piece* p))(const ChessGame*,const BoardMove*)
+MoveErr(*getCondFunc(const Piece* p))(const ChessGame*,const ChessMove*)
 {
     assertPiece(p);
     ASSERT(!isBlankSpace(p), "Blank space does not have moves!");
@@ -390,12 +407,12 @@ MoveErr(*getCondFunc(const Piece* p))(const ChessGame*,const BoardMove*)
     return (p->type == PAWN)   ? pawnCondFunc   :
            (p->type == KNIGHT) ? knightCondFunc :
            (p->type == KING)   ? kingCondFunc   :
-           isPathClear;
+           multStepCondFunc;
 }
 
-MoveErr getPieceSpecificMoveErr(const ChessGame* game, const BoardMove* boardMove)
+MoveErr getPieceSpecificMoveErr(const ChessGame* game, const ChessMove* chessMove)
 {
-    return getCondFunc(getKPiecePtrAtVec(game->board,&boardMove->position))(game,boardMove);
+    return getCondFunc(getKPiecePtrAtVec(game->board,&chessMove->boardMove.position))(game,chessMove);
 }
 
 MoveErr getMoveErr(const ChessGame* game, const ChessMove* chessMove)
@@ -415,7 +432,7 @@ MoveErr getMoveErr(const ChessGame* game, const ChessMove* chessMove)
     if (game->player == chessMove->pieceMove.captured.colour)
         return SAME_PLAYER_ATTACK;
 
-    return getCondFunc(getKPiecePtrAtVec(game->board,&chessMove->boardMove.position))(game,&chessMove->boardMove);
+    return getCondFunc(getKPiecePtrAtVec(game->board,&chessMove->boardMove.position))(game,chessMove);
 }
 
 bool isValidMove(const ChessGame* game, const ChessMove* chessMove)

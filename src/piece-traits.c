@@ -68,6 +68,11 @@ const PieceTraits* getTraits(const Piece* p)
     return &kTraitsArray[p->type-1];
 }
 
+bool isMultStep(const Piece* p)
+{
+    return getTraits(p)->multSteps;
+}
+
 bool hasMove(const IntVec2D* move, const Piece* piece)
 {
     assertPiece(piece);
