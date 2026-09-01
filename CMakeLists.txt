@@ -32,6 +32,8 @@ add_executable(
     include/settings.h
 )
 
+# install(TARGETS shess DESTINATION bin)
+
 add_executable(
     test
 
