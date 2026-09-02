@@ -1,3 +1,6 @@
+#ifndef BOARD_THEME_H
+#define BOARD_THEME_H
+
 #include "settings.h"
 #include "assert-toggle.h"
 #include "piece.h"
@@ -15,6 +18,7 @@ typedef struct
     const char*** pieceMap;
     const StrTileSize tileSize;
     const char* themeName;
+    bool hasFill;
 } BoardTheme;
 
 const BoardTheme* getKBoardThemePtr(const char* theme);
@@ -22,3 +26,5 @@ const BoardTheme* getKBoardThemePtr(const char* theme);
 StrTileRet getStrTile(const char* themeName, const Piece* p);
 
 const char* getStrTileRow(const char* themeName, const Piece* p, const int row);
+
+#endif

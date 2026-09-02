@@ -68,6 +68,7 @@ target_compile_options( main PRIVATE
     -Wall
     -Werror
     -Wextra
+    -g
     -O2
     -std=c99
 )

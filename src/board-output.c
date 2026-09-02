@@ -3,7 +3,6 @@
 
 #include "../include/board-output.h"
 #include "../include/io-plus.h"
-#include "../include/assert-toggle.h"
 #include "../include/board-theme.h"
 #include "../include/settings.h"
 
@@ -16,6 +15,9 @@ void printBoardRowWithTheme(const char* themeName, const Board board, const int 
 
     for (int row = 0; row < themePtr->tileSize.y; row++)
     {
+        if (getSettingData("show-board-coords").boolData && row != 0)
+            printf("  ");
+
         for (int x=0; x<8; x++)
         {
             const char* rowTileStr = getStrTileRow(getSettingData("board-theme").strData,

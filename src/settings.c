@@ -9,8 +9,22 @@ Setting gAllSettings[] = (Setting[])
     {
         .settingName = "board-theme",
         .typeOfData = STR_SETT_TYPE,
-        .currData = {.strData = "emoji"},
-        .defaultData = {.strData = "emoji"},
+        .currData = {.strData = "good"},
+        .defaultData = {.strData = "good"},
+    },
+
+    {
+        .settingName = "white-fill-char",
+        .typeOfData = CHAR_SETT_TYPE,
+        .currData = {.charData = '-'},
+        .defaultData = {.charData = '-'},
+    },
+
+    {
+        .settingName = "black-fill-char",
+        .typeOfData = CHAR_SETT_TYPE,
+        .currData = {.charData = '#'},
+        .defaultData = {.charData = '#'},
     },
 
     {
