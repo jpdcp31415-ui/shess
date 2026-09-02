@@ -24,30 +24,30 @@ const BoardTheme gAllBoardThemes[] =
     {
         .themeName = "emoji",
         .tileSize = {1,1},
-        .pieceMap = (const StrTile[]) {
-            " ",
-            "\u265F","\u265E","\u265D","\u265C","\u265B","\u265A",
-            "\u2659","\u2658","\u2657","\u2656","\u2655","\u2654"
+        .pieceMap = (StrTileArr) {
+            (StrTile){" "},
+            (StrTile){"\u265F"},(StrTile){"\u265E"},(StrTile){"\u265D"},(StrTile){"\u265C"},(StrTile){"\u265B"},(StrTile){"\u265A"},
+            (StrTile){"\u2659"},(StrTile){"\u2658"},(StrTile){"\u2657"},(StrTile){"\u2656"},(StrTile){"\u2655"},(StrTile){"\u2654"},
         },
     },
 
     {
         .themeName = "1char",
         .tileSize = {1,1},
-        .pieceMap = (const StrTile[]) {
-            " ",
-            "p","n","b","r","q","k",
-            "P","N","B","R","Q","K"
+        .pieceMap = (StrTileArr) {
+            (StrTile){" "},
+            (StrTile){"p"},(StrTile){"n"},(StrTile){"b"},(StrTile){"r"},(StrTile){"q"},(StrTile){"k"},
+            (StrTile){"P"},(StrTile){"N"},(StrTile){"B"},(StrTile){"R"},(StrTile){"Q"},(StrTile){"K"},
         },
     },
 
     {
         .themeName = "2chars",
         .tileSize = {2,1},
-        .pieceMap = (const StrTile[]) {
-            "  ",
-            "wp","wn","wb","wr","wq","wk",
-            "bp","bn","bb","br","bq","bk"
+        .pieceMap = (StrTileArr) {
+            (StrTile){"  "},
+            (StrTile){"wp"},(StrTile){"wn"},(StrTile){"wb"},(StrTile){"wr"},(StrTile){"wq"},(StrTile){"wk"},
+            (StrTile){"bp"},(StrTile){"bn"},(StrTile){"bb"},(StrTile){"br"},(StrTile){"bq"},(StrTile){"bk"},
         },
     },
 
@@ -76,7 +76,7 @@ int getPieceIndexInMap(const Piece* p)
     EXIT_MSG("How did you get here?");
 }
 
-StrTile getStrTile(const char* themeName, const Piece* p)
+StrTileRet getStrTile(const char* themeName, const Piece* p)
 {
     assertPiece(p);
 
@@ -91,10 +91,7 @@ const char* getStrTileRow(const char* themeName, const Piece* p, const int row)
 {
     ASSERT_LE(row, getKBoardThemePtr(themeName)->tileSize.y, "%d");
 
-    const char* strTileRow = getStrTile(themeName,p);
+    const char* strTileRow = getStrTile(themeName,p)[row];
 
-    for (int i=1; i < row; i++)
-        strTileRow = strchr(strTileRow, '\0');
-        
     return strTileRow;
 }
