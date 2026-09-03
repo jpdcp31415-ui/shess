@@ -1,5 +1,7 @@
 #include "../include/board-theme.h"
 #include "../include/settings.h"
+#include "../include/assert-toggle.h"
+#include "../include/settings.h"
 
 #include <string.h>
 

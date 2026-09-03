@@ -1,10 +1,7 @@
 #ifndef BOARD_THEME_H
 #define BOARD_THEME_H
 
-#include "settings.h"
-#include "assert-toggle.h"
 #include "piece.h"
-#include "int-vec-2d.h"
 #include "board.h"
 
 typedef const char* StrTile;

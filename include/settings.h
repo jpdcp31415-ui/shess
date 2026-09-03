@@ -8,7 +8,7 @@ typedef union
     bool boolData;
     int intData;
     char charData;
-    char* strData;
+    char strData[64];
 } USettingType;
 
 typedef enum
