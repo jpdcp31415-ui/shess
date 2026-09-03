@@ -4,6 +4,8 @@
 #include "piece.h"
 #include "board.h"
 
+#define NO_FILL_CHAR '\0'
+
 typedef const char* StrTile;
 typedef const char* StrTileArr[];
 
@@ -18,7 +20,7 @@ typedef struct
     const char** pieceMap;
     const StrTileSize tileSize;
     const char* themeName;
-    bool hasFill;
+    const char fillChar;
 } BoardTheme;
 
 const BoardTheme* getKBoardThemePtr(const char* theme);

@@ -33,7 +33,7 @@ const BoardTheme gAllBoardThemes[] =
             "\u265F","\u265E","\u265D","\u265C","\u265B","\u265A",
             "\u2659","\u2658","\u2657","\u2656","\u2655","\u2654",
         },
-        .hasFill = false
+        .fillChar = NO_FILL_CHAR
     },
 
     {
@@ -44,7 +44,7 @@ const BoardTheme gAllBoardThemes[] =
             "p","n","b","r","q","k",
             "P","N","B","R","Q","K",
         },
-        .hasFill = false
+        .fillChar = NO_FILL_CHAR
     },
 
     {
@@ -55,7 +55,7 @@ const BoardTheme gAllBoardThemes[] =
             "wp","wn","wb","wr","wq","wk",
             "bp","bn","bb","br","bq","bk",
         },
-        .hasFill = false
+        .fillChar = NO_FILL_CHAR
     },
 
     {
@@ -97,7 +97,7 @@ const BoardTheme gAllBoardThemes[] =
                "\\fff/\n"
                 " fff \n",
         },
-        .hasFill = true
+        .fillChar = 'f'
     },
 
     { // Works as a null terminator
@@ -133,15 +133,16 @@ StrTile getStrTile(const char* themeName, const Piece* p)
 
     ASSERT_NOT_EQ(theme, NULL, "%p");
 
-    return theme->hasFill && p->colour == BLACK ?
+    return theme->fillChar != NO_FILL_CHAR && p->colour == BLACK ?
            theme->pieceMap[getPieceIndexInMap(p) - 6] :
            theme->pieceMap[getPieceIndexInMap(p)];
 }
 
-void replaceFillChar(char* strTileRow, const Piece* p)
+void replaceFillChar(const char* themeName, char* strTileRow, const Piece* p)
 {
-    while (strchr(strTileRow,'f') != NULL)
-        *strchr(strTileRow, 'f') = p->colour == WHITE ?
+    const BoardTheme* theme = getKBoardThemePtr(themeName);
+    while (strchr(strTileRow, theme->fillChar) != NULL)
+        *strchr(strTileRow, theme->fillChar) = p->colour == WHITE ?
                                    getSettingData("white-fill-char").charData :
                                    getSettingData("black-fill-char").charData;
 }
@@ -161,7 +162,8 @@ const char* getStrTileRow(const char* themeName, const Piece* p, const int row)
         for (int i=0; i<row; i++)
             token = strtok(NULL, "\n");
 
-    replaceFillChar(token, p);
+    if (theme->fillChar != NO_FILL_CHAR)
+        replaceFillChar(themeName, token, p);
     
     return token;
 }
