@@ -25,92 +25,75 @@ const BoardTheme gAllBoardThemes[] =
 {
     {
         .themeName = "emoji",
-        .tileSize = {1,1},
+        .tileSize = {.width=1, .height=1},
         .pieceMap = (StrTileArr) {
-            (StrTile){" "},
-            (StrTile){"\u265F"},(StrTile){"\u265E"},(StrTile){"\u265D"},
-            (StrTile){"\u265C"},(StrTile){"\u265B"},(StrTile){"\u265A"},
-            (StrTile){"\u2659"},(StrTile){"\u2658"},(StrTile){"\u2657"},
-            (StrTile){"\u2656"},(StrTile){"\u2655"},(StrTile){"\u2654"},
+            " ",
+            "\u265F","\u265E","\u265D","\u265C","\u265B","\u265A",
+            "\u2659","\u2658","\u2657","\u2656","\u2655","\u2654",
         },
         .hasFill = false
     },
 
     {
         .themeName = "1char",
-        .tileSize = {1,1},
+        .tileSize = {.width=1, .height=1},
         .pieceMap = (StrTileArr) {
-            (StrTile){" "},
-            (StrTile){"p"},(StrTile){"n"},(StrTile){"b"},(StrTile){"r"},(StrTile){"q"},(StrTile){"k"},
-            (StrTile){"P"},(StrTile){"N"},(StrTile){"B"},(StrTile){"R"},(StrTile){"Q"},(StrTile){"K"},
+            " ",
+            "p","n","b","r","q","k",
+            "P","N","B","R","Q","K",
         },
         .hasFill = false
     },
 
     {
         .themeName = "2chars",
-        .tileSize = {2,1},
+        .tileSize = {.width=2, .height=1},
         .pieceMap = (StrTileArr) {
-            (StrTile){"  "},
-            (StrTile){"wp"},(StrTile){"wn"},(StrTile){"wb"},(StrTile){"wr"},(StrTile){"wq"},(StrTile){"wk"},
-            (StrTile){"bp"},(StrTile){"bn"},(StrTile){"bb"},(StrTile){"br"},(StrTile){"bq"},(StrTile){"bk"},
+            "  ",
+            "wp","wn","wb","wr","wq","wk",
+            "bp","bn","bb","br","bq","bk",
         },
         .hasFill = false
     },
 
     {
         .themeName = "good",
-        .tileSize = {5,4},
+        .tileSize = {.width=5, .height=4},
         .pieceMap = (StrTileArr) {
-            (StrTile){
-                "     ",
-                "     ",
-                "     ",
-                "     "
-            },
+                "     \n"
+                "     \n"
+                "     \n"
+                "     \n",
 
-            (StrTile){  // 'f' is a char for filling in
-                        // with the white/black char from settings
-                " (f) ",
-                "  $  ",
-                " (f) ",
-                "(fff)"
-            },
+                " (f) \n"
+                "  $  \n"
+                " (f) \n"
+                "(fff)\n",
 
-            (StrTile){
-                "  _^ ",
-                " /of|",
-                "%fff|",
-                " |ff|"
-            },
+                "  _^ \n"
+                " /of|\n"
+                "%fff|\n"
+                " |ff|\n",
 
-            (StrTile){
-                "  o  ",
-                " (/) ",
-                " (f) ",
-                "(fff)"
-            },
+                "  o  \n"
+                " (/) \n"
+                " (f) \n"
+                "(fff)\n",
             
-            (StrTile){
-                "U U U",
-               "\\fff/",
-                " |f| ",
-                "/fff\\"
-            },
+                "U U U\n"
+               "\\fff/\n"
+                " |f| \n"
+                "/fff\\\n",
 
-            (StrTile){
-                "o O o",
-               "\\_|_/",
-                " )f( ",
-                "(fff)"
-            },
+                "o O o\n"
+               "\\_|_/\n"
+                " )f( \n"
+                "(fff)\n",
 
-            (StrTile){
-                "  +  ",
-               "/\\|/\\",
-               "\\fff/",
-                " fff "
-            },
+                "  +  \n"
+               "/\\|/\\\n"
+               "\\fff/\n"
+                " fff \n",
         },
         .hasFill = true
     },
@@ -140,7 +123,7 @@ int getPieceIndexInMap(const Piece* p)
     EXIT_MSG("How did you get here?");
 }
 
-StrTileRet getStrTile(const char* themeName, const Piece* p)
+StrTile getStrTile(const char* themeName, const Piece* p)
 {
     assertPiece(p);
 
@@ -163,16 +146,20 @@ void replaceFillChar(char* strTileRow, const Piece* p)
 
 const char* getStrTileRow(const char* themeName, const Piece* p, const int row)
 {
-    ASSERT_LE(row, getKBoardThemePtr(themeName)->tileSize.y, "%d");
-
-    const char* strTileRow = getStrTile(themeName,p)[row];
-
-    static char strTileRowCopy[256] = "";
-
-    strcpy(strTileRowCopy, strTileRow);
-
-    if (strchr(strTileRow, 'f') != NULL)
-        replaceFillChar(strTileRowCopy, p);
+    const BoardTheme* theme = getKBoardThemePtr(themeName);
+    ASSERT(row >= 0 && row < theme->tileSize.height, "Cannot acess row out of bounds!");
     
-    return strTileRowCopy;
+    const StrTile tile = getStrTile(themeName, p);
+    static char tileCpy[64] = "";
+    strcpy(tileCpy,tile);
+    
+    char *token = tileCpy;
+
+    if ((token = strtok(tileCpy, "\n")) != NULL)
+        for (int i=0; i<row; i++)
+            token = strtok(NULL, "\n");
+
+    replaceFillChar(token, p);
+    
+    return token;
 }

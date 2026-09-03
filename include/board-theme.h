@@ -7,15 +7,18 @@
 #include "int-vec-2d.h"
 #include "board.h"
 
-typedef const char* StrTile[];
-typedef const char** StrTileRet;
-typedef const char** StrTileArr[];
-
-typedef IntVec2D StrTileSize;
+typedef const char* StrTile;
+typedef const char* StrTileArr[];
 
 typedef struct
 {
-    const char*** pieceMap;
+    const int width;
+    const int height;
+} StrTileSize;
+
+typedef struct
+{
+    const char** pieceMap;
     const StrTileSize tileSize;
     const char* themeName;
     bool hasFill;
@@ -23,7 +26,7 @@ typedef struct
 
 const BoardTheme* getKBoardThemePtr(const char* theme);
 
-StrTileRet getStrTile(const char* themeName, const Piece* p);
+StrTile getStrTile(const char* themeName, const Piece* p);
 
 const char* getStrTileRow(const char* themeName, const Piece* p, const int row);
 

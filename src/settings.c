@@ -9,8 +9,8 @@ Setting gAllSettings[] = (Setting[])
     {
         .settingName = "board-theme",
         .typeOfData = STR_SETT_TYPE,
-        .currData = {.strData = "good"},
-        .defaultData = {.strData = "good"},
+        .currData = {.strData = "emoji"},
+        .defaultData = {.strData = "emoji"},
     },
 
     {

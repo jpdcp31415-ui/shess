@@ -13,7 +13,7 @@ void printBoardRowWithTheme(const char* themeName, const Board board, const int 
     if (getSettingData("show-board-coords").boolData)
         printf("%d ", 7-y);
 
-    for (int row = 0; row < themePtr->tileSize.y; row++)
+    for (int row = 0; row < themePtr->tileSize.height; row++)
     {
         if (getSettingData("show-board-coords").boolData && row != 0)
             printf("  ");
@@ -36,6 +36,8 @@ void printBoardWithTheme(const char* themeName, const Board board)
     for (int y=0; y<8; y++)
         printBoardRowWithTheme(themeName,board,y);
 
+    const BoardTheme* themePtr = getKBoardThemePtr(themeName);
+
     if (getSettingData("show-board-coords").boolData)
     {
         printf("  ");
@@ -43,7 +45,8 @@ void printBoardWithTheme(const char* themeName, const Board board)
         {
             printf("%d", x);
             if (getSettingData("space-between-columns").boolData)
-                printf(" ");
+                for (int col = 0; col < themePtr->tileSize.width; col++)
+                    printf(" ");
         }
         printf("\n");
     }
