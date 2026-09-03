@@ -14,6 +14,13 @@ Setting gAllSettings[] = (Setting[])
     },
 
     {
+        .settingName = "blank-fill-char",
+        .typeOfData = CHAR_SETT_TYPE,
+        .currData = {.charData = ' '},
+        .defaultData = {.charData = ' '},
+    },
+
+    {
         .settingName = "white-fill-char",
         .typeOfData = CHAR_SETT_TYPE,
         .currData = {.charData = '-'},

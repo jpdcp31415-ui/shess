@@ -138,19 +138,40 @@ StrTile getStrTile(const char* themeName, const Piece* p)
            theme->pieceMap[getPieceIndexInMap(p)];
 }
 
-void replaceFillChar(const char* themeName, char* strTileRow, const Piece* p)
+void replaceFillChar(const char* themeName, char* strTileRow,
+                     const char whiteFillCh,
+                     const char blackFillCh,
+                     const Piece* p)
 {
     const BoardTheme* theme = getKBoardThemePtr(themeName);
     while (strchr(strTileRow, theme->fillChar) != NULL)
-        *strchr(strTileRow, theme->fillChar) = p->colour == WHITE ?
-                                   getSettingData("white-fill-char").charData :
-                                   getSettingData("black-fill-char").charData;
+        *strchr(strTileRow, theme->fillChar) =
+            p->colour == WHITE ? whiteFillCh : blackFillCh;
+}
+
+const char* getFilledStrOfCh(const char ch, const int len)
+{
+    static char str[64] = "";
+    ASSERT_FMT(len >= 0 && len < 64, "Cannot create string of %d chars", len);
+    strcpy(str,""); // clear string because of being static
+
+    for (int i=0; i<len; i++)
+        str[i] = ch;
+
+    return str;
 }
 
 const char* getStrTileRow(const char* themeName, const Piece* p, const int row)
 {
     const BoardTheme* theme = getKBoardThemePtr(themeName);
-    ASSERT(row >= 0 && row < theme->tileSize.height, "Cannot acess row out of bounds!");
+
+    ASSERT_FMT(row >= 0 && row < theme->tileSize.height, "Cannot acess row %d", row);
+
+    if (isBlankSpace(p))
+        return getFilledStrOfCh(
+                getSettingData("blank-fill-char").charData,
+                theme->tileSize.width
+               );
     
     const StrTile tile = getStrTile(themeName, p);
     static char tileCpy[64] = "";
@@ -163,7 +184,10 @@ const char* getStrTileRow(const char* themeName, const Piece* p, const int row)
             token = strtok(NULL, "\n");
 
     if (theme->fillChar != NO_FILL_CHAR)
-        replaceFillChar(themeName, token, p);
+        replaceFillChar(themeName, token, 
+                getSettingData("white-fill-char").charData,
+                getSettingData("black-fill-char").charData,
+                p);
     
     return token;
 }
