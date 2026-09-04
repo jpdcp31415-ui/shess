@@ -6,8 +6,6 @@
 #include <string.h>
 
 const Piece pieceMapOrder[] = {
-    {NULL_COLOUR,NULL_TYPE},
-
     {WHITE,PAWN},
     {WHITE,KNIGHT},
     {WHITE,BISHOP},
@@ -29,7 +27,6 @@ const BoardTheme gAllBoardThemes[] =
         .themeName = "emoji",
         .tileSize = {.width=1, .height=1},
         .pieceMap = (StrTileArr) {
-            " ",
             "\u265F","\u265E","\u265D","\u265C","\u265B","\u265A",
             "\u2659","\u2658","\u2657","\u2656","\u2655","\u2654",
         },
@@ -40,7 +37,6 @@ const BoardTheme gAllBoardThemes[] =
         .themeName = "1char",
         .tileSize = {.width=1, .height=1},
         .pieceMap = (StrTileArr) {
-            " ",
             "p","n","b","r","q","k",
             "P","N","B","R","Q","K",
         },
@@ -51,7 +47,6 @@ const BoardTheme gAllBoardThemes[] =
         .themeName = "2chars",
         .tileSize = {.width=2, .height=1},
         .pieceMap = (StrTileArr) {
-            "  ",
             "wp","wn","wb","wr","wq","wk",
             "bp","bn","bb","br","bq","bk",
         },
@@ -62,11 +57,6 @@ const BoardTheme gAllBoardThemes[] =
         .themeName = "good",
         .tileSize = {.width=5, .height=4},
         .pieceMap = (StrTileArr) {
-                "     \n"
-                "     \n"
-                "     \n"
-                "     \n",
-
                 " (f) \n"
                 "  $  \n"
                 " (f) \n"

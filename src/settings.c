@@ -61,14 +61,29 @@ const char* getSettingTypeFmt(const TypeOfSetting t)
     return fmtArr[t];
 }
 
-USettingType getSettingData(const char* setting)
+Setting* getSettingStruct(const char* setting)
 {
     for (int i = 0; gAllSettings[i].settingName != NULL; i++)
         if (strcmp(gAllSettings[i].settingName,setting) == 0)
-            return gAllSettings[i].currData;
+            return &gAllSettings[i];
 
-    return (USettingType){};
+    return NULL;
 }
 
-USettingType setSettingData(const char* setting);
+USettingType getSettingData(const char* setting)
+{
+    return getSettingStruct(setting)->currData;
+}
 
+/* USettingType setSettingData(const char* setting) */
+/* { */
+/*     switch (getSettingData(setting)) */
+/*     { */
+/*     case NULL_SETT_TYPE: */
+/*     case BOOL_SETT_TYPE: */
+/*     case INT_SETT_TYPE: */
+/*     case STR_SETT_TYPE: */
+/*     case CHAR_SETT_TYPE: */
+/*     } */
+/* } */
+/*  */
