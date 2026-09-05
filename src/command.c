@@ -67,15 +67,10 @@ void moveCommand(const char* input, const char* usage, const int numArgs)
 
     const BoardMove currBoardMove = firstBoardMove;
 
-    const IntVec2D nextPosition = addVecs(&currBoardMove.position,&currBoardMove.move);
-
-    const PieceMove currPieceMove = 
-    {
-        .mover = getCurrPieceAtVec(&currBoardMove.position),
-        .captured = getCurrPieceAtVec(&nextPosition),
+    const ChessMove currChessMove = {
+        currBoardMove,
+        getAsPieceMove(gCurrChessGame.board,&currBoardMove)
     };
-
-    const ChessMove currChessMove = {currBoardMove,currPieceMove};
 
     if (!isValidMove(&gCurrChessGame,&currChessMove))
     {
