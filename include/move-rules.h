@@ -5,18 +5,6 @@
 #include "../include/chess-game.h"
 
 // new chess move
-/* typedef struct */
-/* { */
-/*     const IntVec2D position; */
-/*     const Piece piece; */
-/* } PosAndPiece; */
-/*  */
-/* typedef struct */
-/* { */
-/*     PosAndPiece fromSpace; */
-/*     PosAndPiece toSpace; */
-/*     const IntVec2D moveVec; */
-/* } ChessMove2; */
 
 typedef struct 
 {
