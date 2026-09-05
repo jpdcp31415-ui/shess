@@ -4,6 +4,7 @@
 #include "../include/io-plus.h"
 #include "../include/move-rules.h"
 #include "../include/chess-game.h"
+#include "../include/game-state.h"
 
 void promptForPawnPromotion(ChessGame* game)
 {

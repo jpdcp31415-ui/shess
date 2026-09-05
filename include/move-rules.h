@@ -4,6 +4,20 @@
 #include "../include/int-vec-2d.h"
 #include "../include/chess-game.h"
 
+// new chess move
+/* typedef struct */
+/* { */
+/*     const IntVec2D position; */
+/*     const Piece piece; */
+/* } PosAndPiece; */
+/*  */
+/* typedef struct */
+/* { */
+/*     PosAndPiece fromSpace; */
+/*     PosAndPiece toSpace; */
+/*     const IntVec2D moveVec; */
+/* } ChessMove2; */
+
 typedef struct 
 {
     IntVec2D position;
@@ -54,6 +68,8 @@ typedef enum
     SAME_PLAYER_ATTACK,
 } MoveErr;
 
+const ChessGame* movedKChessGamePtr(const ChessGame* game, const BoardMove* boardMove);
+
 PieceMove getAsPieceMove(const Board board, const BoardMove* boardMove);
 
 IntVec2D getPawnPromotionPosition(const ChessGame* game);
@@ -63,17 +79,6 @@ bool isPawnPromotion(const ChessGame* game);
 const char* getMoveErrReason(const MoveErr mvErr);
 
 MoveErr getOOBMoveErr(const BoardMove* boardMove);
-
-typedef enum
-{
-    DEF_GAME_STATE,
-    CHECK_STATE,
-    LOSS_STATE,
-    DRAW_STATE,
-    WIN_STATE,
-} GameState;
-
-GameState getChessGameState(const ChessGame* game);
 
 bool isWinForOppPlayer(const ChessGame* game);
 

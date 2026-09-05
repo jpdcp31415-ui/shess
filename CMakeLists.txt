@@ -17,19 +17,7 @@ add_executable(
     src/piece.c
     src/board-theme.c
     src/settings.c
-
-    include/assert-toggle.h
-    include/board-output.h
-    include/board.h
-    include/chess-game.h
-    include/command.h
-    include/int-vec-2d.h
-    include/io-plus.h
-    include/move-rules.h
-    include/piece-traits.h
-    include/piece.h
-    include/board-theme.h
-    include/settings.h
+    src/game-state.c
 )
 
 add_executable(
@@ -47,22 +35,19 @@ add_executable(
     src/piece.c
     src/board-theme.c
     src/settings.c
-
-    include/assert-toggle.h
-    include/board-output.h
-    include/board.h
-    include/chess-game.h
-    include/command.h
-    include/int-vec-2d.h
-    include/io-plus.h
-    include/move-rules.h
-    include/piece-traits.h
-    include/piece.h
-    include/board-theme.h
-    include/settings.h
+    src/game-state.c
 )
 
 target_compile_options( main PRIVATE
+    -Wall
+    -Werror
+    -Wextra
+    -g
+    -O2
+    -std=c99
+)
+
+target_compile_options( test PRIVATE
     -Wall
     -Werror
     -Wextra
