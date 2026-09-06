@@ -150,6 +150,19 @@ bool isPieceStuckAtVec(const ChessGame* game, const IntVec2D* position)
     return true;
 }
 
+int getUnstuckPieceCount(const ChessGame* game, const Piece* p)
+{
+    int count = 0;
+
+    for (int y = 0; y < 8; y++)
+        for (int x = 0; x < 8; x++)
+            if (equalPiece(getKPiecePtrAt(game->board, x, y), p) &&
+                isPieceStuckAtVec(game, &(IntVec2D){x,y}))
+                count++;
+
+    return count;
+}
+
 bool canBlockAttackMove(const ChessGame* game, const ChessMove* possibleAttack)
 {
     const Piece possibleMover = possibleAttack->pieceMove.mover;
