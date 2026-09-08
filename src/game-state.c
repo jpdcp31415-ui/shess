@@ -1,6 +1,62 @@
 #include "../include/move-rules.h"
 #include "../include/assert-toggle.h"
 #include "../include/piece-traits.h"
+#include <string.h>
+
+typedef struct
+{
+    ChessMove* data;
+    int length;
+    int capacity;
+    // Colour player;
+} ChessMoveArr;
+
+ChessMoveArr* initMoveArr(void)
+{
+    static ChessMoveArr moves = {};
+    
+    moves.data = calloc(1, sizeof(ChessMove));
+    ASSERT(moves.data != NULL, "Could not allocate in initMoveArr");
+    moves.length = 0;
+    moves.capacity = 1;
+    
+    return &moves;
+}
+
+ChessMoveArr* initLegalMovesTo(const ChessGame* game, const IntVec2D* position);
+ChessMoveArr* initLegalMovesFrom(const ChessGame* game, const IntVec2D* position);
+
+void freeMoveArr(ChessMoveArr* moves)
+{
+    free(moves->data);
+    moves->length = 0;
+    moves->capacity = 0;
+}
+
+void pushMove(ChessMoveArr* moves, const ChessMove* move)
+{
+    if (moves->capacity == 0 && moves->length == 0) {
+        moves->capacity++;
+        goto end;
+    }
+
+    if (moves->length + 1 > moves->capacity)
+    {
+        moves->data = realloc(moves->data, moves->capacity * 2);
+        ASSERT(moves->data != NULL, "Could not re-allocate in pushMove");
+        moves->capacity *= 2;
+    }
+    
+end:
+    moves->length++;
+    memcpy(&moves->data[moves->length], move, sizeof(ChessMove));
+}
+
+const ChessMove* getMovePtr(const ChessMoveArr* moves, const int i)
+{
+    ASSERT_FMT(i >= 0 && i < moves->length, "Acessing index of ChessMoveArr at %d, length is: %d", i, moves->length);
+    return &moves->data[i];
+}
 
 IntVec2D whereKingIs(const Board board, const Colour kingColour)
 {
@@ -224,3 +280,102 @@ bool doesMoveCauseCheck(const ChessGame* game, const BoardMove* boardMove)
     return isCurrInCheck(movedKChessGamePtr(game,boardMove));
 }
 
+bool areAllPiecesAreStuck(const ChessGame* game)
+{
+    for (int y=0; y<8; y++)
+        for (int x=0; x<8; x++)
+            if (!isBlankSpace(getKPiecePtrAt(game->board, x, y))     &&
+                getPieceAt(game->board, x, y).colour == game->player &&
+                !isPieceStuckAtVec(game, &(IntVec2D){x,y}))
+                return false;
+
+    return true;
+}
+
+int getPieceCount(const Board board, const Piece* p)
+{
+    ASSERT(isBlankSpace(p), "Cannot count blank pieces!");
+
+    int count = 0;
+
+    for (int y = 0; y < 8; y++)
+        for (int x = 0; x < 8; x++)
+            if (equalPiece(getKPiecePtrAt(board, x, y), p))
+                count++;
+
+    return count;
+}
+
+typedef struct
+{
+    const int pawnCount;
+    const int knightCount;
+    const int bishopCount;
+    const int rookCount;
+    const int queenCount;
+    const int kingCount;
+} PieceCount;
+
+bool equalPieceCount(const PieceCount* pieceCount1, const PieceCount* pieceCount2)
+{
+    return memcmp(pieceCount1, pieceCount2, sizeof(PieceCount)) == 0;
+}
+
+PieceCount getAllOfColourPieceCount(const Board board, const Colour c)
+{
+    const PieceCount pieceCount = {
+        .pawnCount   = getPieceCount(board, &(Piece){c, PAWN}),
+        .knightCount = getPieceCount(board, &(Piece){c, KNIGHT}),
+        .bishopCount = getPieceCount(board, &(Piece){c, BISHOP}),
+        .rookCount   = getPieceCount(board, &(Piece){c, ROOK}),
+        .queenCount  = getPieceCount(board, &(Piece){c, QUEEN}),
+        .kingCount   = getPieceCount(board, &(Piece){c, KING}),
+    };
+
+    return pieceCount;
+}
+
+bool isInsufMaterial(const ChessGame* game)
+{
+    const PieceCount currPieceCount = getAllOfColourPieceCount(game->board, game->player);
+    const PieceCount oppPieceCount  = getAllOfColourPieceCount(game->board, oppositeColour(game->player));
+    
+    const PieceCount OnlyKing = {
+        .kingCount = 1,
+    };
+
+    const PieceCount KingAndKnight = {
+        .kingCount = 1,
+        .knightCount = 1,
+    };
+
+    const PieceCount KingAndBishop = {
+        .kingCount = 1,
+        .bishopCount = 1,
+    };
+
+    if (equalPieceCount(&currPieceCount, &OnlyKing) && equalPieceCount(&oppPieceCount, &OnlyKing))
+        return true;
+
+    if ((equalPieceCount(&currPieceCount, &OnlyKing) && equalPieceCount(&oppPieceCount, &KingAndKnight)) ||
+        (equalPieceCount(&oppPieceCount, &OnlyKing) && equalPieceCount(&currPieceCount, &KingAndKnight)))
+        return true;
+
+    if ((equalPieceCount(&currPieceCount, &OnlyKing) && equalPieceCount(&oppPieceCount, &KingAndBishop)) ||
+        (equalPieceCount(&oppPieceCount, &OnlyKing) && equalPieceCount(&currPieceCount, &KingAndBishop)))
+        return true;
+
+    if (equalPieceCount(&currPieceCount, &KingAndBishop) && equalPieceCount(&oppPieceCount, &KingAndBishop))
+        return true;
+
+    return false;
+}
+
+bool isGameDraw(const ChessGame* game)
+{
+    if (areAllPiecesAreStuck(game)) return true;
+
+    if (isInsufMaterial(game)) return true;
+
+    return false;
+}
