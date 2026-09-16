@@ -22,4 +22,6 @@ const Piece* getKPiecePtrAt(const Board board, const int x, const int y);
 
 const Piece* getKPiecePtrAtVec(const Board board, const IntVec2D* vec);
 
+IntVec2D whereKingIs(const Board board, const Colour kingColour);
+
 #endif

@@ -53,3 +53,14 @@ const Piece* getKPiecePtrAtVec(const Board board, const IntVec2D* vec)
             "Getting piece that is out of bounds!\n Values: %d, %d", vec->x, vec->y);
     return getKPiecePtrAt(board,vec->x,vec->y);
 }
+
+IntVec2D whereKingIs(const Board board, const Colour kingColour)
+{
+    for (int y = 0; y < 8; y++)
+        for (int x = 0; x < 8; x++)
+            if (equalPiece(getKPiecePtrAt(board,x,y),&(Piece){kingColour,KING}))
+                return (IntVec2D){x,y};
+
+    EXIT_MSG(!"King was not found!");
+}
+

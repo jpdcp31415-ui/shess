@@ -13,6 +13,14 @@ typedef enum
     WIN_STATE,
 } GameState;
 
+typedef struct
+{
+    ChessMove* data;
+    int length;
+    int capacity;
+    Colour player;
+} ChessMoveArr;
+
 GameState getChessGameState(const ChessGame* game);
 
 IntVec2D whereKingIs(const Board board, const Colour kingColour);

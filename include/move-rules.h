@@ -39,12 +39,8 @@ typedef enum
     NO_PIECE_TO_ATTACK, // When pawn is moving diagonally
     NOT_INIT_POSITION, // Moving pawn 2 spaces forward 
     CANT_ATTACK_FRONT,
+    CANT_ATTACK_KING,
     PATH_NOT_CLEAR,
-
-    // MOVE CONDITIONS FOR CHECK AND CHECKMATE
-    // CANT_MOVE_KING, 
-    // CANT_BLOCK_CHECK, 
-    // CANT_CAPTURE_OPP_PIECE,?
 
     /* SPECIAL MOVES */
     CASTLING_CHECK,
@@ -73,6 +69,8 @@ bool isWinForOppPlayer(const ChessGame* game);
 void movePieceUncond(ChessGame* game, const BoardMove* boardMove);
 
 MoveErr getMoveErr(const ChessGame* game, const ChessMove* chessMove);
+
+bool isValidMoveOpts(const ChessGame *game, const ChessMove *chessMove, const bool ignoreCheck);
 
 bool isValidMove(const ChessGame* game, const ChessMove* chessMove);
 

@@ -19,6 +19,7 @@ const char* getMoveErrReason(const MoveErr mvErr)
     case NO_PIECE_TO_ATTACK:   return "There are no pieces to attack (diagonally) with pawn!\n";
     case NOT_INIT_POSITION:    return "Pawn cannot move 2 spaces unless has not moved before!\n";
     case CANT_ATTACK_FRONT:    return "There is a piece in front of this pawn that you cannot attack!\n";
+    case CANT_ATTACK_KING:     return "You cannot attack the king of the opposite player!\n";
     case PATH_NOT_CLEAR:       return "There are pieces in the way of your move!\n";
 
     case CASTLING_CHECK:       return "Can't castle because of check in the middle or where king is!\n";
@@ -193,10 +194,12 @@ MoveErr(*getCondFunc(const Piece* p))(const ChessGame*,const ChessMove*)
 
 MoveErr getPieceSpecificMoveErr(const ChessGame* game, const ChessMove* chessMove)
 {
-    return getCondFunc(getKPiecePtrAtVec(game->board,&chessMove->boardMove.position))(game,chessMove);
+    return getCondFunc(
+               getKPiecePtrAtVec(game->board,&chessMove->boardMove.position)
+           )(game,chessMove);
 }
 
-MoveErr getMoveErr(const ChessGame* game, const ChessMove* chessMove)
+MoveErr getMoveErrOpts(const ChessGame* game, const ChessMove* chessMove, const bool ignoreCheck)
 {
     ASSERT(game->player != NULL_PLAYER, "Cannot move when no player is playing!");
 
@@ -205,18 +208,38 @@ MoveErr getMoveErr(const ChessGame* game, const ChessMove* chessMove)
 
     if (isBlankSpace(&chessMove->pieceMove.mover))
         return MOVER_IS_BLANK;
+
     if (game->player == oppositeColour(chessMove->pieceMove.mover.colour))
         return OPPOSITE_PLAYER_MOVE;
+
     if (!hasMove(&chessMove->boardMove.move, &chessMove->pieceMove.mover))
         return DOESNT_HAVE_MOVE;
 
     if (game->player == chessMove->pieceMove.captured.colour)
         return SAME_PLAYER_ATTACK;
 
-    return getCondFunc(getKPiecePtrAtVec(game->board,&chessMove->boardMove.position))(game,chessMove);
+    if (!ignoreCheck)
+        if (doesMoveCauseCheck(game, &chessMove->boardMove) &&
+            isCurrInCheck(game))
+            return IS_STILL_CHECK;
+
+    if (ignoreCheck && chessMove->pieceMove.mover.type == KING)
+        return NO_MOVE_ERR;
+
+    return getPieceSpecificMoveErr(game, chessMove);
+}
+
+bool isValidMoveOpts(const ChessGame *game, const ChessMove *chessMove, const bool ignoreCheck)
+{
+    return getMoveErrOpts(game, chessMove, ignoreCheck) == NO_MOVE_ERR;
+}
+
+MoveErr getMoveErr(const ChessGame* game, const ChessMove* chessMove)
+{
+    return getMoveErrOpts(game, chessMove, false);
 }
 
 bool isValidMove(const ChessGame* game, const ChessMove* chessMove)
 {
-    return getMoveErr(game,chessMove) == NO_MOVE_ERR;
+    return isValidMoveOpts(game, chessMove, false);
 }

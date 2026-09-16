@@ -1,213 +1,33 @@
 #include "../include/move-rules.h"
 #include "../include/assert-toggle.h"
 #include "../include/piece-traits.h"
+#include "../include/chess-move-arr.h"
+
 #include <string.h>
-
-typedef struct
-{
-    ChessMove* data;
-    int length;
-    int capacity;
-    // Colour player;
-} ChessMoveArr;
-
-ChessMoveArr* initMoveArr(void)
-{
-    static ChessMoveArr moves = {};
-    
-    moves.data = calloc(1, sizeof(ChessMove));
-    ASSERT(moves.data != NULL, "Could not allocate in initMoveArr");
-    moves.length = 0;
-    moves.capacity = 1;
-    
-    return &moves;
-}
-
-ChessMoveArr* initLegalMovesTo(const ChessGame* game, const IntVec2D* position);
-ChessMoveArr* initLegalMovesFrom(const ChessGame* game, const IntVec2D* position);
-
-void freeMoveArr(ChessMoveArr* moves)
-{
-    free(moves->data);
-    moves->length = 0;
-    moves->capacity = 0;
-}
-
-void pushMove(ChessMoveArr* moves, const ChessMove* move)
-{
-    if (moves->capacity == 0 && moves->length == 0) {
-        moves->capacity++;
-        goto end;
-    }
-
-    if (moves->length + 1 > moves->capacity)
-    {
-        moves->data = realloc(moves->data, moves->capacity * 2);
-        ASSERT(moves->data != NULL, "Could not re-allocate in pushMove");
-        moves->capacity *= 2;
-    }
-    
-end:
-    moves->length++;
-    memcpy(&moves->data[moves->length], move, sizeof(ChessMove));
-}
-
-const ChessMove* getMovePtr(const ChessMoveArr* moves, const int i)
-{
-    ASSERT_FMT(i >= 0 && i < moves->length, "Acessing index of ChessMoveArr at %d, length is: %d", i, moves->length);
-    return &moves->data[i];
-}
-
-IntVec2D whereKingIs(const Board board, const Colour kingColour)
-{
-    for (int y = 0; y < 8; y++)
-        for (int x = 0; x < 8; x++)
-            if (equalPiece(getKPiecePtrAt(board,x,y),&(Piece){kingColour,KING}))
-                return (IntVec2D){x,y};
-
-    EXIT_MSG(!"King was not found!");
-}
-
-ChessMove getPossibleMoveTo(const ChessGame* game, const IntVec2D* position)
-{
-    ASSERT(game->player != NULL_PLAYER, "Cannot check for piece moves without current player!");
-
-    const Piece pieceAtPosition = getPieceAtVec(game->board,position);
-
-    ASSERT(isBlankSpace(&pieceAtPosition) || game->player != pieceAtPosition.colour, "Cannot attack piece of same colour!");
-
-    for (int y = 0; y < 8; y++)
-        for (int x = 0; x < 8; x++)
-        {
-            const Piece possibleMover = getPieceAt(game->board,x,y);
-
-            if (isBlankSpace(&possibleMover) || game->player != possibleMover.colour) continue;
-
-            const BoardMove possibleBoardMove =
-            {
-                .position = (IntVec2D){x,y},
-                .move = subVecs(position,&(IntVec2D){x,y})
-            };
-
-            const ChessMove possibleChessMove =
-            {
-                .boardMove = possibleBoardMove,
-                .pieceMove = getAsPieceMove(game->board,&possibleBoardMove)
-            };
-
-            if (isValidMove(game,&possibleChessMove)) return possibleChessMove;
-        }
-
-    // sentinel value for cases when there is
-    // no possibility that a piece moves to the position (flipped)
-    return (ChessMove)
-    {
-        .boardMove = 
-        {
-            .position = {-1,-1},
-            .move = {0,0},
-        },
-        .pieceMove = {
-            .mover = {NULL_COLOUR,NULL_TYPE},
-            .captured = pieceAtPosition
-        }
-    };
-}
-
-bool currPlayerPieceMayMoveTo(const ChessGame* game, const IntVec2D* position)
-{
-    const Piece moverPiece = getPossibleMoveTo(game,position).pieceMove.mover;
-    return !isBlankSpace(&moverPiece);
-}
-
-// the possibility of a piece moving to a specific position
-bool oppPieceMayMoveTo(const ChessGame* game, const IntVec2D* position)
-{
-    // flip board for the opposite player's perspective
-    const ChessGame* _gameFlippedPtr = flippedKChessGamePtr(game);
-
-    ChessGame gameFlipped = {.player = NULL_PLAYER};
-    setChessGame(_gameFlippedPtr,&gameFlipped);
-    gameFlipped.player = oppositeColour(game->player);
-
-    const IntVec2D flippedPosition = {position->x, 7-position->y};
-
-    const Piece moverPiece = getPossibleMoveTo(&gameFlipped,&flippedPosition).pieceMove.mover;
-    return !isBlankSpace(&moverPiece);
-}
 
 bool isCurrInCheck(const ChessGame* game)
 {
-    const IntVec2D kingPosition = whereKingIs(game->board,game->player);
-    return oppPieceMayMoveTo(game,&kingPosition);
+    ASSERT(game->player != NULL_PLAYER, "Cannot check for piece moves without current player!");
+
+    const IntVec2D kingPosition = whereKingIs(game->board, game->player);
+    return oppPieceMayMoveTo(game, &kingPosition, true);
 }
 
 bool isPieceStuckAtVec(const ChessGame* game, const IntVec2D* position)
 {
-    const ChessGame* flippedGamePtr = flippedKChessGamePtr(game);
+    ASSERT(game->player != NULL_PLAYER, "Cannot check for piece moves without current player!");
 
-    const Piece _pieceAtPosition = getPieceAtVec(game->board,position);
+    ChessMoveArr moves = initLegalMovesFrom(game, position, false);
+    const int length = moves.length;
+    freeMoveArr(&moves);
 
-    const ChessGame* usedGame = game->player == _pieceAtPosition.colour ? game : flippedGamePtr;
-
-    const IntVec2D usedPosition = game->player == _pieceAtPosition.colour ?
-                                                  *position :
-                                                  (IntVec2D) {position->x, 7-position->y};
-
-    const Piece pieceAtPosition = getPieceAtVec(usedGame->board,&usedPosition);
-
-    ASSERT(!isBlankSpace(&pieceAtPosition), "Blank space cannot get stuck!");
-
-    const PieceTraits* traits = getTraits(&pieceAtPosition);
-
-    if (!isMultStep(&pieceAtPosition))
-        for (int i = 0; i < traits->numMoves; i++)
-        {
-            const BoardMove possibleBoardMove =
-            {
-                .position = usedPosition,
-                .move = traits->moves[i]
-            };
-
-            const IntVec2D nextPosition = addVecs(&usedPosition,&traits->moves[i]);
-            if (!isVecInBoardBounds(&nextPosition)) continue;
-            
-            const ChessMove possibleChessMove =
-            {
-                .boardMove = possibleBoardMove,
-                .pieceMove = getAsPieceMove(usedGame->board,&possibleBoardMove)
-            };
-
-            if (isValidMove(usedGame,&possibleChessMove))
-                return false;
-        }
-    else
-        for (int i = 0; i < traits->numMoves; i++)
-            for (int j = 0; j < 8; j++)
-            {
-                const IntVec2D multMove = multNumByVec(j,&traits->moves[i]);
-
-                const BoardMove possibleBoardMove =
-                {
-                    .position = usedPosition,
-                    .move = multMove
-                };
-
-                const ChessMove possibleChessMove =
-                {
-                    .boardMove = possibleBoardMove,
-                    .pieceMove = getAsPieceMove(usedGame->board,&possibleBoardMove)
-                };
-
-                if (isValidMove(usedGame,&possibleChessMove))
-                    return false;
-            }
-
-    return true;
+    return length == 0;
 }
 
 int getUnstuckPieceCount(const ChessGame* game, const Piece* p)
 {
+    ASSERT(game->player != NULL_PLAYER, "Cannot check for piece moves without current player!");
+
     int count = 0;
 
     for (int y = 0; y < 8; y++)
@@ -219,34 +39,49 @@ int getUnstuckPieceCount(const ChessGame* game, const Piece* p)
     return count;
 }
 
-bool canBlockAttackMove(const ChessGame* game, const ChessMove* possibleAttack)
+bool canBlockAttackMove(const ChessGame* game, const ChessMove* attack)
 {
-    const Piece possibleMover = possibleAttack->pieceMove.mover;
-    ASSERT(!isBlankSpace(&possibleMover), "This move is not a valid move!");
+    ASSERT(game->player != NULL_PLAYER, "Cannot check for piece moves without current player!");
 
+    const Piece possibleMover = attack->pieceMove.mover;
+    ASSERT(!isBlankSpace(&possibleMover), "This move is not a valid move!");
     ASSERT(isMultStep(&possibleMover), "Piece mover is not a multi-step piece!");
 
-    const IntVec2D direcVec = getDirecVec(&possibleAttack->boardMove.move,
-                                          &possibleAttack->pieceMove.mover);
+    const IntVec2D direcVec = getDirecVec(&attack->boardMove.move,
+                                          &attack->pieceMove.mover);
 
     for (int i = 1; i < 8; i++)
     {
         const IntVec2D loopVec = multNumByVec(i,&direcVec);
-        const IntVec2D positionAtLoopVec = addVecs(&possibleAttack->boardMove.position,&loopVec);
+        const IntVec2D positionAtLoopVec = addVecs(&attack->boardMove.position,&loopVec);
 
         if (!isVecInBoardBounds(&positionAtLoopVec)) continue;
 
-        if (currPlayerPieceMayMoveTo(game,&positionAtLoopVec)) return true;
+        if (currPieceMayMoveTo(game, &positionAtLoopVec, true)) return true;
     }
 
     return false;
 }
 
-// or isLossCurrPlayer
+bool canBlockCheck(const ChessGame* game)
+{
+    const ChessMove move = initAttackToKing(game);
+
+    ASSERT(!isBlankSpace(&move.pieceMove.mover), "There is no king attack move: so can't know whether is blockable");
+
+    if (!isMultStep(&move.pieceMove.mover))
+        return false;
+
+    return canBlockAttackMove(game, &move);
+}
+
+// or isLossForCurrPlayer
 // or isCheckmateForCurrPlayer
 // or isCheckmate
 bool isWinForOppPlayer(const ChessGame* game)
 {
+    ASSERT(game->player != NULL_PLAYER, "Cannot check for piece moves without current player!");
+
     const IntVec2D kingPosition = whereKingIs(game->board,game->player);
 
     if (!isCurrInCheck(game)) return false;
@@ -260,17 +95,13 @@ bool isWinForOppPlayer(const ChessGame* game)
     setChessGame(_gameFlippedPtr,&gameFlipped);
     gameFlipped.player = oppositeColour(game->player);
 
-    const IntVec2D flippedPosition = {kingPosition.x, 7-kingPosition.y};
-    const ChessMove possibleAttack = getPossibleMoveTo(&gameFlipped,&flippedPosition);
+    if (canBlockCheck(game)) return false;
 
-    if (isBlankSpace(&possibleAttack.pieceMove.mover)) return false;
+    const ChessMove possibleAttack = initAttackToKing(&gameFlipped);
+    ASSERT(!isBlankSpace(&possibleAttack.pieceMove.mover), "You just told me that you were in check to how is this true?");
 
-    if (isMultStep(&possibleAttack.pieceMove.mover))
-        if (canBlockAttackMove(game,&possibleAttack)) return false;
-
-    const IntVec2D nextPosition = addVecs(&possibleAttack.boardMove.position,
-                                          &possibleAttack.boardMove.move);
-    if (currPlayerPieceMayMoveTo(game, &nextPosition)) return false;
+    const IntVec2D attackerPosition = possibleAttack.boardMove.position;
+    if (currPieceMayMoveTo(game, &attackerPosition, true)) return false;
 
     return true;
 }
@@ -282,8 +113,8 @@ bool doesMoveCauseCheck(const ChessGame* game, const BoardMove* boardMove)
 
 bool areAllPiecesAreStuck(const ChessGame* game)
 {
-    for (int y=0; y<8; y++)
-        for (int x=0; x<8; x++)
+    for (int y = 0; y < 8; y++)
+        for (int x = 0; x < 8; x++)
             if (!isBlankSpace(getKPiecePtrAt(game->board, x, y))     &&
                 getPieceAt(game->board, x, y).colour == game->player &&
                 !isPieceStuckAtVec(game, &(IntVec2D){x,y}))
@@ -339,7 +170,7 @@ bool isInsufMaterial(const ChessGame* game)
 {
     const PieceCount currPieceCount = getAllOfColourPieceCount(game->board, game->player);
     const PieceCount oppPieceCount  = getAllOfColourPieceCount(game->board, oppositeColour(game->player));
-    
+
     const PieceCount OnlyKing = {
         .kingCount = 1,
     };
@@ -357,12 +188,12 @@ bool isInsufMaterial(const ChessGame* game)
     if (equalPieceCount(&currPieceCount, &OnlyKing) && equalPieceCount(&oppPieceCount, &OnlyKing))
         return true;
 
-    if ((equalPieceCount(&currPieceCount, &OnlyKing) && equalPieceCount(&oppPieceCount, &KingAndKnight)) ||
-        (equalPieceCount(&oppPieceCount, &OnlyKing) && equalPieceCount(&currPieceCount, &KingAndKnight)))
+    if ((equalPieceCount(&currPieceCount, &OnlyKing) && equalPieceCount(&oppPieceCount,  &KingAndKnight)) ||
+        (equalPieceCount(&oppPieceCount,  &OnlyKing) && equalPieceCount(&currPieceCount, &KingAndKnight)))
         return true;
 
-    if ((equalPieceCount(&currPieceCount, &OnlyKing) && equalPieceCount(&oppPieceCount, &KingAndBishop)) ||
-        (equalPieceCount(&oppPieceCount, &OnlyKing) && equalPieceCount(&currPieceCount, &KingAndBishop)))
+    if ((equalPieceCount(&currPieceCount, &OnlyKing) && equalPieceCount(&oppPieceCount,  &KingAndBishop)) ||
+        (equalPieceCount(&oppPieceCount,  &OnlyKing) && equalPieceCount(&currPieceCount, &KingAndBishop)))
         return true;
 
     if (equalPieceCount(&currPieceCount, &KingAndBishop) && equalPieceCount(&oppPieceCount, &KingAndBishop))
@@ -373,9 +204,9 @@ bool isInsufMaterial(const ChessGame* game)
 
 bool isGameDraw(const ChessGame* game)
 {
-    if (areAllPiecesAreStuck(game)) return true;
-
-    if (isInsufMaterial(game)) return true;
+    if (isCurrInCheck(game))        return false;
+    if (!isInsufMaterial(game))     return false;
+    if (!areAllPiecesAreStuck(game)) return false;
 
     return false;
 }

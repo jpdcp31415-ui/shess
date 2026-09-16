@@ -9,10 +9,14 @@ typedef struct
     const Type pieceType;
     const bool multSteps;
     const IntVec2D* moves;
+    const IntVec2D* directions;
     const int numMoves;
+    const int numDirecs;
 } PieceTraits;
 
-const PieceTraits* getTraits(const Piece*);
+const IntVec2D* getMoves(const Piece* p);
+
+int getNumMoves(const Piece* p);
 
 IntVec2D getDirecVec(const IntVec2D* move, const Piece* piece);
 

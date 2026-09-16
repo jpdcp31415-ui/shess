@@ -9,6 +9,7 @@ add_executable(
     src/board-output.c
     src/board.c
     src/chess-game.c
+    src/chess-move-arr.c
     src/command.c
     src/int-vec-2d.c
     src/io-plus.c
@@ -23,10 +24,12 @@ add_executable(
 add_executable(
     test
 
+    test/main.c
     test/test.c
     src/board-output.c
     src/board.c
     src/chess-game.c
+    src/chess-move-arr.c
     src/command.c
     src/int-vec-2d.c
     src/io-plus.c
@@ -40,18 +43,23 @@ add_executable(
 
 target_compile_options( main PRIVATE
     -Wall
-    -Werror
     -Wextra
-    -g
+    -Werror
     -O2
     -std=c99
 )
 
 target_compile_options( test PRIVATE
     -Wall
-    -Werror
     -Wextra
-    -g
+    -Werror
+    # -g
+    # -fsanitize=address
+    # -fno-omit-frame-pointer
     -O2
     -std=c99
 )
+
+# add_link_options(
+#     -fsanitize=address
+# )
