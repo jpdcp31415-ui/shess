@@ -3,14 +3,14 @@
 #include "../include/piece-traits.h"
 #include "../include/chess-game.h"
 
+#include <stdio.h>
 #include <string.h>
 
 ChessMoveArr initMoveArr(void)
 {
-    static ChessMoveArr moves = {};
+    ChessMoveArr moves = {};
 
     moves.data = calloc(1, sizeof(ChessMove));
-
     ASSERT(moves.data != NULL, "Could not allocate in initMoveArr");
     moves.length = 0;
     moves.capacity = 1;
@@ -20,13 +20,18 @@ ChessMoveArr initMoveArr(void)
 
 void freeMoveArr(ChessMoveArr* moves)
 {
-    free(moves->data);
+    ASSERT_FMT(moves->data != NULL, "Trying to free a ChessMoveArr twice at address %p", moves->data);
+
     moves->length = 0;
     moves->capacity = 0;
+    free(moves->data);
+    moves->data = NULL;
 }
 
 void pushMove(ChessMoveArr* moves, const ChessMove* move)
 {
+    ASSERT_FMT(moves->data != NULL, "Trying to re-use/push to a ChessMoveArr twice at address %p", moves->data);
+
     if (moves->capacity == 0 && moves->length == 0)
     {
         moves->capacity++;
@@ -55,8 +60,7 @@ ChessMoveArr initAllLegalMovesCurrOpts(const ChessGame* game, const bool ignoreC
 {
     ASSERT(game->player != NULL_PLAYER, "Cannot check for piece moves without current player!");
 
-    static ChessMoveArr moveArr = {};
-    moveArr = initMoveArr();
+    ChessMoveArr moveArr = initMoveArr();
 
     for (int y = 0; y < 8; y++)
         for (int x = 0; x < 8; x++)
@@ -96,8 +100,7 @@ ChessMoveArr initLegalMovesTo(const ChessGame* game, const IntVec2D* positionTo,
 {
     ChessMoveArr allMoves = initAllLegalMovesCurrOpts(game, ignoreCheck);
 
-    static ChessMoveArr movesToPos = {}; 
-    movesToPos = initMoveArr();
+    ChessMoveArr movesToPos = initMoveArr();
     
     for (int i = 0; i < allMoves.length; i++)
     {
@@ -117,8 +120,7 @@ ChessMoveArr initLegalMovesFrom(const ChessGame* game, const IntVec2D* positionF
 {
     ChessMoveArr allMoves = initAllLegalMovesCurrOpts(game, ignoreCheck);
 
-    static ChessMoveArr movesToPos = {};
-    movesToPos = initMoveArr();
+    ChessMoveArr movesToPos = initMoveArr();
     
     for (int i = 0; i < allMoves.length; i++)
     {
@@ -150,15 +152,20 @@ ChessMove initAttackToKing(const ChessGame* game)
     return attackToKing;
 }
 
-bool currPieceMayMoveTo(const ChessGame* game, const IntVec2D* position, const bool ignoreCheck)
+bool isPieceStuckAtVec(const ChessGame* game, const IntVec2D* position, const bool ignoreCheck)
 {
     ASSERT(game->player != NULL_PLAYER, "Cannot check for piece moves without current player!");
 
-    ChessMoveArr moves = initLegalMovesTo(game, position, ignoreCheck);
+    ChessMoveArr moves = initLegalMovesFrom(game, position, ignoreCheck);
     const int length = moves.length;
     freeMoveArr(&moves);
 
-    return length != 0;
+    return length == 0;
+}
+
+bool currPieceMayMoveTo(const ChessGame* game, const IntVec2D* position, const bool ignoreCheck)
+{
+    return isPieceStuckAtVec(game, position, ignoreCheck);
 }
 
 // the possibility of a piece moving to a specific position

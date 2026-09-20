@@ -22,6 +22,8 @@ ChessMoveArr initLegalMovesTo(const ChessGame* game, const IntVec2D* positionTo,
 
 ChessMove initAttackToKing(const ChessGame* game);
 
+bool isPieceStuckAtVec(const ChessGame* game, const IntVec2D* position, const bool ignoreCheck);
+
 bool currPieceMayMoveTo(const ChessGame* game, const IntVec2D* position, const bool ignoreCheck);
 
 bool oppPieceMayMoveTo(const ChessGame* game, const IntVec2D* position, const bool ignoreCheck);

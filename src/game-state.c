@@ -3,6 +3,7 @@
 #include "../include/piece-traits.h"
 #include "../include/chess-move-arr.h"
 
+#include <stdbool.h>
 #include <string.h>
 
 bool isCurrInCheck(const ChessGame* game)
@@ -11,17 +12,6 @@ bool isCurrInCheck(const ChessGame* game)
 
     const IntVec2D kingPosition = whereKingIs(game->board, game->player);
     return oppPieceMayMoveTo(game, &kingPosition, true);
-}
-
-bool isPieceStuckAtVec(const ChessGame* game, const IntVec2D* position)
-{
-    ASSERT(game->player != NULL_PLAYER, "Cannot check for piece moves without current player!");
-
-    ChessMoveArr moves = initLegalMovesFrom(game, position, false);
-    const int length = moves.length;
-    freeMoveArr(&moves);
-
-    return length == 0;
 }
 
 int getUnstuckPieceCount(const ChessGame* game, const Piece* p)
@@ -33,7 +23,7 @@ int getUnstuckPieceCount(const ChessGame* game, const Piece* p)
     for (int y = 0; y < 8; y++)
         for (int x = 0; x < 8; x++)
             if (equalPiece(getKPiecePtrAt(game->board, x, y), p) &&
-                isPieceStuckAtVec(game, &(IntVec2D){x,y}))
+                isPieceStuckAtVec(game, &(IntVec2D){x,y}, false))
                 count++;
 
     return count;
@@ -67,7 +57,8 @@ bool canBlockCheck(const ChessGame* game)
 {
     const ChessMove move = initAttackToKing(game);
 
-    ASSERT(!isBlankSpace(&move.pieceMove.mover), "There is no king attack move: so can't know whether is blockable");
+    if (isBlankSpace(&move.pieceMove.mover))
+        return false;
 
     if (!isMultStep(&move.pieceMove.mover))
         return false;
@@ -86,7 +77,7 @@ bool isWinForOppPlayer(const ChessGame* game)
 
     if (!isCurrInCheck(game)) return false;
 
-    if (!isPieceStuckAtVec(game,&kingPosition)) return false;
+    if (!isPieceStuckAtVec(game,&kingPosition, false)) return false;
 
     // flip board for the opposite player's perspective
     const ChessGame* _gameFlippedPtr = flippedKChessGamePtr(game);
@@ -98,10 +89,10 @@ bool isWinForOppPlayer(const ChessGame* game)
     if (canBlockCheck(game)) return false;
 
     const ChessMove possibleAttack = initAttackToKing(&gameFlipped);
-    ASSERT(!isBlankSpace(&possibleAttack.pieceMove.mover), "You just told me that you were in check to how is this true?");
 
     const IntVec2D attackerPosition = possibleAttack.boardMove.position;
-    if (currPieceMayMoveTo(game, &attackerPosition, true)) return false;
+    if (!isBlankSpace(&possibleAttack.pieceMove.mover) &&
+        currPieceMayMoveTo(game, &attackerPosition, true)) return false;
 
     return true;
 }
@@ -117,7 +108,7 @@ bool areAllPiecesAreStuck(const ChessGame* game)
         for (int x = 0; x < 8; x++)
             if (!isBlankSpace(getKPiecePtrAt(game->board, x, y))     &&
                 getPieceAt(game->board, x, y).colour == game->player &&
-                !isPieceStuckAtVec(game, &(IntVec2D){x,y}))
+                !isPieceStuckAtVec(game, &(IntVec2D){x,y}, false))
                 return false;
 
     return true;
