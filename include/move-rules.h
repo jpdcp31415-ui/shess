@@ -39,7 +39,6 @@ typedef enum
     NO_PIECE_TO_ATTACK, // When pawn is moving diagonally
     NOT_INIT_POSITION, // Moving pawn 2 spaces forward 
     CANT_ATTACK_FRONT,
-    CANT_ATTACK_KING,
     PATH_NOT_CLEAR,
 
     /* SPECIAL MOVES */

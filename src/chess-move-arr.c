@@ -135,14 +135,22 @@ ChessMoveArr initLegalMovesFrom(const ChessGame* game, const IntVec2D* positionF
     return movesToPos;
 }
 
-ChessMove initAttackToKing(const ChessGame* game)
+ChessMove getAttackToKing(const ChessGame* game)
 {
     ASSERT(game->player != NULL_PLAYER, "Cannot check for piece moves without current player!");
 
+    ChessGame flippedGame = {.player = NULL_PLAYER};
+    setChessGame(flippedKChessGamePtr(game), &flippedGame);
+    flippedGame.player = oppositeColour(game->player);
+
     const IntVec2D kingPosition = whereKingIs(game->board, game->player);
-    ChessMoveArr moveToKing = initLegalMovesTo(game, &kingPosition, true);
+    const IntVec2D flippedKingPos = {kingPosition.x, 7 - kingPosition.y};
+
+    ChessMoveArr moveToKing = initLegalMovesTo(&flippedGame, &flippedKingPos, true);
 
     ChessMove attackToKing = {.pieceMove = {.mover = {NULL_COLOUR, NULL_TYPE}}};
+
+    ASSERT(moveToKing.length == 0 || moveToKing.length == 1, "More than one piece cannot check a king at the same time");
 
     if (moveToKing.length == 1)
         memcpy(&attackToKing, &moveToKing.data[0], sizeof(ChessMove));
@@ -165,10 +173,14 @@ bool isPieceStuckAtVec(const ChessGame* game, const IntVec2D* position, const bo
 
 bool currPieceMayMoveTo(const ChessGame* game, const IntVec2D* position, const bool ignoreCheck)
 {
-    return isPieceStuckAtVec(game, position, ignoreCheck);
+    ChessMoveArr moves = initLegalMovesTo(game, position, ignoreCheck);
+    const int length = moves.length;
+    freeMoveArr(&moves);
+
+    return length != 0;
 }
 
-// the possibility of a piece moving to a specific position
+// the possibility of an opposite player piece moving to a specific position
 bool oppPieceMayMoveTo(const ChessGame* game, const IntVec2D* position, const bool ignoreCheck)
 {
     ASSERT(game->player != NULL_PLAYER, "Cannot check for piece moves without current player!");

@@ -19,13 +19,12 @@ const char* getMoveErrReason(const MoveErr mvErr)
     case NO_PIECE_TO_ATTACK:   return "There are no pieces to attack (diagonally) with pawn!\n";
     case NOT_INIT_POSITION:    return "Pawn cannot move 2 spaces unless has not moved before!\n";
     case CANT_ATTACK_FRONT:    return "There is a piece in front of this pawn that you cannot attack!\n";
-    case CANT_ATTACK_KING:     return "You cannot attack the king of the opposite player!\n";
     case PATH_NOT_CLEAR:       return "There are pieces in the way of your move!\n";
 
     case CASTLING_CHECK:       return "Can't castle because of check in the middle or where king is!\n";
     case CANT_EN_PASSENT:      return "Can't en passent!\n";
-    case IS_STILL_CHECK:       return "This move won't take you out of check!\n";
     case MOVE_CAUSES_CHECK:    return "This move leads you to be in check!\n";
+    case IS_STILL_CHECK:       return "This move won't take you out of check!\n";
 
     case SAME_PLAYER_ATTACK:   return "You can't attack your own pieces!\n";
     }

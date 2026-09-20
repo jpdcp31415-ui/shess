@@ -55,13 +55,11 @@ bool canBlockAttackMove(const ChessGame* game, const ChessMove* attack)
 
 bool canBlockCheck(const ChessGame* game)
 {
-    const ChessMove move = initAttackToKing(game);
+    const ChessMove move = getAttackToKing(game);
 
-    if (isBlankSpace(&move.pieceMove.mover))
-        return false;
+    ASSERT(!isBlankSpace(&move.pieceMove.mover), "There is no attack move to the king so idk if it can be blocked");
 
-    if (!isMultStep(&move.pieceMove.mover))
-        return false;
+    if (!isMultStep(&move.pieceMove.mover)) return false;
 
     return canBlockAttackMove(game, &move);
 }
@@ -88,7 +86,7 @@ bool isWinForOppPlayer(const ChessGame* game)
 
     if (canBlockCheck(game)) return false;
 
-    const ChessMove possibleAttack = initAttackToKing(&gameFlipped);
+    const ChessMove possibleAttack = getAttackToKing(&gameFlipped);
 
     const IntVec2D attackerPosition = possibleAttack.boardMove.position;
     if (!isBlankSpace(&possibleAttack.pieceMove.mover) &&
