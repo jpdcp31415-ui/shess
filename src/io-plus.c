@@ -14,7 +14,7 @@ char getSingleChar(void)
 {
     char inputLine[MAX_LINE_LENGTH] = "";
     getLine(inputLine);
-	return inputLine[0];
+    return inputLine[0];
 }
 
 bool getYesOrNo(void)

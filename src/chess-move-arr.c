@@ -3,7 +3,6 @@
 #include "../include/piece-traits.h"
 #include "../include/chess-game.h"
 
-#include <stdio.h>
 #include <string.h>
 
 ChessMoveArr initMoveArr(void)
@@ -14,7 +13,7 @@ ChessMoveArr initMoveArr(void)
     ASSERT(moves.data != NULL, "Could not allocate in initMoveArr");
     moves.length = 0;
     moves.capacity = 1;
-    
+
     return moves;
 }
 
@@ -66,9 +65,7 @@ ChessMoveArr initAllLegalMovesCurrOpts(const ChessGame* game, const bool ignoreC
         for (int x = 0; x < 8; x++)
         {
             const Piece mover = getPieceAt(game->board, x, y);
-
             if (game->player != mover.colour || isBlankSpace(&mover)) continue;
-
             const IntVec2D* moves = getMoves(&mover);
 
             for (int i = 0; i < getNumMoves(&mover); i++)
@@ -79,14 +76,10 @@ ChessMoveArr initAllLegalMovesCurrOpts(const ChessGame* game, const bool ignoreC
                     .move = moves[i]
                 };
 
-                const IntVec2D nextPosition = addVecs(&(IntVec2D){x,y}, &moves[i]);
+                const IntVec2D nextPosition = getNextPos(&possibleBoardMove);
                 if (!isVecInBoardBounds(&nextPosition)) continue;
 
-                const ChessMove possibleChessMove =
-                {
-                    .boardMove = possibleBoardMove,
-                    .pieceMove = getAsPieceMove(game->board,&possibleBoardMove)
-                };
+                const ChessMove possibleChessMove = getAsChessMove(game->board, &possibleBoardMove);
 
                 if (isValidMoveOpts(game,&possibleChessMove,ignoreCheck))
                     pushMove(&moveArr, &possibleChessMove);
@@ -104,8 +97,7 @@ ChessMoveArr initLegalMovesTo(const ChessGame* game, const IntVec2D* positionTo,
     
     for (int i = 0; i < allMoves.length; i++)
     {
-        const IntVec2D nextPosition = addVecs(&getMovePtr(&allMoves, i)->boardMove.position,
-                                              &getMovePtr(&allMoves, i)->boardMove.move);
+        const IntVec2D nextPosition = getNextPos(&getMovePtr(&allMoves, i)->boardMove);
 
         if (equalVecs(&nextPosition, positionTo))
             pushMove(&movesToPos, getMovePtr(&allMoves, i));
@@ -121,7 +113,7 @@ ChessMoveArr initLegalMovesFrom(const ChessGame* game, const IntVec2D* positionF
     ChessMoveArr allMoves = initAllLegalMovesCurrOpts(game, ignoreCheck);
 
     ChessMoveArr movesToPos = initMoveArr();
-    
+
     for (int i = 0; i < allMoves.length; i++)
     {
         const IntVec2D posFromEach = getMovePtr(&allMoves, i)->boardMove.position;
@@ -152,8 +144,7 @@ ChessMove getAttackToKing(const ChessGame* game)
 
     ASSERT(moveToKing.length == 0 || moveToKing.length == 1, "More than one piece cannot check a king at the same time");
 
-    if (moveToKing.length == 1)
-        memcpy(&attackToKing, &moveToKing.data[0], sizeof(ChessMove));
+    if (moveToKing.length == 1) attackToKing = moveToKing.data[0];
 
     freeMoveArr(&moveToKing);
 

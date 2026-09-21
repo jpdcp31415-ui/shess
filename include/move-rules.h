@@ -12,17 +12,23 @@ typedef struct
     IntVec2D move;
 } BoardMove;
 
+IntVec2D getNextPos(const BoardMove* b);
+
 typedef struct
 {
     Piece mover;
     Piece captured;
 } PieceMove;
 
+PieceMove getAsPieceMove(const Board board, const BoardMove* boardMove);
+
 typedef struct 
 {
     BoardMove boardMove;
     PieceMove pieceMove;
 } ChessMove;
+
+ChessMove getAsChessMove(const Board board, const BoardMove* boardMove);
 
 typedef enum
 {
@@ -54,6 +60,8 @@ typedef enum
 const ChessGame* movedKChessGamePtr(const ChessGame* game, const BoardMove* boardMove);
 
 PieceMove getAsPieceMove(const Board board, const BoardMove* boardMove);
+
+ChessMove getAsChessMove(const Board board, const BoardMove* boardMove);
 
 IntVec2D getPawnPromotionPosition(const ChessGame* game);
 

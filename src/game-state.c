@@ -29,7 +29,7 @@ int getUnstuckPieceCount(const ChessGame* game, const Piece* p)
     return count;
 }
 
-bool canBlockAttackMove(const ChessGame* game, const ChessMove* attack)
+bool canBlockAttack(const ChessGame* game, const ChessMove* attack)
 {
     ASSERT(game->player != NULL_PLAYER, "Cannot check for piece moves without current player!");
 
@@ -61,7 +61,21 @@ bool canBlockCheck(const ChessGame* game)
 
     if (!isMultStep(&move.pieceMove.mover)) return false;
 
-    return canBlockAttackMove(game, &move);
+    return canBlockAttack(game, &move);
+}
+
+bool canCaptureKingAttacker(const ChessGame* game, const ChessMove* move)
+{
+    ASSERT(equalPiece(&move->pieceMove.captured, &(Piece){game->player, KING}), "Attack is not to king");
+
+    ASSERT(!isBlankSpace(&move->pieceMove.mover), "There is no mover in attack");
+    ASSERT(!isBlankSpace(&move->pieceMove.captured), "Move is not an attack");
+
+    const IntVec2D attackerPosition = move->boardMove.position;
+
+    if (currPieceMayMoveTo(game, &attackerPosition, true)) return true;
+
+    return false;
 }
 
 // or isLossForCurrPlayer
@@ -77,21 +91,11 @@ bool isWinForOppPlayer(const ChessGame* game)
 
     if (!isPieceStuckAtVec(game,&kingPosition, false)) return false;
 
-    // flip board for the opposite player's perspective
-    const ChessGame* _gameFlippedPtr = flippedKChessGamePtr(game);
-
-    ChessGame gameFlipped = {.player = NULL_PLAYER};
-    setChessGame(_gameFlippedPtr,&gameFlipped);
-    gameFlipped.player = oppositeColour(game->player);
-
     if (canBlockCheck(game)) return false;
 
-    const ChessMove possibleAttack = getAttackToKing(&gameFlipped);
-
-    const IntVec2D attackerPosition = possibleAttack.boardMove.position;
-    if (!isBlankSpace(&possibleAttack.pieceMove.mover) &&
-        currPieceMayMoveTo(game, &attackerPosition, true)) return false;
-
+    const ChessMove attack = getAttackToKing(game);
+    if (canCaptureKingAttacker(game, &attack)) return false;
+    
     return true;
 }
 

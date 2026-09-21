@@ -3,6 +3,37 @@
 #include "../include/assert-toggle.h"
 #include "../include/game-state.h"
 
+IntVec2D getNextPos(const BoardMove* b)
+{
+    return addVecs(&b->position, &b->move);
+}
+
+PieceMove getAsPieceMove(const Board board, const BoardMove* boardMove)
+{
+    const IntVec2D nextPosition = getNextPos(boardMove);
+
+    return (PieceMove)
+    {
+        .mover = getPieceAtVec(board,&boardMove->position),
+        .captured = getPieceAtVec(board,&nextPosition)
+    };
+}
+
+ChessMove getAsChessMove(const Board board, const BoardMove* boardMove)
+{
+    const IntVec2D nextPosition = getNextPos(boardMove);
+
+    return (ChessMove)
+    {
+        .boardMove = *boardMove,
+        .pieceMove =
+        {
+            .mover = getPieceAtVec(board,&boardMove->position),
+            .captured = getPieceAtVec(board,&nextPosition)
+        }        
+    };
+}
+
 const char* getMoveErrReason(const MoveErr mvErr)
 {
     switch (mvErr)
@@ -32,20 +63,9 @@ const char* getMoveErrReason(const MoveErr mvErr)
     EXIT_MSG(!"There are no more move errors!");
 }
 
-PieceMove getAsPieceMove(const Board board, const BoardMove* boardMove)
-{
-    const IntVec2D nextPosition = addVecs(&boardMove->position, &boardMove->move);
-
-    return (PieceMove)
-    {
-        .mover = getPieceAtVec(board,&boardMove->position),
-        .captured = getPieceAtVec(board,&nextPosition)
-    };
-}
-
 void movePieceUncond(ChessGame* game, const BoardMove* boardMove)
 {
-    const IntVec2D nextPosition = addVecs(&boardMove->position, &boardMove->move);
+    const IntVec2D nextPosition = getNextPos(boardMove);
     *getPiecePtrAtVec(game->board,&nextPosition) = *getPiecePtrAtVec(game->board,&boardMove->position);
     *getPiecePtrAtVec(game->board,&boardMove->position) = (Piece){NULL_COLOUR, NULL_TYPE};
 
@@ -68,7 +88,7 @@ MoveErr getOOBMoveErr(const BoardMove* boardMove)
     if (!isVecInBoardBounds(&boardMove->position))
         return OOB_POSITION;
 
-    const IntVec2D nextPosition = addVecs(&boardMove->position,&boardMove->move);
+    const IntVec2D nextPosition = getNextPos(boardMove);
 
     if (!isVecInBoardBounds(&nextPosition))
         return OOB_MOVE;
@@ -142,7 +162,7 @@ bool isPathClear(const ChessGame* game, const BoardMove* boardMove)
 
     const IntVec2D direcVec = getDirecVec(&boardMove->move,&pieceAtPosition);
 
-    const IntVec2D nextPosition = addVecs(&boardMove->position,&boardMove->move);
+    const IntVec2D nextPosition = getNextPos(boardMove);
 
     for (int i = 1; i < 8; i++)
     {
