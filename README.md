@@ -1,4 +1,4 @@
-NOTE: this project is NOT finnished!
+NOTE: this project is NOT finished!
 
 # Shess
 
@@ -24,7 +24,7 @@ This program is not very fancy but you can still customize how the pieces are pr
 
 The customization can be changed by creating (or changing) a .shessrc file that the program will use to change its settings.
 
-## Installation
+## Running
 
 Run:
 
