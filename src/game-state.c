@@ -93,7 +93,7 @@ bool isWinForOppPlayer(const ChessGame* game)
     if (canBlockCheck(game)) return false;
 
     const ChessMove attack = getAttackToKing(game);
-    if (canCaptureKingAttacker(game, &attack)) return false;
+    if (!currPieceMayMoveTo(game, &attack.boardMove.position, false)) return false;
 
     return true;
 }
