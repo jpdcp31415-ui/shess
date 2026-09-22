@@ -37,6 +37,8 @@ const char* getSettingTypeFmt(const TypeOfSetting t);
 
 USettingType getSettingData(const char* settingName);
 
+USettingType getSettingDataSafely(const char* setting);
+
 void setCommand(const char* input, const char* usage, const int numArgs);
 
 #endif

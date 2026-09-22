@@ -10,21 +10,21 @@ void printBoardRowWithTheme(const char* themeName, const Board board, const int 
 {
     const BoardTheme* themePtr = getKBoardThemePtr(themeName);
 
-    if (getSettingData("show-board-coords").boolData)
+    if (getSettingDataSafely("show-board-coords").boolData)
         printf("%d ", 7-y);
 
     for (int row = 0; row < themePtr->tileSize.height; row++)
     {
-        if (getSettingData("show-board-coords").boolData && row != 0)
+        if (getSettingDataSafely("show-board-coords").boolData && row != 0)
             printf("  ");
 
         for (int x=0; x<8; x++)
         {
-            const char* rowTileStr = getStrTileRow(getSettingData("board-theme").strData,
+            const char* rowTileStr = getStrTileRow(getSettingDataSafely("board-theme").strData,
                                                    getKPiecePtrAt(board,x,y),
                                                    row);
             printf("%s", rowTileStr);
-            if (getSettingData("space-between-columns").boolData)
+            if (getSettingDataSafely("space-between-columns").boolData)
                 printf(" ");
         }
         printf("\n");
@@ -33,18 +33,17 @@ void printBoardRowWithTheme(const char* themeName, const Board board, const int 
 
 void printBoardWithTheme(const char* themeName, const Board board)
 {
-    for (int y=0; y<8; y++)
-        printBoardRowWithTheme(themeName,board,y);
+    for (int y=0; y<8; y++) printBoardRowWithTheme(themeName,board,y);
 
     const BoardTheme* themePtr = getKBoardThemePtr(themeName);
 
-    if (getSettingData("show-board-coords").boolData)
+    if (getSettingDataSafely("show-board-coords").boolData)
     {
         printf("  ");
         for (int x=0; x<8; x++)
         {
             printf("%d", x);
-            if (getSettingData("space-between-columns").boolData)
+            if (getSettingDataSafely("space-between-columns").boolData)
                 for (int col = 0; col < themePtr->tileSize.width; col++)
                     printf(" ");
         }
@@ -54,7 +53,7 @@ void printBoardWithTheme(const char* themeName, const Board board)
 
 void printBoard(const Board board)
 {
-    printBoardWithTheme(getSettingData("board-theme").strData,board);
+    printBoardWithTheme(getSettingDataSafely("board-theme").strData,board);
 }
 
 char getAndMatchCh(const char* const matchChs)

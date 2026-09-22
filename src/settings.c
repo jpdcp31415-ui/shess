@@ -68,8 +68,11 @@ Setting gAllSettings[] = (Setting[])
 
 const char* getSettingTypeFmt(const TypeOfSetting t)
 {
-    const char** fmtArr = (const char*[]){"","%s" /* for "true" / "false" */,"%d","%s","%c"};
-    return fmtArr[t];
+    ASSERT(t != NULL_SETT_TYPE, "Cannot get type formar for NULL_SETT_TYPE");
+
+    const char** fmtArr = (const char*[]){"%s", /* for "true" / "false" */
+                                          "%d","%s","%c"};
+    return fmtArr[t - 1];
 }
 
 Setting* getSettingStruct(const char* setting)
@@ -81,9 +84,21 @@ Setting* getSettingStruct(const char* setting)
     return NULL;
 }
 
+Setting* getSettingStructSafely(const char* setting)
+{
+    Setting* settingStruct = getSettingStruct(setting);
+    ASSERT_FMT(settingStruct != NULL, "Setting %s does not exist, then cannot get it's corresponding struct", setting);
+    return settingStruct;
+}
+
 USettingType getSettingData(const char* setting)
 {
     return getSettingStruct(setting)->currData;
+}
+
+USettingType getSettingDataSafely(const char* setting)
+{
+    return getSettingStructSafely(setting)->currData;
 }
 
 typedef enum
@@ -95,7 +110,7 @@ typedef enum
 
 SettingValueErr setSettingData(const char* setting, const char* strValue)
 {
-    Setting* setStruct = getSettingStruct(setting);
+    Setting* setStruct = getSettingStructSafely(setting);
 
     const char* fmt = getSettingTypeFmt(setStruct->typeOfData);
 
