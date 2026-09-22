@@ -1,3 +1,5 @@
+NOTE: this project is NOT finnished!
+
 # Shess
 
 ![](logo.png)
