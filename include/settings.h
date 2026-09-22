@@ -3,12 +3,14 @@
 
 #include <stdbool.h>
 
+#define MAX_STR_SET_DATA 64
+
 typedef union
 {
     bool boolData;
     int intData;
     char charData;
-    char strData[64];
+    char strData[MAX_STR_SET_DATA];
 } USettingType;
 
 typedef enum
@@ -17,7 +19,7 @@ typedef enum
     BOOL_SETT_TYPE,
     INT_SETT_TYPE,
     STR_SETT_TYPE,
-    CHAR_SETT_TYPE
+    CHAR_SETT_TYPE,
 } TypeOfSetting;
 
 typedef struct
@@ -26,6 +28,7 @@ typedef struct
     const TypeOfSetting typeOfData;
     USettingType currData;
     const USettingType defaultData;
+    bool(*const isValidData)(const char*);
 } Setting;
 
 extern Setting gAllSettings[];
@@ -34,8 +37,6 @@ const char* getSettingTypeFmt(const TypeOfSetting t);
 
 USettingType getSettingData(const char* settingName);
 
-USettingType setSettingData(const char* settingName);
-
-// add setting for custom space character
+void setCommand(const char* input, const char* usage, const int numArgs);
 
 #endif

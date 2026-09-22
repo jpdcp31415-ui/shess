@@ -7,7 +7,7 @@ typedef struct
 {
     const char* const name;
     const char* const shortName;
-    void(*run)(const char* input, const char* usage, const int numArgs);
+    void(*const run)(const char* input, const char* usage, const int numArgs);
     const char* const helpText;
     const char* usage;
     const int numArgs;
@@ -19,7 +19,7 @@ typedef struct
 {
     const char* const name;
     const char* const shortName;
-    void(*run)(void);
+    void(*const run)(void);
     const char* const helpText;
 } NoArgsCommand;
 

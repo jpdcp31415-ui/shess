@@ -5,6 +5,7 @@
 #include "../include/move-rules.h"
 #include "../include/chess-game.h"
 #include "../include/game-state.h"
+#include "../include/settings.h"
 
 void promptForPawnPromotion(ChessGame* game)
 {
@@ -138,11 +139,14 @@ const Command kCmdList[] =
         .numArgs = 1,
     },
 
-    /* { */
-    /*     .name = "set", */
-    /*     .run = setupCommand, */
-    /*     .helpText = "This command allows you to set any of the available settings that exist for this program", */
-    /* }, */
+    {
+        .name = "set",
+        .shortName = "set",
+        .run = setCommand,
+        .helpText = "This command allows you to set any of the available settings that exist for this program",
+        .usage = "%s %s",
+        .numArgs = 2,
+    },
 
     { // this is going to be like a null terminator
         .name = NULL,
