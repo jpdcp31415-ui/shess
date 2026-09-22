@@ -10,6 +10,7 @@ typedef struct
     void(*const run)(const char* input, const char* usage, const int numArgs);
     const char* const helpText;
     const char* usage;
+    const char* argNames;
     const int numArgs;
 } Command;
 

@@ -105,14 +105,16 @@ void helpCommand(const char* input, const char* usage, const int numArgs)
     const Command* cmdPtr = findCmdPtr(cmd);
     if (cmdPtr != NULL)
     {
-        printf("%s\n", cmdPtr->helpText);
+        printf("Usage: %s %s\n", cmd, cmdPtr->argNames);
+        printf("Help:  %s\n", cmdPtr->helpText);
         return;
     }
 
     const NoArgsCommand* noArgsCmdPtr = findNoArgsCmdPtr(cmd);
     if (noArgsCmdPtr != NULL)
     {
-        printf("%s\n", noArgsCmdPtr->helpText);
+        printf("Usage: %s\n", cmd);
+        printf("Help:  %s\n", noArgsCmdPtr->helpText);
         return;
     }
 
@@ -125,8 +127,9 @@ const Command kCmdList[] =
         .name = "move",
         .shortName = "mv",
         .run = moveCommand,
-        .helpText = "Moves the pieces using x and y or chess notation",
+        .helpText = "Moves the pieces using x and y",
         .usage = "%d %d %d %d",
+        .argNames = "pos-x pos-y mov-x mov-y",
         .numArgs = 4,
     },
 
@@ -136,6 +139,7 @@ const Command kCmdList[] =
         .run = helpCommand,
         .helpText = "Displays text about the command",
         .usage = "%s",
+        .argNames = "cmd-name",
         .numArgs = 1,
     },
 
@@ -145,6 +149,7 @@ const Command kCmdList[] =
         .run = setCommand,
         .helpText = "This command allows you to set any of the available settings that exist for this program",
         .usage = "%s %s",
+        .argNames = "setting new-value",
         .numArgs = 2,
     },
 
@@ -186,9 +191,9 @@ void listCommands(void)
     {
         const Command* cmd = &kCmdList[i];
         if (strcmp(cmd->name,cmd->shortName) != 0)
-            printf("%s / %s [%s]\n", cmd->name, cmd->shortName, cmd->usage);
+            printf("%s / %s [%s]\n", cmd->name, cmd->shortName, cmd->argNames);
         else
-            printf("%s [%s]\n", cmd->name, cmd->usage);
+            printf("%s [%s]\n", cmd->name, cmd->argNames);
     }
 }
 
@@ -212,7 +217,7 @@ const NoArgsCommand kNoArgsCmdList[] =
         .name = "quit",
         .shortName = "qt",
         .run = endProgram,
-        .helpText = "Prints the current state of the board to the console",
+        .helpText = "Quits the program/game",
     },
 
     {
