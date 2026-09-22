@@ -67,7 +67,6 @@ bool canBlockCheck(const ChessGame* game)
 bool canCaptureKingAttacker(const ChessGame* game, const ChessMove* move)
 {
     ASSERT(equalPiece(&move->pieceMove.captured, &(Piece){game->player, KING}), "Attack is not to king");
-
     ASSERT(!isBlankSpace(&move->pieceMove.mover), "There is no mover in attack");
     ASSERT(!isBlankSpace(&move->pieceMove.captured), "Move is not an attack");
 
@@ -95,7 +94,7 @@ bool isWinForOppPlayer(const ChessGame* game)
 
     const ChessMove attack = getAttackToKing(game);
     if (canCaptureKingAttacker(game, &attack)) return false;
-    
+
     return true;
 }
 
