@@ -19,6 +19,7 @@ add_executable(
     src/board-theme.c
     src/settings.c
     src/game-state.c
+    src/list-command.c
 )
 
 add_executable(
@@ -39,6 +40,7 @@ add_executable(
     src/board-theme.c
     src/settings.c
     src/game-state.c
+    src/list-command.c
 )
 
 target_compile_options( main PRIVATE

@@ -26,6 +26,8 @@ typedef struct
 
 extern const NoArgsCommand kNoArgsCmdList[];
 
+extern const Command kCmdList[];
+
 /* Command functions */
 
 void moveCommand(const char* input, const char* usage, const int numArgs);
