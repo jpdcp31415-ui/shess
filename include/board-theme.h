@@ -23,6 +23,8 @@ typedef struct
     const char fillChar;
 } BoardTheme;
 
+void printBoardThemes(void);
+
 const BoardTheme* getKBoardThemePtr(const char* theme);
 
 StrTile getStrTile(const char* themeName, const Piece* p);

@@ -39,6 +39,8 @@ USettingType getSettingData(const char* settingName);
 
 USettingType getSettingDataSafely(const char* setting);
 
+void printSettings(void);
+
 void setCommand(const char* input, const char* usage, const int numArgs);
 
 #endif

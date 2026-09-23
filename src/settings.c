@@ -91,6 +91,12 @@ Setting* getSettingStructSafely(const char* setting)
     return settingStruct;
 }
 
+void printSettings(void)
+{
+    for (int i = 0; gAllSettings[i].settingName != NULL; i++)
+        printf("%s\n", gAllSettings[i].settingName);
+}
+
 USettingType getSettingData(const char* setting)
 {
     return getSettingStruct(setting)->currData;
@@ -170,7 +176,7 @@ void setCommand(const char* input, const char* usage, const int numArgs)
 
     if (getSettingStruct(setting) == NULL)
     {
-        printf("Error: Setting: %s does not exist\n", setting);
+        printf("Error: setting \"%s\" does not exist\n", setting);
         return;
     }
 

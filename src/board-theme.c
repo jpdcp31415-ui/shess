@@ -3,6 +3,7 @@
 #include "../include/assert-toggle.h"
 #include "../include/settings.h"
 
+#include <stdio.h>
 #include <string.h>
 
 const Piece pieceMapOrder[] = {
@@ -94,6 +95,12 @@ const BoardTheme gAllBoardThemes[] =
         .themeName = NULL,
     }
 };
+
+void printBoardThemes(void)
+{
+    for (int i = 0; gAllBoardThemes[i].themeName != NULL; i++)
+        printf("%s\n", gAllBoardThemes[i].themeName);
+}
 
 const BoardTheme* getKBoardThemePtr(const char* themeName)
 {
