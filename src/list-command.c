@@ -3,7 +3,6 @@
 #include "../include/assert-toggle.h"
 #include "../include/command.h"
 #include "../include/board-theme.h"
-#include "../include/io-plus.h"
 #include "../include/settings.h"
 
 void printCommands(void)
@@ -40,18 +39,22 @@ const ListCategory kListCategories[] =
         .name = "board-themes",
         .printValues = printBoardThemes,
     },
+
     {
         .name = "settings",
         .printValues = printSettings,
     },
+
     {
         .name = "commands",
         .printValues = printCommands,
     },
+
     {
         .name = "categories",
         .printValues = printCategories,
     },
+
     { // null terminator
         .name = NULL,
     },
