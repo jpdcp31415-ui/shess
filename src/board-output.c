@@ -5,6 +5,7 @@
 #include "../include/io-plus.h"
 #include "../include/board-theme.h"
 #include "../include/settings.h"
+#include "../include/colour-escapes.h"
 
 void printBoardRowWithTheme(const char* themeName, const Board board, const int y)
 {
@@ -33,7 +34,7 @@ void printBoardRowWithTheme(const char* themeName, const Board board, const int 
 
 void printBoardWithTheme(const char* themeName, const Board board)
 {
-    for (int y=0; y<8; y++) printBoardRowWithTheme(themeName,board,y);
+    for (int y=0; y<8; y++) printBoardRowWithTheme(themeName, board, y);
 
     const BoardTheme* themePtr = getKBoardThemePtr(themeName);
 
@@ -53,7 +54,17 @@ void printBoardWithTheme(const char* themeName, const Board board)
 
 void printBoard(const Board board)
 {
-    printBoardWithTheme(getSettingDataSafely("board-theme").strData,board);
+    const char* colourSetting = getSettingDataSafely("board-colour").strData;
+    const char* colourEsc = matchColour(colourSetting, FOREGROUND_COL);
+
+    printf("%s", colourEsc);
+
+    printBoardWithTheme(
+            getSettingDataSafely("board-theme").strData,
+            board  
+    );
+
+    printf(ESC_NORMAL_FMT);
 }
 
 char getAndMatchCh(const char* const matchChs)

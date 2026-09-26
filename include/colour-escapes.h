@@ -19,11 +19,50 @@
 #define CYAN_BKG_COL       "\e[46m"
 #define LIGHT_GRAY_BKG_COL "\e[47m"
 
-#define NORMAL_FMT    "\e[0m"
-#define BOLD_FMT      "\e[1m"
-#define FADED_FMT     "\e[2m"
-#define ITALIC_FMT    "\e[3m"
-#define UNDERLINE_FMT "\e[4m"
-#define BLINK_FMT     "\e[5m"
+#define ESC_NORMAL_FMT    "\e[0m"
+#define ESC_BOLD_FMT      "\e[1m"
+#define ESC_FADED_FMT     "\e[2m"
+#define ESC_ITALIC_FMT    "\e[3m"
+#define ESC_UNDERLINE_FMT "\e[4m"
+#define ESC_BLINK_FMT     "\e[5m"
+
+typedef enum
+{
+    WHITE_COL,
+    BLACK_COL,
+    RED_COL,
+    GREEN_COL,
+    BROWN_COL,
+    BLUE_COL,
+    PURPLE_COL,
+    CYAN_COL,
+    LIGHT_GRAY_COL,
+} TermColour;
+
+typedef enum
+{
+    NORMAL_FMT,
+    BOLD_FMT,
+    FADED_FMT,
+    ITALIC_FMT,
+    UNDERLINE_FMT,
+    BLINK_FMT,
+} TermFormat;
+
+typedef enum
+{
+    BACKGROUND_COL,
+    FOREGROUND_COL,
+} ForeOrBackCol;
+
+typedef struct
+{
+    TermColour colour;
+    TermFormat format;
+    ForeOrBackCol foreOrBack;
+} ColourFmt;
+
+const char* getColourEscape(const ColourFmt* colFmt);
+const char* matchColour(const char* colName, const ForeOrBackCol bOrF);
 
 #endif

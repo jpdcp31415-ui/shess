@@ -196,9 +196,8 @@ bool isInsufMaterial(const ChessGame* game)
 
 bool isGameDraw(const ChessGame* game)
 {
-    if (isCurrInCheck(game))        return false;
     if (!isInsufMaterial(game))     return false;
-    if (!areAllPiecesAreStuck(game)) return false;
+    if (isCurrInCheck(game) || !areAllPiecesAreStuck(game)) return false;
 
     return false;
 }

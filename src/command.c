@@ -9,7 +9,6 @@
 #include "../include/game-state.h"
 #include "../include/settings.h"
 #include "../include/list-command.h"
-#include "../include/colour-escapes.h"
 
 void promptForPawnPromotion(ChessGame* game)
 {
@@ -280,8 +279,6 @@ void commandLoop(void)
 
     char inputLine[MAX_LINE_LENGTH] = "";
 
-    printf("%s", BLUE_COLOUR);
-
     printf("Welcome to minimal-chess!\n"
            "Use \"list\" to list all commands\n"
            "And use \"help [command]\" for text about the command\n");
@@ -306,6 +303,4 @@ void commandLoop(void)
 
         runCmdStr(cmdStr,cmdArgs);
     }
-
-    printf("%s", NORMAL_FORMAT);
 }

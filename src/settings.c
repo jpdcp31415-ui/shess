@@ -24,6 +24,14 @@ Setting gAllSettings[] = (Setting[])
     },
 
     {
+        .settingName = "board-colour",
+        .typeOfData = STR_SETT_TYPE,
+        .currData = {.strData = "white"},
+        .defaultData = {.strData = "white"},
+        // .isValidData = isValidColourName,
+    },
+
+    {
         .settingName = "blank-fill-char",
         .typeOfData = CHAR_SETT_TYPE,
         .currData = {.charData = '_'},
