@@ -60,7 +60,8 @@ target_compile_options( test PRIVATE
     # -g
     # -fsanitize=address
     # -fno-omit-frame-pointer
-    # -O2
+    -O2
+    -fno-omit-frame-pointer
     -std=c99
 )
 
