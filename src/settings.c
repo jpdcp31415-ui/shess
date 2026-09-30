@@ -1,4 +1,3 @@
-#include <linux/limits.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
@@ -12,7 +11,16 @@ bool isValidBoardTheme(const char* boardTheme)
     return getKBoardThemePtr(boardTheme) != NULL;
 }
 
-Setting gAllSettings[] = (Setting[])
+TermFormat strToFormat(const char* sett);
+
+bool isValidColourStr(const char* col)
+{
+    return strToFormat(col).backCol != NULL_TERM_COLOUR &&
+           strToFormat(col).foreCol != NULL_TERM_COLOUR &&
+           strToFormat(col).style != INVALID_TERM_STYLE;
+}
+
+Setting gAllSettings[] =
 {
     /* ---OUTPUT SETTINGS--- */
     {
@@ -25,10 +33,22 @@ Setting gAllSettings[] = (Setting[])
 
     {
         .settingName = "board-colour",
-        .typeOfData = STR_SETT_TYPE,
-        .currData = {.strData = "white"},
-        .defaultData = {.strData = "white"},
-        // .isValidData = isValidColourName,
+        .typeOfData = COLOUR_SETT_TYPE,
+        .currData = {
+            .colourData = {
+                .backCol = WHITE_COL,
+                .foreCol = WHITE_COL,
+                .style = NULL_TERM_STYLE,
+            }
+        },
+        .defaultData = {
+            .colourData = {
+                .backCol = WHITE_COL,
+                .foreCol = WHITE_COL,
+                .style = NULL_TERM_STYLE,
+            }
+        },
+        .isValidData = isValidColourStr,
     },
 
     {
@@ -78,7 +98,7 @@ const char* getSettingTypeFmt(const TypeOfSetting t)
     ASSERT(t != NULL_SETT_TYPE, "Cannot get type formar for NULL_SETT_TYPE");
 
     const char** fmtArr = (const char*[]){"%s", /* for "true" / "false" */
-                                          "%d","%s","%c"};
+                                          "%d","%s","%c","%s"};
     return fmtArr[t - 1];
 }
 
@@ -141,11 +161,11 @@ SettingValueErr setSettingData(const char* setting, const char* strValue)
         data->intData = i;
         break;
     case BOOL_SETT_TYPE:
-        char boolStr[MAX_INPUT] = "";
+        char boolStr[MAX_STR_SET_DATA] = "";
 
         if (sscanf(strValue, fmt, boolStr) == 0)
             return VALUE_INPUT_ERR;
-        
+
         if (!(strcmp(boolStr, "true") == 0 || strcmp(boolStr, "false") == 0))
             return VALUE_INPUT_ERR;
 
@@ -163,11 +183,89 @@ SettingValueErr setSettingData(const char* setting, const char* strValue)
             return VALUE_INPUT_ERR;
         data->charData = c;
         break;
+    case COLOUR_SETT_TYPE:
+        char colStr[MAX_STR_SET_DATA] = "";
+        if (sscanf(strValue, fmt, colStr) == 0)
+            return VALUE_INPUT_ERR;
+        data->colourData = strToFormat(colStr);
+        break;
     case NULL_SETT_TYPE:
         EXIT_MSG("This setting has a type of data NULL_SETT_TYPE which cannot be assigned");
     }
 
     return NO_VALUE_ERR;
+}
+
+TermColour strToColour(const char* str)
+{
+    if (strcmp(str, "white") == 0)      return WHITE_COL;
+    if (strcmp(str, "black") == 0)      return BLACK_COL;
+    if (strcmp(str, "red")   == 0)      return RED_COL;
+    if (strcmp(str, "green") == 0)      return GREEN_COL;
+    if (strcmp(str, "brown") == 0)      return BROWN_COL;
+    if (strcmp(str, "blue")  == 0)      return BLUE_COL;
+    if (strcmp(str, "purple") == 0)     return PURPLE_COL;
+    if (strcmp(str, "cyan") == 0)       return CYAN_COL;
+    if (strcmp(str, "light-gray") == 0) return LIGHT_GRAY_COL;
+
+    return NULL_TERM_COLOUR;
+}
+
+TermStyle strToStyle(const char* str)
+{
+    if (strcmp(str, "normal") == 0)     return NULL_TERM_STYLE;
+    if (strcmp(str, "bold") == 0)       return BOLD_FMT;
+    if (strcmp(str, "faded")   == 0)    return FADED_FMT;
+    if (strcmp(str, "italic") == 0)     return ITALIC_FMT;
+    if (strcmp(str, "underline") == 0 ||
+        strcmp(str, "under") == 0)      return UNDERLINE_FMT;
+    if (strcmp(str, "blink") == 0)      return BLINK_FMT;
+
+    return INVALID_TERM_STYLE;
+}
+
+TermColour getForeFromStr(const char* str)
+{
+    if (strcmp(str, "") == 0) return WHITE_COL;
+
+    if (strchr(str, ';') == NULL) return WHITE_COL;
+
+    char fore[64] = "";
+    strncpy(fore, str, strcspn(str, ";"));
+    return strToColour(fore);
+}
+
+TermColour getBackFromStr(const char* str)
+{
+    if (strcmp(str, "") == 0) return WHITE_COL;
+
+    const char* strPtr = strchr(str, ';') + 1;
+    if (strPtr == NULL + 1) return WHITE_COL;
+
+    char back[64] = "";
+    strncpy(back, strPtr, strcspn(strPtr, ";"));
+    return strToColour(back);
+}
+
+TermStyle getStyleFromStr(const char* str)
+{
+    if (strcmp(str, "") == 0) return NULL_TERM_STYLE;
+
+    const char* strPtr = strchr(str, ';') + 1;
+    if (strPtr == NULL + 1) return NULL_TERM_STYLE;
+    strPtr = strchr(strPtr, ';') + 1;
+    if (strPtr == NULL + 1) return NULL_TERM_STYLE;
+
+    return strToStyle(strPtr);
+}
+
+TermFormat strToFormat(const char* sett)
+{
+    return (TermFormat) {
+        .foreCol = getForeFromStr(sett),
+        .backCol = getBackFromStr(sett),
+        .style   = getStyleFromStr(sett),
+    };
 }
 
 void setCommand(const char* input, const char* usage, const int numArgs)
@@ -179,6 +277,20 @@ void setCommand(const char* input, const char* usage, const int numArgs)
     {
         printf("Error: Input did not go as expected OR setting or value was/were not specified!\n");
         return;
+    }
+
+    if (getSettingStruct(setting)->typeOfData == COLOUR_SETT_TYPE)
+    {
+        const TermFormat fmt = strToFormat(settingValue);
+
+        if (fmt.foreCol == NULL_TERM_COLOUR)
+            printf("Error: could not get foreground colour\n");
+        
+        if (fmt.backCol == NULL_TERM_COLOUR)
+            printf("Error: could not get background colour\n");
+        
+        if (fmt.style == INVALID_TERM_STYLE)
+            printf("Error: could not get style\n");
     }
 
     if (getSettingStruct(setting) == NULL)

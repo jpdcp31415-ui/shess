@@ -3,6 +3,9 @@
 
 #include <stdbool.h>
 
+#include "colour-escapes.h"
+#include "piece.h"
+
 #define MAX_STR_SET_DATA 64
 
 typedef union
@@ -11,6 +14,7 @@ typedef union
     int intData;
     char charData;
     char strData[MAX_STR_SET_DATA];
+    TermFormat colourData;
 } USettingType;
 
 typedef enum
@@ -20,9 +24,10 @@ typedef enum
     INT_SETT_TYPE,
     STR_SETT_TYPE,
     CHAR_SETT_TYPE,
+    COLOUR_SETT_TYPE,
 } TypeOfSetting;
 
-typedef struct
+typedef struct _Setting
 {
     const char* settingName;
     const TypeOfSetting typeOfData;
@@ -30,8 +35,6 @@ typedef struct
     const USettingType defaultData;
     bool(*const isValidData)(const char*);
 } Setting;
-
-extern Setting gAllSettings[];
 
 const char* getSettingTypeFmt(const TypeOfSetting t);
 

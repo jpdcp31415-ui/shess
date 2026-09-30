@@ -54,14 +54,14 @@ void printBoardWithTheme(const char* themeName, const Board board)
 
 void printBoard(const Board board)
 {
-    const char* colourSetting = getSettingDataSafely("board-colour").strData;
-    const char* colourEsc = matchColour(colourSetting, FOREGROUND_COL);
+    const TermFormat colourSetting = getSettingDataSafely("board-colour").colourData;
+    const char* colourEsc = getColourAsEsc(&colourSetting);
 
     printf("%s", colourEsc);
 
     printBoardWithTheme(
-            getSettingDataSafely("board-theme").strData,
-            board  
+        getSettingDataSafely("board-theme").strData,
+        board
     );
 
     printf(ESC_NORMAL_FMT);
