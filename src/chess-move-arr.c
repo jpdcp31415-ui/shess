@@ -89,42 +89,40 @@ ChessMoveArr initAllLegalMovesCurrOpts(const ChessGame* game, const bool ignoreC
     return moveArr;
 }
 
-ChessMoveArr initLegalMovesTo(const ChessGame* game, const IntVec2D* positionTo, const bool ignoreCheck)
+ChessMoveArr pushMoveIfCmp(const ChessGame* game, bool(*cmp)(const ChessMove*, const IntVec2D*), const IntVec2D* v, const bool ignoreCheck)
 {
     ChessMoveArr allMoves = initAllLegalMovesCurrOpts(game, ignoreCheck);
 
-    ChessMoveArr movesToPos = initMoveArr();
+    ChessMoveArr moves = initMoveArr();
     
     for (int i = 0; i < allMoves.length; i++)
-    {
-        const IntVec2D nextPosition = getNextPos(&getMovePtr(&allMoves, i)->boardMove);
-
-        if (equalVecs(&nextPosition, positionTo))
-            pushMove(&movesToPos, getMovePtr(&allMoves, i));
-    }
+        if (cmp(getMovePtr(&allMoves, i), v))
+            pushMove(&moves, getMovePtr(&allMoves, i));
 
     freeMoveArr(&allMoves);
 
-    return movesToPos;
+    return moves;
+}
+
+bool equalPosition(const ChessMove* m, const IntVec2D* v)
+{
+    return equalVecs(&m->boardMove.position, v);
+}
+
+bool equalNextPosition(const ChessMove* m, const IntVec2D* v)
+{
+    const IntVec2D nextPos = getNextPos(&m->boardMove);
+    return equalVecs(&nextPos, v);
 }
 
 ChessMoveArr initLegalMovesFrom(const ChessGame* game, const IntVec2D* positionFrom, const bool ignoreCheck)
 {
-    ChessMoveArr allMoves = initAllLegalMovesCurrOpts(game, ignoreCheck);
+    return pushMoveIfCmp(game, equalPosition, positionFrom, ignoreCheck);
+}
 
-    ChessMoveArr movesToPos = initMoveArr();
-
-    for (int i = 0; i < allMoves.length; i++)
-    {
-        const IntVec2D posFromEach = getMovePtr(&allMoves, i)->boardMove.position;
-
-        if (equalVecs(&posFromEach, positionFrom))
-            pushMove(&movesToPos, getMovePtr(&allMoves, i));
-    }
-
-    freeMoveArr(&allMoves);
-
-    return movesToPos;
+ChessMoveArr initLegalMovesTo(const ChessGame* game, const IntVec2D* positionTo, const bool ignoreCheck)
+{
+    return pushMoveIfCmp(game, equalNextPosition, positionTo, ignoreCheck);
 }
 
 ChessMove getAttackToKing(const ChessGame* game)
