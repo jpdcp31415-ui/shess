@@ -35,9 +35,7 @@ void printBoardRowWithTheme(const char* themeName, const Board board, const int 
 void printBoardWithTheme(const char* themeName, const Board board)
 {
     for (int y=0; y<8; y++) printBoardRowWithTheme(themeName, board, y);
-
     const BoardTheme* themePtr = getKBoardThemePtr(themeName);
-
     if (getSettingDataSafely("show-board-coords").boolData)
     {
         printf("  ");

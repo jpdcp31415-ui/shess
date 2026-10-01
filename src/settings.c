@@ -228,7 +228,7 @@ TermColour getForeFromStr(const char* str)
 {
     if (strcmp(str, "") == 0) return WHITE_COL;
 
-    if (strchr(str, ';') == NULL) return WHITE_COL;
+    if (strchr(str, ';') == NULL) return strToColour(str);
 
     char fore[64] = "";
     strncpy(fore, str, strcspn(str, ";"));
@@ -279,6 +279,12 @@ void setCommand(const char* input, const char* usage, const int numArgs)
         return;
     }
 
+    if (getSettingStruct(setting) == NULL)
+    {
+        printf("Error: setting \"%s\" does not exist\n", setting);
+        return;
+    }
+
     if (getSettingStruct(setting)->typeOfData == COLOUR_SETT_TYPE)
     {
         const TermFormat fmt = strToFormat(settingValue);
@@ -291,12 +297,6 @@ void setCommand(const char* input, const char* usage, const int numArgs)
         
         if (fmt.style == INVALID_TERM_STYLE)
             printf("Error: could not get style\n");
-    }
-
-    if (getSettingStruct(setting) == NULL)
-    {
-        printf("Error: setting \"%s\" does not exist\n", setting);
-        return;
     }
 
     switch (setSettingData(setting, settingValue))
