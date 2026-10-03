@@ -36,14 +36,14 @@ Setting gAllSettings[] =
         .typeOfData = COLOUR_SETT_TYPE,
         .currData = {
             .colourData = {
-                .backCol = WHITE_COL,
+                .backCol = BLACK_COL,
                 .foreCol = WHITE_COL,
                 .style = NULL_TERM_STYLE,
             }
         },
         .defaultData = {
             .colourData = {
-                .backCol = WHITE_COL,
+                .backCol = BLACK_COL,
                 .foreCol = WHITE_COL,
                 .style = NULL_TERM_STYLE,
             }
@@ -237,10 +237,10 @@ TermColour getForeFromStr(const char* str)
 
 TermColour getBackFromStr(const char* str)
 {
-    if (strcmp(str, "") == 0) return WHITE_COL;
+    if (strcmp(str, "") == 0) return BLACK_COL;
 
     const char* strPtr = strchr(str, ';') + 1;
-    if (strPtr == NULL + 1) return WHITE_COL;
+    if (strPtr == NULL + 1) return BLACK_COL;
 
     char back[64] = "";
     strncpy(back, strPtr, strcspn(strPtr, ";"));

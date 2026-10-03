@@ -13,15 +13,15 @@ const char* getColourAsEsc(const TermFormat* fmt)
     if (fmt->foreCol != WHITE_COL)
     {
         char foreStr[10] = "";
-        sprintf(foreStr, "%d", 30 + fmt->foreCol - 2);
+        sprintf(foreStr, "%d", 30 + fmt->foreCol - WHITE_COL);
         strcat(esc, foreStr);
     }
 
     ASSERT(fmt->backCol != NULL_TERM_COLOUR, "Cannot get colour escape number from NULL_TERM_COLOUR");
-    if (fmt->backCol != WHITE_COL)
+    if (fmt->backCol != BLACK_COL)
     {
         char backStr[10] = "";
-        sprintf(backStr, ";%d", 40 + fmt->backCol - 2);
+        sprintf(backStr, ";%d", 40 + fmt->backCol - WHITE_COL);
         strcat(esc, backStr);
     }
 

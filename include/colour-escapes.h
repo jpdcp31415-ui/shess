@@ -12,7 +12,6 @@ typedef enum
 {
     NULL_TERM_COLOUR,
     WHITE_COL,
-    BLACK_COL,
     RED_COL,
     GREEN_COL,
     BROWN_COL,
@@ -20,6 +19,7 @@ typedef enum
     PURPLE_COL,
     CYAN_COL,
     LIGHT_GRAY_COL,
+    BLACK_COL,
 } TermColour;
 
 typedef enum
