@@ -136,7 +136,7 @@ const IntVec2D* getDirections(const Piece* p)
 
 IntVec2D getDirecVec(const IntVec2D* move, const Piece* piece)
 {
-    ASSERT(isMultStep(piece), "Piece is not does not move multiple steps");
+    ASSERT(isMultStep(piece), "Piece does not move multiple steps");
 
     const IntVec2D* directions = getDirections(piece);
 
