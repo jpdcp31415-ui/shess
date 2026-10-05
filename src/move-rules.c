@@ -38,26 +38,26 @@ const char* getMoveErrReason(const MoveErr mvErr)
 {
     switch (mvErr)
     {
-    case NO_MOVE_ERR:          return "There were no errors!\n";
+    case NO_MOVE_ERR:          return "There were no errors!";
 
-    case OOB_POSITION:         return "Position is Out of Bounds!\n";
-    case OOB_MOVE:             return "Position + Move is Out of Bounds!\n";
+    case OOB_POSITION:         return "Position is Out of Bounds!";
+    case OOB_MOVE:             return "Position + Move is Out of Bounds!";
 
-    case MOVER_IS_BLANK:       return "Can't move blank piece!\n";
-    case OPPOSITE_PLAYER_MOVE: return "Can't move piece of opposite player!\n";
-    case DOESNT_HAVE_MOVE:     return "This piece does not have that move!\n";
+    case MOVER_IS_BLANK:       return "Can't move blank piece!";
+    case OPPOSITE_PLAYER_MOVE: return "Can't move piece of opposite player!";
+    case DOESNT_HAVE_MOVE:     return "This piece does not have that move!";
 
-    case NO_PIECE_TO_ATTACK:   return "There are no pieces to attack (diagonally) with pawn!\n";
-    case NOT_INIT_POSITION:    return "Pawn cannot move 2 spaces unless has not moved before!\n";
-    case CANT_ATTACK_FRONT:    return "There is a piece in front of this pawn that you cannot attack!\n";
-    case PATH_NOT_CLEAR:       return "There are pieces in the way of your move!\n";
+    case NO_PIECE_TO_ATTACK:   return "There are no pieces to attack (diagonally) with pawn!";
+    case NOT_INIT_POSITION:    return "Pawn cannot move 2 spaces unless has not moved before!";
+    case CANT_ATTACK_FRONT:    return "There is a piece in front of this pawn that you cannot attack!";
+    case PATH_NOT_CLEAR:       return "There are pieces in the way of your move!";
 
-    case CASTLING_CHECK:       return "Can't castle because of check in the middle or where king is!\n";
-    case CANT_EN_PASSENT:      return "Can't en passent!\n";
-    case MOVE_CAUSES_CHECK:    return "This move leads you to be in check!\n";
-    case IS_STILL_CHECK:       return "This move won't take you out of check!\n";
+    case CASTLING_CHECK:       return "Can't castle because of check in the middle or where king is!";
+    case CANT_EN_PASSENT:      return "Can't en passent!";
+    case MOVE_CAUSES_CHECK:    return "This move leads you to be in check!";
+    case IS_STILL_CHECK:       return "This move won't take you out of check!";
 
-    case SAME_PLAYER_ATTACK:   return "You can't attack your own pieces!\n";
+    case SAME_PLAYER_ATTACK:   return "You can't attack your own pieces!";
     }
 
     EXIT_MSG(!"There are no more move errors!");

@@ -202,7 +202,7 @@ TermColour strToColour(const char* str)
     if (strcmp(str, "black") == 0)      return BLACK_COL;
     if (strcmp(str, "red")   == 0)      return RED_COL;
     if (strcmp(str, "green") == 0)      return GREEN_COL;
-    if (strcmp(str, "brown") == 0)      return BROWN_COL;
+    if (strcmp(str, "yellow") == 0)     return YELLOW_COL;
     if (strcmp(str, "blue")  == 0)      return BLUE_COL;
     if (strcmp(str, "purple") == 0)     return PURPLE_COL;
     if (strcmp(str, "cyan") == 0)       return CYAN_COL;
@@ -275,13 +275,13 @@ void setCommand(const char* input, const char* usage, const int numArgs)
 
     if (sscanf(input, usage, setting, settingValue) != numArgs)
     {
-        printf("Error: Input did not go as expected OR setting or value was/were not specified!\n");
+        printWMsgType(ERROR_MSG,"Input did not go as expected OR setting or value was/were not specified!");
         return;
     }
 
     if (getSettingStruct(setting) == NULL)
     {
-        printf("Error: setting \"%s\" does not exist\n", setting);
+        printWMsgType(ERROR_MSG,"setting \"%s\" does not exist", setting);
         return;
     }
 
@@ -290,23 +290,23 @@ void setCommand(const char* input, const char* usage, const int numArgs)
         const TermFormat fmt = strToFormat(settingValue);
 
         if (fmt.foreCol == NULL_TERM_COLOUR)
-            printf("Error: could not get foreground colour\n");
+            printWMsgType(ERROR_MSG,"could not get foreground colour");
         
         if (fmt.backCol == NULL_TERM_COLOUR)
-            printf("Error: could not get background colour\n");
+            printWMsgType(ERROR_MSG,"could not get background colour");
         
         if (fmt.style == INVALID_TERM_STYLE)
-            printf("Error: could not get style\n");
+            printWMsgType(ERROR_MSG,"could not get style\n");
     }
 
     switch (setSettingData(setting, settingValue))
     {
     case NO_VALUE_ERR: return;
     case VALUE_INPUT_ERR:
-        printf("Error: Input did not go well when getting new value (%s) for setting (%s)\n", settingValue, setting);
+        printWMsgType(ERROR_MSG, "Input did not go well when getting new value (%s) for setting (%s)\n", settingValue, setting);
         return;
     case INVALID_VALUE_ERR:
-        printf("Error: Invalid value \"%s\" for setting \"%s\"\n", settingValue, setting);
+        printWMsgType(ERROR_MSG, "Invalid value \"%s\" for setting \"%s\"\n", settingValue, setting);
         return;
     default: EXIT_MSG("Invalid value for SettingValueErr type");
     }

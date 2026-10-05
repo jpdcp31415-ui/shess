@@ -14,7 +14,7 @@ typedef enum
     WHITE_COL,
     RED_COL,
     GREEN_COL,
-    BROWN_COL,
+    YELLOW_COL,
     BLUE_COL,
     PURPLE_COL,
     CYAN_COL,
@@ -22,6 +22,8 @@ typedef enum
     BLACK_COL,
 } TermColour;
 
+// change this to a struct?
+// to allow multiple styles
 typedef enum
 {
     INVALID_TERM_STYLE,
@@ -41,5 +43,14 @@ typedef struct
 } TermFormat;
 
 const char* getColourAsEsc(const TermFormat* fmt);
+
+typedef enum
+{
+    WARN_MSG,
+    ERROR_MSG,
+    INFO_MSG,
+} TermMsgType;
+
+int printWMsgType(const TermMsgType t, const char* fmt, ...);
 
 #endif

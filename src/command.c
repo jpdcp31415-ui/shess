@@ -55,7 +55,7 @@ void moveCommand(const char* input, const char* usage, const int numArgs)
 
     if (n != numArgs)
     {
-        printf("Error: Input did not go as expected!\n");
+        printWMsgType(ERROR_MSG, "Input did not go as expected!");
         return;
     }
 
@@ -66,7 +66,7 @@ void moveCommand(const char* input, const char* usage, const int numArgs)
 
     if (varOOBErr != NO_MOVE_ERR)
     {
-        printf("Error: %s", getMoveErrReason(varOOBErr));
+        printWMsgType(ERROR_MSG, "%s", getMoveErrReason(varOOBErr));
         return;
     }
 
@@ -80,7 +80,7 @@ void moveCommand(const char* input, const char* usage, const int numArgs)
     if (!isValidMove(&gCurrChessGame,&currChessMove))
     {
         const MoveErr mvErr = getMoveErr(&gCurrChessGame,&currChessMove);
-        printf("Error: %s",getMoveErrReason(mvErr));
+        printWMsgType(ERROR_MSG,"%s",getMoveErrReason(mvErr));
         return;
     }
 
@@ -101,7 +101,7 @@ void helpCommand(const char* input, const char* usage, const int numArgs)
 
     if (n != numArgs)
     {
-        printf("Error: Input did not go as expected!\n");
+        printWMsgType(ERROR_MSG,"Input did not go as expected!");
         return;
     }
 
@@ -121,7 +121,7 @@ void helpCommand(const char* input, const char* usage, const int numArgs)
         return;
     }
 
-    printf("Error: Command %s does not exist!\n", cmd);
+    printWMsgType(ERROR_MSG,"Command %s does not exist!", cmd);
 }
 
 const Command kCmdList[] = 
@@ -261,7 +261,7 @@ void runCmdStr(const char* cmd, const char* input)
         return;
     }
 
-    printf("Error: Command %s does not exist!\n", cmd);
+    printWMsgType(ERROR_MSG,"Command %s does not exist!", cmd);
 }
 
 bool allCharsAreWS(const char* str)
@@ -290,7 +290,11 @@ void commandLoop(void)
 
     while (gProgramIsRunning)
     {
-        printf("$ ");
+        printf("%s$ " ESC_NORMAL_FMT, getColourAsEsc(&(TermFormat){
+                        .foreCol = GREEN_COL,
+                        .backCol = BLACK_COL,
+                        .style = NULL_TERM_STYLE,
+                    }));
 
         getLine(inputLine);
 
