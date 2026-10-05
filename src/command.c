@@ -108,16 +108,54 @@ void helpCommand(const char* input, const char* usage, const int numArgs)
     const Command* cmdPtr = findCmdPtr(cmd);
     if (cmdPtr != NULL)
     {
-        printf("Usage: %s %s\n", cmd, cmdPtr->argNames);
-        printf("Help:  %s\n", cmdPtr->helpText);
+        printWTermFormat("Usage: ", &(TermFormat){
+                .backCol = BLACK_COL,
+                .foreCol = BLUE_COL,
+                .style = BOLD_FMT,
+        });
+        printWTermFormat(cmd, &(TermFormat){
+                .backCol = BLACK_COL,
+                .foreCol = GREEN_COL,
+                .style = BOLD_FMT,
+        });
+        printf(" ");
+        printWTermFormat(cmdPtr->argNames, &(TermFormat){
+                .backCol = BLACK_COL,
+                .foreCol = YELLOW_COL,
+                .style = BOLD_FMT,
+        });
+        printf("\n");
+
+        printWTermFormat("Help:  ", &(TermFormat){
+                .backCol = BLACK_COL,
+                .foreCol = BLUE_COL,
+                .style = BOLD_FMT,
+        });
+        printf("%s\n", cmdPtr->helpText);
         return;
     }
 
     const NoArgsCommand* noArgsCmdPtr = findNoArgsCmdPtr(cmd);
     if (noArgsCmdPtr != NULL)
     {
-        printf("Usage: %s\n", cmd);
-        printf("Help:  %s\n", noArgsCmdPtr->helpText);
+        printWTermFormat("Usage: ", &(TermFormat){
+                .backCol = BLACK_COL,
+                .foreCol = BLUE_COL,
+                .style = BOLD_FMT,
+        });
+        printWTermFormat(cmd, &(TermFormat){
+                .backCol = BLACK_COL,
+                .foreCol = GREEN_COL,
+                .style = BOLD_FMT,
+        });
+        printf("\n");
+
+        printWTermFormat("Help:  ", &(TermFormat){
+                .backCol = BLACK_COL,
+                .foreCol = BLUE_COL,
+                .style = BOLD_FMT,
+        });
+        printf("%s\n", noArgsCmdPtr->helpText);
         return;
     }
 

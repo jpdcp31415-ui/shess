@@ -38,6 +38,18 @@ const char* getColourAsEsc(const TermFormat* fmt)
     return esc;
 }
 
+void printWTermFormat(const char* str, const TermFormat* fmt)
+{
+    static char strCpy[255] = "";
+    strcpy(strCpy, "");
+
+    strcat(strCpy, getColourAsEsc(fmt));
+    strcat(strCpy, str);
+    strcat(strCpy, ESC_NORMAL_FMT);
+
+    printf("%s", strCpy);
+}
+
 int printWMsgType(const TermMsgType t, const char* fmt, ...)
 {
     switch (t)

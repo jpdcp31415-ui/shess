@@ -11,6 +11,7 @@
 typedef enum
 {
     NULL_TERM_COLOUR,
+    BLACK_COL,
     WHITE_COL,
     RED_COL,
     GREEN_COL,
@@ -19,7 +20,6 @@ typedef enum
     PURPLE_COL,
     CYAN_COL,
     LIGHT_GRAY_COL,
-    BLACK_COL,
 } TermColour;
 
 // change this to a struct?
@@ -43,6 +43,8 @@ typedef struct
 } TermFormat;
 
 const char* getColourAsEsc(const TermFormat* fmt);
+
+void printWTermFormat(const char* str, const TermFormat* fmt);
 
 typedef enum
 {
