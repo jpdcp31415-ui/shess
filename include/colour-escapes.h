@@ -20,7 +20,14 @@ typedef enum
     PURPLE_COL,
     CYAN_COL,
     LIGHT_GRAY_COL,
-} TermColour;
+} Term3BitColour;
+
+typedef struct
+{
+    int red;
+    int blue;
+    int green;
+} TermRgbColour;
 
 // change this to a struct?
 // to allow multiple styles
@@ -37,12 +44,14 @@ typedef enum
 
 typedef struct
 {
-    TermColour backCol;
-    TermColour foreCol;
+    Term3BitColour backCol;
+    Term3BitColour foreCol;
     TermStyle style;
 } TermFormat;
 
-const char* getColourAsEsc(const TermFormat* fmt);
+const char* getTermFormatAsEsc(const TermFormat* fmt);
+
+void printRgbColEsc(const TermRgbColour* col);
 
 void printWTermFormat(const char* str, const TermFormat* fmt);
 

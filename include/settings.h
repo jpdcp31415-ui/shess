@@ -14,7 +14,7 @@ typedef union
     int intData;
     char charData;
     char strData[MAX_STR_SET_DATA];
-    TermFormat colourData;
+    TermRgbColour colourData;
 } USettingType;
 
 typedef enum

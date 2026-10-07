@@ -11,13 +11,22 @@ bool isValidBoardTheme(const char* boardTheme)
     return getKBoardThemePtr(boardTheme) != NULL;
 }
 
-TermFormat strToFormat(const char* sett);
-
-bool isValidColourStr(const char* col)
+bool isValidRgbCol(const TermRgbColour* col)
 {
-    return strToFormat(col).backCol != NULL_TERM_COLOUR &&
-           strToFormat(col).foreCol != NULL_TERM_COLOUR &&
-           strToFormat(col).style != INVALID_TERM_STYLE;
+    return col->red   >= 0   &&
+           col->red   <= 255 &&
+           col->blue  >= 0   &&
+           col->blue  <= 255 &&
+           col->green >= 0   &&
+           col->green <= 255;
+}
+
+TermRgbColour strToRgbColour(const char* str);
+
+bool isValidRgbColStr(const char* str)
+{
+    const TermRgbColour col = strToRgbColour(str);
+    return isValidRgbCol(&col);
 }
 
 Setting gAllSettings[] =
@@ -36,19 +45,19 @@ Setting gAllSettings[] =
         .typeOfData = COLOUR_SETT_TYPE,
         .currData = {
             .colourData = {
-                .backCol = BLACK_COL,
-                .foreCol = WHITE_COL,
-                .style = NULL_TERM_STYLE,
+                .red   = 255,
+                .green = 255,
+                .blue  = 255,
             }
         },
         .defaultData = {
             .colourData = {
-                .backCol = BLACK_COL,
-                .foreCol = WHITE_COL,
-                .style = NULL_TERM_STYLE,
+                .red   = 255,
+                .green = 255,
+                .blue  = 255,
             }
         },
-        .isValidData = isValidColourStr,
+        .isValidData = isValidRgbColStr,
     },
 
     {
@@ -141,6 +150,8 @@ typedef enum
     INVALID_VALUE_ERR,
 } SettingValueErr;
 
+TermRgbColour strToRgbColour(const char* str);
+
 SettingValueErr setSettingData(const char* setting, const char* strValue)
 {
     Setting* setStruct = getSettingStructSafely(setting);
@@ -187,7 +198,7 @@ SettingValueErr setSettingData(const char* setting, const char* strValue)
         char colStr[MAX_STR_SET_DATA] = "";
         if (sscanf(strValue, fmt, colStr) == 0)
             return VALUE_INPUT_ERR;
-        data->colourData = strToFormat(colStr);
+        data->colourData = strToRgbColour(colStr);
         break;
     case NULL_SETT_TYPE:
         EXIT_MSG("This setting has a type of data NULL_SETT_TYPE which cannot be assigned");
@@ -196,76 +207,24 @@ SettingValueErr setSettingData(const char* setting, const char* strValue)
     return NO_VALUE_ERR;
 }
 
-TermColour strToColour(const char* str)
+TermRgbColour getColFromStr(const char* str)
 {
-    if (strcmp(str, "white") == 0)      return WHITE_COL;
-    if (strcmp(str, "black") == 0)      return BLACK_COL;
-    if (strcmp(str, "red")   == 0)      return RED_COL;
-    if (strcmp(str, "green") == 0)      return GREEN_COL;
-    if (strcmp(str, "yellow") == 0)     return YELLOW_COL;
-    if (strcmp(str, "blue")  == 0)      return BLUE_COL;
-    if (strcmp(str, "purple") == 0)     return PURPLE_COL;
-    if (strcmp(str, "cyan") == 0)       return CYAN_COL;
-    if (strcmp(str, "light-gray") == 0) return LIGHT_GRAY_COL;
+    TermRgbColour col = {};
 
-    return NULL_TERM_COLOUR;
+    int n = sscanf(str, "%d,%d,%d", &col.red, &col.blue, &col.blue);
+    if (n != 0) return (TermRgbColour){-1,-1,-1};
+
+    return col;
 }
 
-TermStyle strToStyle(const char* str)
+TermRgbColour strToRgbColour(const char* str)
 {
-    if (strcmp(str, "normal") == 0)     return NULL_TERM_STYLE;
-    if (strcmp(str, "bold") == 0)       return BOLD_FMT;
-    if (strcmp(str, "faded")   == 0)    return FADED_FMT;
-    if (strcmp(str, "italic") == 0)     return ITALIC_FMT;
-    if (strcmp(str, "underline") == 0 ||
-        strcmp(str, "under") == 0)      return UNDERLINE_FMT;
-    if (strcmp(str, "blink") == 0)      return BLINK_FMT;
+    TermRgbColour col = {};
 
-    return INVALID_TERM_STYLE;
-}
+    int n = sscanf(str, "%d;%d;%d", &col.red, &col.green, &col.blue);
+    if (n != 3) return (TermRgbColour){-1, -1, -1};
 
-TermColour getForeFromStr(const char* str)
-{
-    if (strcmp(str, "") == 0) return WHITE_COL;
-
-    if (strchr(str, ';') == NULL) return strToColour(str);
-
-    char fore[64] = "";
-    strncpy(fore, str, strcspn(str, ";"));
-    return strToColour(fore);
-}
-
-TermColour getBackFromStr(const char* str)
-{
-    if (strcmp(str, "") == 0) return BLACK_COL;
-
-    const char* strPtr = strchr(str, ';') + 1;
-    if (strPtr == NULL + 1) return BLACK_COL;
-
-    char back[64] = "";
-    strncpy(back, strPtr, strcspn(strPtr, ";"));
-    return strToColour(back);
-}
-
-TermStyle getStyleFromStr(const char* str)
-{
-    if (strcmp(str, "") == 0) return NULL_TERM_STYLE;
-
-    const char* strPtr = strchr(str, ';') + 1;
-    if (strPtr == NULL + 1) return NULL_TERM_STYLE;
-    strPtr = strchr(strPtr, ';') + 1;
-    if (strPtr == NULL + 1) return NULL_TERM_STYLE;
-
-    return strToStyle(strPtr);
-}
-
-TermFormat strToFormat(const char* sett)
-{
-    return (TermFormat) {
-        .foreCol = getForeFromStr(sett),
-        .backCol = getBackFromStr(sett),
-        .style   = getStyleFromStr(sett),
-    };
+    return col;
 }
 
 void setCommand(const char* input, const char* usage, const int numArgs)
@@ -287,16 +246,10 @@ void setCommand(const char* input, const char* usage, const int numArgs)
 
     if (getSettingStruct(setting)->typeOfData == COLOUR_SETT_TYPE)
     {
-        const TermFormat fmt = strToFormat(settingValue);
+        const TermRgbColour col = strToRgbColour(settingValue);
 
-        if (fmt.foreCol == NULL_TERM_COLOUR)
-            printWMsgType(ERROR_MSG,"could not get foreground colour");
-        
-        if (fmt.backCol == NULL_TERM_COLOUR)
-            printWMsgType(ERROR_MSG,"could not get background colour");
-        
-        if (fmt.style == INVALID_TERM_STYLE)
-            printWMsgType(ERROR_MSG,"could not get style\n");
+        if (col.red == -1 || col.green == -1 || col.blue == -1)
+            printWMsgType(ERROR_MSG, "could not get RGB colour");
     }
 
     switch (setSettingData(setting, settingValue))

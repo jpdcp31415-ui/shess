@@ -328,7 +328,8 @@ void commandLoop(void)
 
     while (gProgramIsRunning)
     {
-        printf("%s$ " ESC_NORMAL_FMT, getColourAsEsc(&(TermFormat){
+        printf("%s$ " ESC_NORMAL_FMT, getTermFormatAsEsc(
+                    &(TermFormat){
                         .foreCol = GREEN_COL,
                         .backCol = BLACK_COL,
                         .style = NULL_TERM_STYLE,
