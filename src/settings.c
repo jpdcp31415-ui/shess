@@ -219,10 +219,22 @@ TermRgbColour getColFromStr(const char* str)
 
 TermRgbColour strToRgbColour(const char* str)
 {
+    if (strlen(str) > 7) return (TermRgbColour){-1, -1, -1};
+
+    char redStr[8] = "";
+    char greenStr[8] = "";
+    char blueStr[8] = "";
+
+    int n = sscanf(str, "#%2s%2s%2s", redStr, greenStr, blueStr);
+    if (n != 3) return (TermRgbColour){-1, -1, -1};
+
     TermRgbColour col = {};
 
-    int n = sscanf(str, "%d;%d;%d", &col.red, &col.green, &col.blue);
-    if (n != 3) return (TermRgbColour){-1, -1, -1};
+    const int a = sscanf(redStr, "%x", &col.red);
+    const int b = sscanf(greenStr, "%x", &col.green);
+    const int c = sscanf(blueStr, "%x", &col.blue);
+
+    if (a + b + c != 3) return (TermRgbColour){-1, -1, -1};
 
     return col;
 }
@@ -256,10 +268,10 @@ void setCommand(const char* input, const char* usage, const int numArgs)
     {
     case NO_VALUE_ERR: return;
     case VALUE_INPUT_ERR:
-        printWMsgType(ERROR_MSG, "Input did not go well when getting new value (%s) for setting (%s)\n", settingValue, setting);
+        printWMsgType(ERROR_MSG, "Input did not go well when getting new value (%s) for setting (%s)", settingValue, setting);
         return;
     case INVALID_VALUE_ERR:
-        printWMsgType(ERROR_MSG, "Invalid value \"%s\" for setting \"%s\"\n", settingValue, setting);
+        printWMsgType(ERROR_MSG, "Invalid value \"%s\" for setting \"%s\"", settingValue, setting);
         return;
     default: EXIT_MSG("Invalid value for SettingValueErr type");
     }

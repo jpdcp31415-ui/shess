@@ -19,10 +19,10 @@ void appendFore3bitColAsEsc(char* str, const Term3BitColour col)
 void appendBack3bitColAsEsc(char* str, const Term3BitColour col)
 {
     ASSERT(col != NULL_TERM_COLOUR, "Cannot get colour escape number from NULL_TERM_COLOUR");
-    if (col != WHITE_COL)
+    if (col != BLACK_COL)
     {
         char backStr[64] = "";
-        sprintf(backStr, "%d", 40 + col - WHITE_COL);
+        sprintf(backStr, ";%d", 40 + col - WHITE_COL);
         strcat(str, backStr);
     }
 }
