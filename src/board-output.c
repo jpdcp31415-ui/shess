@@ -7,7 +7,7 @@
 #include "../include/settings.h"
 #include "../include/colour-escapes.h"
 
-void printBoardRowWithTheme(const char* themeName, const Board board, const int y)
+void printBoardRowWThemeAndCol(const char* themeName, const TermRgbColour* col, const Board board, const int y)
 {
     const BoardTheme* themePtr = getKBoardThemePtr(themeName);
 
@@ -18,7 +18,8 @@ void printBoardRowWithTheme(const char* themeName, const Board board, const int 
     {
         if (getSettingDataSafely("show-board-coords").boolData && row != 0)
             printf("  ");
-
+        
+        printRgbColEsc(col);
         for (int x=0; x<8; x++)
         {
             const char* rowTileStr = getStrTileRow(getSettingDataSafely("board-theme").strData,
@@ -28,13 +29,14 @@ void printBoardRowWithTheme(const char* themeName, const Board board, const int 
             if (getSettingDataSafely("space-between-columns").boolData)
                 printf(" ");
         }
+        printf(ESC_NORMAL_FMT);
         printf("\n");
     }
 }
 
-void printBoardWithTheme(const char* themeName, const Board board)
+void printBoardWThemeAndCol(const char* themeName, const TermRgbColour* col, const Board board)
 {
-    for (int y=0; y<8; y++) printBoardRowWithTheme(themeName, board, y);
+    for (int y=0; y<8; y++) printBoardRowWThemeAndCol(themeName, col, board, y);
     const BoardTheme* themePtr = getKBoardThemePtr(themeName);
     if (getSettingDataSafely("show-board-coords").boolData)
     {
@@ -53,14 +55,11 @@ void printBoardWithTheme(const char* themeName, const Board board)
 void printBoard(const Board board)
 {
     const TermRgbColour colourSetting = getSettingDataSafely("board-colour").colourData;
-    printRgbColEsc(&colourSetting);
-
-    printBoardWithTheme(
+    printBoardWThemeAndCol(
         getSettingDataSafely("board-theme").strData,
+        &colourSetting,
         board
     );
-
-    printf(ESC_NORMAL_FMT);
 }
 
 char getAndMatchCh(const char* const matchChs)
