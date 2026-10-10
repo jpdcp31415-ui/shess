@@ -11,7 +11,7 @@ void appendFore3bitColAsEsc(char* str, const Term3BitColour col)
     if (col != WHITE_COL)
     {
         char foreStr[64] = "";
-        sprintf(foreStr, "%d", 30 + col - WHITE_COL);
+        sprintf(foreStr, "%d", 90 + col - WHITE_COL);
         strcat(str, foreStr);
     }
 }
@@ -22,7 +22,7 @@ void appendBack3bitColAsEsc(char* str, const Term3BitColour col)
     if (col != BLACK_COL)
     {
         char backStr[64] = "";
-        sprintf(backStr, ";%d", 40 + col - WHITE_COL);
+        sprintf(backStr, ";%d", 100 + col - WHITE_COL);
         strcat(str, backStr);
     }
 }
@@ -32,26 +32,6 @@ void appendForeRgbColAsEsc(char* str, const TermRgbColour* col)
     char foreStrRgb[64] = "";
     sprintf(foreStrRgb, "38;2;%d;%d;%d", col->red, col->green, col->blue);
     strcat(str, foreStrRgb);
-}
-
-const char* getTermFormatAsEsc(const TermFormat* fmt)
-{
-    static char esc[64] = "\e[";
-    strcpy(esc, "\e[");
-
-    appendFore3bitColAsEsc(esc, fmt->foreCol);
-    appendBack3bitColAsEsc(esc, fmt->backCol);
-
-    if (fmt->style != NULL_TERM_STYLE)
-    {
-        char number[10] = "";
-        sprintf(number, ";%d", fmt->style - BOLD_FMT);
-        strcat(esc, number);
-    }
-
-    strcat(esc, "m");
-
-    return esc;
 }
 
 void printRgbColEsc(const TermRgbColour* col)
@@ -64,38 +44,45 @@ void printRgbColEsc(const TermRgbColour* col)
 
 void printWTermFormat(const char* str, const TermFormat* fmt)
 {
-    static char strCpy[255] = "";
-    strcpy(strCpy, "");
+    char esc[64] = "\e[";
 
-    strcat(strCpy, getTermFormatAsEsc(fmt));
-    strcat(strCpy, str);
-    strcat(strCpy, ESC_NORMAL_FMT);
+    appendFore3bitColAsEsc(esc, fmt->foreCol);
+    appendBack3bitColAsEsc(esc, fmt->backCol);
 
-    printf("%s", strCpy);
+    if (fmt->style != NULL_TERM_STYLE)
+    {
+        char number[10] = "";
+        sprintf(number, ";%d", fmt->style - NULL_TERM_STYLE);
+        strcat(esc, number);
+    }
+
+    strcat(esc, "m");
+
+    printf("%s%s%s", esc, str, ESC_NORMAL_FMT);
 }
 
 int printWMsgType(const TermMsgType t, const char* fmt, ...)
 {
     switch (t)
     {
-    case WARN_MSG:  printf("%sWarning: " ESC_NORMAL_FMT,
-                                getTermFormatAsEsc(&(TermFormat){
+    case WARN_MSG:  printWTermFormat("Warning: ",
+                                &(TermFormat){
                                     .backCol = BLACK_COL,
                                     .foreCol = YELLOW_COL,
                                     .style = BOLD_FMT,
-                                })); break;
-    case ERROR_MSG: printf("%sError: " ESC_NORMAL_FMT,
-                                getTermFormatAsEsc(&(TermFormat){
+                                }); break;
+    case ERROR_MSG: printWTermFormat("Error: ",
+                                &(TermFormat){
                                     .backCol = BLACK_COL,
                                     .foreCol = RED_COL,
                                     .style = BOLD_FMT,
-                                })); break;
-    case INFO_MSG:  printf("%sInfo: " ESC_NORMAL_FMT,
-                                getTermFormatAsEsc(&(TermFormat){
+                                }); break;
+    case INFO_MSG:  printWTermFormat("Info: ",
+                                &(TermFormat){
                                     .backCol = BLACK_COL,
                                     .foreCol = BLUE_COL,
                                     .style = BOLD_FMT,
-                                })); break;
+                                }); break;
     }
 
     va_list list;

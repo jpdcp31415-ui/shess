@@ -299,7 +299,7 @@ void runCmdStr(const char* cmd, const char* input)
         return;
     }
 
-    printWMsgType(ERROR_MSG,"Command %s does not exist!", cmd);
+    printWMsgType(ERROR_MSG, "Command %s does not exist!", cmd);
 }
 
 bool allCharsAreWS(const char* str)
