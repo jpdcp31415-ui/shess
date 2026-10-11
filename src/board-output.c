@@ -7,26 +7,34 @@
 #include "../include/settings.h"
 #include "../include/colour-escapes.h"
 
-void printBoardRowWThemeAndCol(const char* themeName, const TermRgbColour* col, const Board board, const int y)
+typedef struct
 {
-    const BoardTheme* themePtr = getKBoardThemePtr(themeName);
+    const char* theme;
+    const TermRgbColour colour;
+    const bool showCoords;
+    const bool spaceBetweenColumns;
+} BoardOutputSettings;
 
-    if (getSettingDataSafely("show-board-coords").boolData)
+void printBoardRowWThemeAndCol(const Board board, const BoardOutputSettings* settings, const int y)
+{
+    const BoardTheme* themePtr = getKBoardThemePtr(settings->theme);
+
+    if (settings->showCoords)
         printf("%d ", 7-y);
 
     for (int row = 0; row < themePtr->tileSize.height; row++)
     {
-        if (getSettingDataSafely("show-board-coords").boolData && row != 0)
+        if (settings->spaceBetweenColumns && row != 0)
             printf("  ");
         
-        printRgbColEsc(col);
+        printRgbColEsc(&settings->colour);
         for (int x=0; x<8; x++)
         {
             const char* rowTileStr = getStrTileRow(getSettingDataSafely("board-theme").strData,
                                                    getKPiecePtrAt(board,x,y),
                                                    row);
             printf("%s", rowTileStr);
-            if (getSettingDataSafely("space-between-columns").boolData)
+            if (settings->spaceBetweenColumns)
                 printf(" ");
         }
         printf(ESC_NORMAL_FMT);
@@ -34,17 +42,17 @@ void printBoardRowWThemeAndCol(const char* themeName, const TermRgbColour* col, 
     }
 }
 
-void printBoardWThemeAndCol(const char* themeName, const TermRgbColour* col, const Board board)
+void printBoardWThemeAndCol(const Board board, const BoardOutputSettings* settings)
 {
-    for (int y=0; y<8; y++) printBoardRowWThemeAndCol(themeName, col, board, y);
-    const BoardTheme* themePtr = getKBoardThemePtr(themeName);
+    for (int y=0; y<8; y++) printBoardRowWThemeAndCol(board, settings, y);
+    const BoardTheme* themePtr = getKBoardThemePtr(settings->theme);
     if (getSettingDataSafely("show-board-coords").boolData)
     {
         printf("  ");
         for (int x=0; x<8; x++)
         {
             printf("%d", x);
-            if (getSettingDataSafely("space-between-columns").boolData)
+            if (settings->spaceBetweenColumns)
                 for (int col = 0; col < themePtr->tileSize.width; col++)
                     printf(" ");
         }
@@ -54,11 +62,16 @@ void printBoardWThemeAndCol(const char* themeName, const TermRgbColour* col, con
 
 void printBoard(const Board board)
 {
-    const TermRgbColour colourSetting = getSettingDataSafely("board-colour").colourData;
+    const BoardOutputSettings settings = {
+        .theme = getSettingDataSafely("board-theme").strData,
+        .colour = getSettingDataSafely("board-colour").colourData,
+        .spaceBetweenColumns = getSettingDataSafely("space-between-columns").boolData,
+        .showCoords = getSettingDataSafely("show-board-coords").boolData,
+    };
+
     printBoardWThemeAndCol(
-        getSettingDataSafely("board-theme").strData,
-        &colourSetting,
-        board
+        board,
+        &settings
     );
 }
 

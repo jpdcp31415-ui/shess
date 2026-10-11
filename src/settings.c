@@ -190,7 +190,7 @@ SettingValueErr setSettingData(const char* setting, const char* strValue)
         break;
     case CHAR_SETT_TYPE:
         char c = '\0';
-        if (sscanf(strValue, fmt, c) == 0)
+        if (sscanf(strValue, fmt, &c) == 0)
             return VALUE_INPUT_ERR;
         data->charData = c;
         break;

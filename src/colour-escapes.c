@@ -22,7 +22,7 @@ void appendBack3bitColAsEsc(char* str, const Term3BitColour col)
     if (col != BLACK_COL)
     {
         char backStr[64] = "";
-        sprintf(backStr, ";%d", 100 + col - WHITE_COL);
+        sprintf(backStr, "%d", 100 + col - WHITE_COL);
         strcat(str, backStr);
     }
 }
@@ -47,12 +47,17 @@ void printWTermFormat(const char* str, const TermFormat* fmt)
     char esc[64] = "\e[";
 
     appendFore3bitColAsEsc(esc, fmt->foreCol);
+    
+    if (fmt->foreCol != WHITE_COL && fmt->backCol != BLACK_COL)
+        strcat(esc, ";");
+    
     appendBack3bitColAsEsc(esc, fmt->backCol);
 
     if (fmt->style != NULL_TERM_STYLE)
     {
         char number[10] = "";
-        sprintf(number, ";%d", fmt->style - NULL_TERM_STYLE);
+        strcat(esc, ";");
+        sprintf(number, "%d", fmt->style - NULL_TERM_STYLE);
         strcat(esc, number);
     }
 

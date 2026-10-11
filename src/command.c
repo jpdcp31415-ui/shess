@@ -317,9 +317,9 @@ void commandLoop(void)
 
     char inputLine[MAX_LINE_LENGTH] = "";
 
-    printf("Welcome to minimal-chess!\n"
-           "Use \"list\" to list all commands\n"
-           "And use \"help [command]\" for text about the command\n");
+    printf("Welcome to shess!\n"
+           "Use \"list commands\" to list all commands\n"
+           "And \"help [command]\" for text about the command\n");
 
     resetCurrChessGame();
     printCurrChessGame();
