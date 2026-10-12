@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 
-#include "colour-escapes.h"
+#include "term-fmt.h"
 #include "piece.h"
 
 #define MAX_STR_SET_DATA 64

@@ -317,9 +317,19 @@ void commandLoop(void)
 
     char inputLine[MAX_LINE_LENGTH] = "";
 
-    printf("Welcome to shess!\n"
+    printf("Welcome to ");
+
+    printWTermFormat("shess",
+            &(TermFormat){
+                .foreCol = CYAN_COL,
+                .backCol = BLACK_COL,
+                .style = BOLD_FMT,
+            });
+        
+    printf("!\n"
            "Use \"list commands\" to list all commands\n"
-           "And \"help [command]\" for text about the command\n");
+           "And \"help [command]\" for text about the command\n"
+           "***********************************************\n");
 
     resetCurrChessGame();
     printCurrChessGame();
@@ -328,7 +338,8 @@ void commandLoop(void)
 
     while (gProgramIsRunning)
     {
-        printWTermFormat("$ ", &(TermFormat){
+        printWTermFormat("$ ",
+                &(TermFormat){
                     .foreCol = GREEN_COL,
                     .backCol = BLACK_COL,
                     .style = NULL_TERM_STYLE,

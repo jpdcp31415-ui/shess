@@ -5,7 +5,7 @@
 #include "../include/io-plus.h"
 #include "../include/board-theme.h"
 #include "../include/settings.h"
-#include "../include/colour-escapes.h"
+#include "../include/term-fmt.h"
 
 typedef struct
 {

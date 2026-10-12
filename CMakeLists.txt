@@ -20,7 +20,7 @@ add_executable(
     src/settings.c
     src/game-state.c
     src/list-command.c
-    src/colour-escapes.c
+    src/term-fmt.c
 )
 
 add_executable(
@@ -42,7 +42,7 @@ add_executable(
     src/settings.c
     src/game-state.c
     src/list-command.c
-    src/colour-escapes.c
+    src/term-fmt.c
 )
 
 target_compile_options( main PRIVATE
