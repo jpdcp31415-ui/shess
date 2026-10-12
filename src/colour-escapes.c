@@ -14,6 +14,7 @@ void appendForeBasicColAsEsc(char* str, const TermBasicColour col)
     case BLACK_COL:      strcat(str, "38;2;0;0;0");       break;
     case RED_COL:        strcat(str, "38;2;255;50;50");   break;
     case ORANGE_COL:     strcat(str, "38;2;255;128;0");   break;
+    case BROWN_COL:      strcat(str, "38;2;192;128;0");   break;
     case YELLOW_COL:     strcat(str, "38;2;255;255;0");   break;
     case GREEN_COL:      strcat(str, "38;2;0;255;0");     break;
     case DARK_GREEN_COL: strcat(str, "38;2;0;128;0");     break;
@@ -21,7 +22,7 @@ void appendForeBasicColAsEsc(char* str, const TermBasicColour col)
     case BLUE_COL:       strcat(str, "38;2;0;128;255");   break;
     case DARK_BLUE_COL:  strcat(str, "38;2;0;0;255");     break;
     case PURPLE_COL:     strcat(str, "38;2;128;0;255");   break;
-    case PINK_COL:       strcat(str, "38;2;255;0;255");   break;
+    case PINK_COL:       strcat(str, "38;2;255;128;255");   break;
     case NULL_TERM_COLOUR:
         ASSERT(col != NULL_TERM_COLOUR, "Cannot get colour escape number from NULL_TERM_COLOUR");
     }
@@ -36,6 +37,7 @@ void appendBackBasicColAsEsc(char* str, const TermBasicColour col)
     case BLACK_COL:      return;
     case RED_COL:        strcat(str, "48;2;255;50;50");   break;
     case ORANGE_COL:     strcat(str, "48;2;255;128;0");   break;
+    case BROWN_COL:      strcat(str, "48;2;192;128;0");   break;
     case YELLOW_COL:     strcat(str, "48;2;255;255;0");   break;
     case GREEN_COL:      strcat(str, "48;2;0;255;0");     break;
     case DARK_GREEN_COL: strcat(str, "48;2;0;128;0");     break;
@@ -43,7 +45,7 @@ void appendBackBasicColAsEsc(char* str, const TermBasicColour col)
     case BLUE_COL:       strcat(str, "48;2;0;128;255");   break;
     case DARK_BLUE_COL:  strcat(str, "48;2;0;0;255");     break;
     case PURPLE_COL:     strcat(str, "48;2;128;0;255");   break;
-    case PINK_COL:       strcat(str, "48;2;255;0;255");   break;
+    case PINK_COL:       strcat(str, "48;2;255;128;255");   break;
     case NULL_TERM_COLOUR:
         ASSERT(col != NULL_TERM_COLOUR, "Cannot get colour escape number from NULL_TERM_COLOUR");
     }

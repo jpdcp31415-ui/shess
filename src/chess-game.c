@@ -18,7 +18,7 @@ static const ChessGame kStartChessGame =
 
     .player = WHITE,
 
-    {
+    .inInitPositions = { 
         {true,true,true,true,true,true,true,true}, // black player side
         {true,true,true,true,true,true,true,true},
         {true,true,true,true,true,true,true,true},

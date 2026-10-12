@@ -16,6 +16,7 @@ typedef enum
     BLACK_COL,
     RED_COL,
     ORANGE_COL,
+    BROWN_COL,
     YELLOW_COL,
     GREEN_COL,
     DARK_GREEN_COL,
