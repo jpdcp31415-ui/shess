@@ -11,16 +11,20 @@
 typedef enum
 {
     NULL_TERM_COLOUR,
-    BLACK_COL,
     WHITE_COL,
-    RED_COL,
-    GREEN_COL,
-    YELLOW_COL,
-    BLUE_COL,
-    PURPLE_COL,
-    CYAN_COL,
     LIGHT_GRAY_COL,
-} Term3BitColour;
+    BLACK_COL,
+    RED_COL,
+    ORANGE_COL,
+    YELLOW_COL,
+    GREEN_COL,
+    DARK_GREEN_COL,
+    CYAN_COL,
+    BLUE_COL,
+    DARK_BLUE_COL,
+    PURPLE_COL,
+    PINK_COL,
+} TermBasicColour;
 
 typedef struct
 {
@@ -44,8 +48,8 @@ typedef enum
 
 typedef struct
 {
-    Term3BitColour backCol;
-    Term3BitColour foreCol;
+    TermBasicColour backCol;
+    TermBasicColour foreCol;
     TermStyle style;
 } TermFormat;
 

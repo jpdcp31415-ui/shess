@@ -5,25 +5,47 @@
 #include "../include/colour-escapes.h"
 #include "../include/assert-toggle.h"
 
-void appendFore3bitColAsEsc(char* str, const Term3BitColour col)
+void appendForeBasicColAsEsc(char* str, const TermBasicColour col)
 {
-    ASSERT(col != NULL_TERM_COLOUR, "Cannot get colour escape number from NULL_TERM_COLOUR");
-    if (col != WHITE_COL)
+    switch (col)
     {
-        char foreStr[64] = "";
-        sprintf(foreStr, "%d", 90 + col - WHITE_COL);
-        strcat(str, foreStr);
+    case WHITE_COL:      return;
+    case LIGHT_GRAY_COL: strcat(str, "38;2;128;128;128"); break;
+    case BLACK_COL:      strcat(str, "38;2;0;0;0");       break;
+    case RED_COL:        strcat(str, "38;2;255;50;50");   break;
+    case ORANGE_COL:     strcat(str, "38;2;255;128;0");   break;
+    case YELLOW_COL:     strcat(str, "38;2;255;255;0");   break;
+    case GREEN_COL:      strcat(str, "38;2;0;255;0");     break;
+    case DARK_GREEN_COL: strcat(str, "38;2;0;128;0");     break;
+    case CYAN_COL:       strcat(str, "38;2;0;255;255");   break;
+    case BLUE_COL:       strcat(str, "38;2;0;128;255");   break;
+    case DARK_BLUE_COL:  strcat(str, "38;2;0;0;255");     break;
+    case PURPLE_COL:     strcat(str, "38;2;128;0;255");   break;
+    case PINK_COL:       strcat(str, "38;2;255;0;255");   break;
+    case NULL_TERM_COLOUR:
+        ASSERT(col != NULL_TERM_COLOUR, "Cannot get colour escape number from NULL_TERM_COLOUR");
     }
 }
 
-void appendBack3bitColAsEsc(char* str, const Term3BitColour col)
+void appendBackBasicColAsEsc(char* str, const TermBasicColour col)
 {
-    ASSERT(col != NULL_TERM_COLOUR, "Cannot get colour escape number from NULL_TERM_COLOUR");
-    if (col != BLACK_COL)
+    switch (col)
     {
-        char backStr[64] = "";
-        sprintf(backStr, "%d", 100 + col - WHITE_COL);
-        strcat(str, backStr);
+    case WHITE_COL:      strcat(str, "48;2;255;255;255"); break;
+    case LIGHT_GRAY_COL: strcat(str, "48;2;128;128;128"); break;
+    case BLACK_COL:      return;
+    case RED_COL:        strcat(str, "48;2;255;50;50");   break;
+    case ORANGE_COL:     strcat(str, "48;2;255;128;0");   break;
+    case YELLOW_COL:     strcat(str, "48;2;255;255;0");   break;
+    case GREEN_COL:      strcat(str, "48;2;0;255;0");     break;
+    case DARK_GREEN_COL: strcat(str, "48;2;0;128;0");     break;
+    case CYAN_COL:       strcat(str, "48;2;0;255;255");   break;
+    case BLUE_COL:       strcat(str, "48;2;0;128;255");   break;
+    case DARK_BLUE_COL:  strcat(str, "48;2;0;0;255");     break;
+    case PURPLE_COL:     strcat(str, "48;2;128;0;255");   break;
+    case PINK_COL:       strcat(str, "48;2;255;0;255");   break;
+    case NULL_TERM_COLOUR:
+        ASSERT(col != NULL_TERM_COLOUR, "Cannot get colour escape number from NULL_TERM_COLOUR");
     }
 }
 
@@ -46,12 +68,12 @@ void printWTermFormat(const char* str, const TermFormat* fmt)
 {
     char esc[64] = "\e[";
 
-    appendFore3bitColAsEsc(esc, fmt->foreCol);
+    appendForeBasicColAsEsc(esc, fmt->foreCol);
     
     if (fmt->foreCol != WHITE_COL && fmt->backCol != BLACK_COL)
         strcat(esc, ";");
     
-    appendBack3bitColAsEsc(esc, fmt->backCol);
+    appendBackBasicColAsEsc(esc, fmt->backCol);
 
     if (fmt->style != NULL_TERM_STYLE)
     {
