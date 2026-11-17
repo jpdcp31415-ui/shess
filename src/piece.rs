@@ -1,4 +1,5 @@
-use crate::vec2::*;
+use crate::vec2::Vec2;
+use crate::game::{Game, InvalidMove, PartUncheckedMove, UncheckedMove, ValidMove};
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum PieceColour {
@@ -25,20 +26,50 @@ pub enum PieceType {
     King,
 }
 
-#[derive(Debug)]
-enum PieceMove {
+#[derive(PartialEq, Copy, Clone, Debug)]
+pub enum PieceMove {
     Vector(Vec2<i32>),
-    Direction(Vec2<i32>),
+    Direction(Vec2<i32>, Option<u32>),
+}
+
+impl PieceMove {
+    pub fn total_vec(&self) -> Vec2<i32> {
+        match self {
+            PieceMove::Vector(mov) => *mov,
+            PieceMove::Direction(mov, steps) => *mov * steps.unwrap().try_into().unwrap(),
+        }
+    }
+}
+
+#[derive(Debug, Copy, Clone)]
+pub enum PieceSpecificErr {
+    PawnCannotMoveDiag,
+    PawnIsNotInStartingPosition,
+    PawnCannotAttackInFront,
+    RookHasMovedBefore,
+    PiecesInWayOfMove,
+}
+
+impl PieceSpecificErr {
+    pub fn reason(&self) -> &'static str {
+        match self {
+            PieceSpecificErr::PawnCannotMoveDiag          => "Pawn cannot move diagonally because there is not piece to attack there",
+            PieceSpecificErr::PawnIsNotInStartingPosition => "Pawn cannot move 2 spaces forward because it has moved before",
+            PieceSpecificErr::PawnCannotAttackInFront     => "Pawn cannot attack the pieces that are is in front of it",
+            PieceSpecificErr::RookHasMovedBefore          => "Cannot castle because rook has moved before",
+            PieceSpecificErr::PiecesInWayOfMove           => "There are pieces is way of your move",
+        }
+    }
 }
 
 impl PieceType {
     pub fn moves(&self) -> Vec<PieceMove> {
         match self {
             PieceType::Pawn => vec![
-                PieceMove::Vector(Vec2 {x: 0, y: 1}),
-                PieceMove::Vector(Vec2 {x: 0, y: 2}),
-                PieceMove::Vector(Vec2 {x: -1, y: 1}),
-                PieceMove::Vector(Vec2 {x: 1, y: 1}),
+                PieceMove::Vector(Vec2 {x:  0, y: -1}),
+                PieceMove::Vector(Vec2 {x:  0, y: -2}),
+                PieceMove::Vector(Vec2 {x: -1, y: -1}),
+                PieceMove::Vector(Vec2 {x:  1, y: -1}),
             ],
 
             PieceType::Knight => vec![
@@ -53,28 +84,28 @@ impl PieceType {
             ],
 
             PieceType::Bishop => vec![
-                PieceMove::Direction(Vec2 {x:  1, y:  1}),
-                PieceMove::Direction(Vec2 {x:  1, y: -1}),
-                PieceMove::Direction(Vec2 {x: -1, y: -1}),
-                PieceMove::Direction(Vec2 {x: -1, y:  1}),
+                PieceMove::Direction(Vec2 {x:  1, y:  1}, None),
+                PieceMove::Direction(Vec2 {x:  1, y: -1}, None),
+                PieceMove::Direction(Vec2 {x: -1, y: -1}, None),
+                PieceMove::Direction(Vec2 {x: -1, y:  1}, None),
             ],
 
             PieceType::Rook => vec![
-                PieceMove::Direction(Vec2 {x:  0, y:  1}),
-                PieceMove::Direction(Vec2 {x:  1, y:  0}),
-                PieceMove::Direction(Vec2 {x:  0, y: -1}),
-                PieceMove::Direction(Vec2 {x: -1, y:  0}),
+                PieceMove::Direction(Vec2 {x:  0, y:  1}, None),
+                PieceMove::Direction(Vec2 {x:  1, y:  0}, None),
+                PieceMove::Direction(Vec2 {x:  0, y: -1}, None),
+                PieceMove::Direction(Vec2 {x: -1, y:  0}, None),
             ],
 
             PieceType::Queen => vec![
-                PieceMove::Direction(Vec2 {x:  1, y:  1}),
-                PieceMove::Direction(Vec2 {x:  1, y: -1}),
-                PieceMove::Direction(Vec2 {x: -1, y: -1}),
-                PieceMove::Direction(Vec2 {x: -1, y:  1}),
-                PieceMove::Direction(Vec2 {x:  0, y:  1}),
-                PieceMove::Direction(Vec2 {x:  1, y:  0}),
-                PieceMove::Direction(Vec2 {x:  0, y: -1}),
-                PieceMove::Direction(Vec2 {x: -1, y:  0}),
+                PieceMove::Direction(Vec2 {x:  1, y:  1}, None),
+                PieceMove::Direction(Vec2 {x:  1, y: -1}, None),
+                PieceMove::Direction(Vec2 {x: -1, y: -1}, None),
+                PieceMove::Direction(Vec2 {x: -1, y:  1}, None),
+                PieceMove::Direction(Vec2 {x:  0, y:  1}, None),
+                PieceMove::Direction(Vec2 {x:  1, y:  0}, None),
+                PieceMove::Direction(Vec2 {x:  0, y: -1}, None),
+                PieceMove::Direction(Vec2 {x: -1, y:  0}, None),
             ],
 
             PieceType::King => vec![
@@ -90,20 +121,13 @@ impl PieceType {
         }
     }
 
-    pub fn has_move(&self, vec: &Vec2<i32>) -> bool {
-        for i in 0..(self.moves().len()) {
-            match self.moves()[i] {
-                PieceMove::Direction(mov) =>
-                    if vec.is_div_by(&mov) {
-                        return true;
-                    },
-                PieceMove::Vector(mov)    =>
-                    if *vec == mov {
-                        return true;
-                    },
+    pub fn has_move(&self, mov: Vec2<i32>) -> bool {
+        self.moves().iter().find(|m|
+            match m {
+                PieceMove::Vector(v)       => mov == *v,
+                PieceMove::Direction(d, s) => mov == *d * s.unwrap() as i32,
             }
-        }
-        false
+        ).is_some()
     }
 
     pub fn is_mult_step(&self) -> bool {
@@ -113,14 +137,54 @@ impl PieceType {
         }
     }
 
-    pub fn move_cond<T>(&self) -> impl Fn(T) {
+    pub fn move_cond(&self) -> Box<dyn Fn(&Game, &PartUncheckedMove) -> Result<(), PieceSpecificErr>> {
         match self {
-            PieceType::Pawn   => |pos|{},
-            PieceType::Knight => |pos|{},
-            PieceType::Bishop => |pos|{},
-            PieceType::Rook   => |pos|{},
-            PieceType::Queen  => |pos|{},
-            PieceType::King   => |pos|{},
+            PieceType::Pawn   =>
+                Box::new(|game: &Game, mov: &PartUncheckedMove| {
+                    match mov.move_vec() {
+                        Vec2 {x: 0, y: -1} =>
+                            if mov.attacked().is_blank() {
+                                Ok(())
+                            } else {
+                                Err(PieceSpecificErr::PawnCannotAttackInFront)
+                            },
+                        Vec2 {x: -1, y: -1} | Vec2 {x: 1, y: -1} =>
+                            if !mov.attacked().is_blank() {
+                                Ok(())
+                            } else {
+                                Err(PieceSpecificErr::PawnCannotMoveDiag)
+                            },
+                        Vec2 {x: 0, y: -2} =>
+                            /* Add error for not the pawn not being in the starting position */
+                            if !game.board().at(mov.from_pos() + Vec2 {x: 0, y: -1}).is_blank() {
+                                Err(PieceSpecificErr::PiecesInWayOfMove)
+                            } else if game.board().at(mov.to_pos()).is_blank() {
+                                Err(PieceSpecificErr::PawnCannotAttackInFront)
+                            } else {
+                                Ok(())
+                            }
+                        _ => Ok(()),
+                    }
+                }),
+
+            PieceType::Knight =>
+                Box::new(|_: &Game, _: &PartUncheckedMove| {
+                    Ok(())
+                }),
+
+            PieceType::Bishop | PieceType::Rook | PieceType::Queen =>
+                Box::new(|game: &Game, mov: &PartUncheckedMove| {
+                    if mov.is_clear(game) {
+                        return Ok(());
+                    } else {
+                        return Err(PieceSpecificErr::PiecesInWayOfMove);
+                    }
+                }),
+
+            PieceType::King   =>
+                Box::new(|game: &Game, mov: &PartUncheckedMove| {
+                    todo!()
+                }),
         }
     }
 
@@ -138,11 +202,39 @@ impl PieceType {
 
     pub fn loop_all_moves<T>(&self, func: T)
     where
-        T: Fn(&PieceMove)
+        T: Fn(Vec2<i32>)
     {
         for mv in self.moves() {
-            func(&mv);
+            match mv {
+                PieceMove::Vector(v)          => func(v),
+                PieceMove::Direction(d, None) =>
+                    for _ in 1..8 {
+                        func(d);
+                    }
+                _ => panic!("Please do not provide a steps number for the piece move array"),
+            }
         }
+
+    }
+
+    pub fn any_moves<T>(&self, func: T) -> bool
+    where
+        T: Fn(Vec2<i32>) -> bool
+    {
+        for mv in self.moves() {
+            match mv {
+                PieceMove::Vector(v) if func(v) => { return true; },
+                PieceMove::Direction(d, None) =>
+                    for i in 1..8 {
+                        if func(d * i) {
+                            return true;
+                        }
+                    }
+                PieceMove::Direction(_, Some(_)) => panic!("Please do not provide a steps number for the piece move array"),
+                _ => (),
+            }
+        }
+        false
     }
 
     pub fn all<F>(func: F) -> bool
@@ -175,4 +267,3 @@ pub struct Piece {
     pub piece_type: PieceType,
     pub colour: PieceColour,
 }
-

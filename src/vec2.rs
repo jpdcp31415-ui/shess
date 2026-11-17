@@ -1,36 +1,14 @@
-use std::ops::Add;
-use std::ops::Sub;
-use std::ops::Mul;
-use std::ops::Div;
-use std::ops::Neg;
+use std::ops::{
+    Add, Sub,
+    Mul, Div,
+    AddAssign, SubAssign,
+    Neg
+};
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct Vec2<T> {
     pub x: T,
     pub y: T,
-}
-
-impl Vec2<usize> {
-    pub fn new() -> Self {
-        Self {
-            x: 0,
-            y: 0,
-        }
-    }
-
-    pub fn invert_board_x(&self) -> Self {
-        Self {
-            x: 7-self.x,
-            y: self.y,
-        }
-    }
-
-    pub fn invert_board_y(&self) -> Self {
-        Self {
-            x: self.x,
-            y: 7-self.y,
-        }
-    }
 }
 
 impl Vec2<i32> {
@@ -64,6 +42,27 @@ impl Vec2<i32> {
             false
         }
     }
+
+    pub fn invert_board_x(&self) -> Self {
+        Self {
+            x: 7-self.x,
+            y: self.y,
+        }
+    }
+
+    pub fn invert_board_y(&self) -> Self {
+        Self {
+            x: self.x,
+            y: 7-self.y,
+        }
+    }
+
+    pub fn is_in_board_bounds(&self) -> bool {
+        match self {
+            Vec2 {x: 0..8, y: 0..8} => true,
+            _ => false,
+        }
+    }
 }
 
 impl<T> Add for Vec2<T>
@@ -79,6 +78,16 @@ where
     }
 }
 
+impl<T> AddAssign for Vec2<T>
+where
+    T: AddAssign
+{
+    fn add_assign(&mut self, other: Self) {
+        self.x += other.x;
+        self.y += other.y;
+    }
+}
+
 impl<T> Sub for Vec2<T>
 where
     T: Sub<Output = T>
@@ -89,6 +98,16 @@ where
             x: self.x - other.x,
             y: self.y - other.y,
         }
+    }
+}
+
+impl<T> SubAssign for Vec2<T>
+where
+    T: SubAssign
+{
+    fn sub_assign(&mut self, other: Self) {
+        self.x -= other.x;
+        self.y -= other.y;
     }
 }
 

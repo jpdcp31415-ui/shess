@@ -1,5 +1,5 @@
-use crate::piece::*;
-use crate::vec2::*;
+use crate::piece::{PieceColour, PieceType, Piece};
+use crate::vec2::Vec2;
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub enum BoardSpace {
@@ -12,7 +12,7 @@ impl BoardSpace {
         Self::Blank
     }
 
-    fn is_blank(&self) -> bool {
+    pub fn is_blank(&self) -> bool {
         *self == BoardSpace::Blank
     }
 
@@ -30,46 +30,47 @@ pub struct Board {
 }
 
 impl Board {
-    pub const fn new() -> Self {
+    pub fn new() -> Self {
+        type BS = BoardSpace;
         Board {
             data: [
                 [
-                    BoardSpace::Blank, BoardSpace::Blank, BoardSpace::Blank, BoardSpace::Blank,
-                    BoardSpace::Blank, BoardSpace::Blank, BoardSpace::Blank, BoardSpace::Blank
+                    BS::Blank, BS::Blank, BS::Blank, BS::Blank,
+                    BS::Blank, BS::Blank, BS::Blank, BS::Blank
                 ],
                 [
-                    BoardSpace::Blank, BoardSpace::Blank, BoardSpace::Blank, BoardSpace::Blank,
-                    BoardSpace::Blank, BoardSpace::Blank, BoardSpace::Blank, BoardSpace::Blank
+                    BS::Blank, BS::Blank, BS::Blank, BS::Blank,
+                    BS::Blank, BS::Blank, BS::Blank, BS::Blank
                 ],
                 [
-                    BoardSpace::Blank, BoardSpace::Blank, BoardSpace::Blank, BoardSpace::Blank,
-                    BoardSpace::Blank, BoardSpace::Blank, BoardSpace::Blank, BoardSpace::Blank
+                    BS::Blank, BS::Blank, BS::Blank, BS::Blank,
+                    BS::Blank, BS::Blank, BS::Blank, BS::Blank
                 ],
                 [
-                    BoardSpace::Blank, BoardSpace::Blank, BoardSpace::Blank, BoardSpace::Blank,
-                    BoardSpace::Blank, BoardSpace::Blank, BoardSpace::Blank, BoardSpace::Blank
+                    BS::Blank, BS::Blank, BS::Blank, BS::Blank,
+                    BS::Blank, BS::Blank, BS::Blank, BS::Blank
                 ],
                 [
-                    BoardSpace::Blank, BoardSpace::Blank, BoardSpace::Blank, BoardSpace::Blank,
-                    BoardSpace::Blank, BoardSpace::Blank, BoardSpace::Blank, BoardSpace::Blank
+                    BS::Blank, BS::Blank, BS::Blank, BS::Blank,
+                    BS::Blank, BS::Blank, BS::Blank, BS::Blank
                 ],
                 [
-                    BoardSpace::Blank, BoardSpace::Blank, BoardSpace::Blank, BoardSpace::Blank,
-                    BoardSpace::Blank, BoardSpace::Blank, BoardSpace::Blank, BoardSpace::Blank
+                    BS::Blank, BS::Blank, BS::Blank, BS::Blank,
+                    BS::Blank, BS::Blank, BS::Blank, BS::Blank
                 ],
                 [
-                    BoardSpace::Blank, BoardSpace::Blank, BoardSpace::Blank, BoardSpace::Blank,
-                    BoardSpace::Blank, BoardSpace::Blank, BoardSpace::Blank, BoardSpace::Blank
+                    BS::Blank, BS::Blank, BS::Blank, BS::Blank,
+                    BS::Blank, BS::Blank, BS::Blank, BS::Blank
                 ],
                 [
-                    BoardSpace::Blank, BoardSpace::Blank, BoardSpace::Blank, BoardSpace::Blank,
-                    BoardSpace::Blank, BoardSpace::Blank, BoardSpace::Blank, BoardSpace::Blank
+                    BS::Blank, BS::Blank, BS::Blank, BS::Blank,
+                    BS::Blank, BS::Blank, BS::Blank, BS::Blank
                 ],
             ]
         }
     }
 
-    pub const fn start_pos() -> Self {
+    pub fn start_pos() -> Self {
         type BS = BoardSpace;
         type PT = PieceType;
         type PC = PieceColour;
@@ -139,36 +140,38 @@ impl Board {
         }
     }            
 
-    pub fn at(&self, pos: &Vec2<usize>) -> &BoardSpace {
-        match pos {
-            Vec2 {x: 0..8, y: 0..8} => &self.data[pos.y][pos.x],
-            _ => panic!("Cannot get BoardSpace out of bounds at: {{{}, {}}}", pos.x, pos.y),
+    pub fn at(&self, pos: Vec2<i32>) -> &BoardSpace {
+        if pos.is_in_board_bounds() {
+            return &self.data[pos.y as usize][pos.x as usize];
         }
+
+        panic!("Cannot get BoardSpace out of bounds at: {{{}, {}}}", pos.x, pos.y);
     }
 
-    pub fn at_mut(&mut self, pos: &Vec2<usize>) -> &mut BoardSpace {
-        match pos {
-            Vec2 {x: 0..8, y: 0..8} => &mut self.data[pos.y][pos.x],
-            _ => panic!("Cannot get BoardSpace out of bounds at: {{{}, {}}}", pos.x, pos.y),
+    pub fn at_mut(&mut self, pos: Vec2<i32>) -> &mut BoardSpace {
+        if pos.is_in_board_bounds() {
+            return &mut self.data[pos.y as usize][pos.x as usize];
         }
+
+        panic!("Cannot get BoardSpace out of bounds at: {{{}, {}}}", pos.x, pos.y);
     }
 
     pub fn flip_ver(&mut self) {
         for y in 0..4 {
             for x in 0..8 {
                 let pos = Vec2{x,y};
-                *self.at_mut(&pos) = *self.at(&pos.invert_board_y());
+                *self.at_mut(pos) = *self.at(pos.invert_board_y());
             }
         }
     }
 
-    pub fn king_pos(&self, col: &PieceColour) -> Vec2<usize> {
+    pub fn king_pos(&self, col: PieceColour) -> Vec2::<i32> {
         for y in 0..8 {
             for x in 0..8 {
-                let loop_space = self.at(&Vec2{x,y});
+                let loop_space = self.at(Vec2{x,y});
                 match loop_space {
                     BoardSpace::Some(Piece {piece_type: PieceType::King, ..})
-                        if *col == loop_space.as_piece().colour => return Vec2::<usize> {x, y},
+                        if col == loop_space.as_piece().colour => return Vec2 {x, y},
                     _ => continue,
                 }
             }
@@ -176,5 +179,4 @@ impl Board {
 
         panic!("Could not find the king");
     }
-
 }

@@ -4,7 +4,6 @@ mod vec2;
 mod game;
 mod test;
 mod command;
-mod setting;
 
 use std::io;
 fn get_line() -> Option<String> {
@@ -15,30 +14,8 @@ fn get_line() -> Option<String> {
 }
 
 fn main() {
-    loop {
-        break;
-    }
-
-    use setting::Setting;
-    use setting::SettingType;
-    use setting::SettingData;
-    use colored::CustomColor as Colour;
-    let all_settings = [
-        Setting {
-            name: "board-theme",
-            data: SettingData::new(SettingType::Str("emoji")),
-            is_valid_value: None,
-        },
-        Setting {
-            name: "board-colour",
-            data: SettingData::new(SettingType::Colour(Colour {
-                r: 255,
-                g: 255,
-                b: 255,
-            })),
-            is_valid_value: None,
-        },
-    ];
+    use game::Game;
+    let mut curr_game = Game::start_pos();
 
     let input = get_line();
     

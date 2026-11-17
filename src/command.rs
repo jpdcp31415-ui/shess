@@ -12,9 +12,10 @@ struct CommandRunArgs<'a> {
     input: &'a str,
 }
 
-enum CommandRunType {
-    TakesNoArgs(fn()),
-    TakesArgs(fn(&CommandRunArgs) -> Result<(), String>),
+enum CommandRunType<T> {
+    TakesNoArgs([(&'static str, fn())]),
+    TakesArgs([(&'static str, fn(&CommandRunArgs) -> Result<(), String>)]),
+    TakesArgsWSetting([(&'static str, fn(T, &CommandRunArgs) -> Result<(), String>)]),
 }
 
 struct CommandUsage {
@@ -22,14 +23,14 @@ struct CommandUsage {
     text: &'static str,
 }
 
-struct Command {
+struct Command<T> {
     name: &'static str,
-    run: CommandRunType,
+    run: CommandRunType<T>,
     usage: Option<CommandUsage>,
     help_text: &'static str,
 }
 
-fn moveCmd(args: &CommandRunArgs) -> Result<(), String> {
+fn move_cmd(args: &CommandRunArgs) -> Result<(), String> {
     Ok(())
 }
 
